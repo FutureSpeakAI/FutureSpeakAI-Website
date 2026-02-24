@@ -730,8 +730,11 @@
         });
 
         const pulseColors = [CYAN, PINK, GOLD, LIME, PURPLE, CORAL, TEAL];
-        const nodePulse = new Float32Array(PARTICLE_COUNT);
-        const nodeColor = new Array(PARTICLE_COUNT).fill(null);
+        const nodeBrightness = new Float32Array(PARTICLE_COUNT);
+        const nodeColorData = new Array(PARTICLE_COUNT).fill(null);
+        const nodeArrival = new Float32Array(PARTICLE_COUNT).fill(-1);
+        let pulseTime = -1;
+        let pulseColorPair = null;
 
         document.addEventListener('click', (e) => {
             if (e.target.closest('button, a, input, textarea, select, label, nav, form')) return;
@@ -745,6 +748,7 @@
             const color1 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
             let color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
             while (color2 === color1) color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
+            pulseColorPair = { c1: color1, c2: color2 };
 
             const posArr = particleGeo.attributes.position.array;
             let closestIdx = 0, closestDist = Infinity;
@@ -756,8 +760,36 @@
                 const d = dx*dx + dy*dy + dz*dz;
                 if (d < closestDist) { closestDist = d; closestIdx = i; }
             }
-            nodePulse[closestIdx] = 1.0;
-            nodeColor[closestIdx] = { c1: color1, c2: color2 };
+
+            nodeArrival.fill(-1);
+            nodeBrightness.fill(0);
+            nodeArrival[closestIdx] = 0;
+            pulseTime = 0;
+
+            const LINK_DIST_SQ = CONNECTION_DIST * CONNECTION_DIST * 1.5;
+            const visited = new Set();
+            const queue = [{idx: closestIdx, hopTime: 0}];
+            visited.add(closestIdx);
+
+            while (queue.length > 0) {
+                const {idx, hopTime} = queue.shift();
+                const i3 = idx * 3;
+                const ax = posArr[i3], ay = posArr[i3+1], az = posArr[i3+2];
+
+                for (let j = 0; j < PARTICLE_COUNT; j++) {
+                    if (visited.has(j)) continue;
+                    const j3 = j * 3;
+                    const dx = ax - posArr[j3], dy = ay - posArr[j3+1], dz = az - posArr[j3+2];
+                    if (dx*dx + dy*dy + dz*dz < LINK_DIST_SQ) {
+                        const nextTime = hopTime + 0.12 + Math.random() * 0.08;
+                        if (nextTime < 4.0) {
+                            nodeArrival[j] = nextTime;
+                            visited.add(j);
+                            queue.push({idx: j, hopTime: nextTime});
+                        }
+                    }
+                }
+            }
         });
 
         let rotX = 0, rotY = 0;
@@ -825,50 +857,37 @@
                 speeds[i] = colorIdx;
             }
 
-            const nextPulse = new Float32Array(PARTICLE_COUNT);
-            const PROPAGATE_DIST = CONNECTION_DIST * 1.3;
-            const PROPAGATE_DIST_SQ = PROPAGATE_DIST * PROPAGATE_DIST;
+            if (pulseTime >= 0) {
+                pulseTime += dt;
 
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                if (nodePulse[i] < 0.05) continue;
-                const i3 = i * 3;
-                const ax = posArr[i3], ay = posArr[i3+1], az = posArr[i3+2];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const arrival = nodeArrival[i];
+                    if (arrival < 0) continue;
+                    const age = pulseTime - arrival;
+                    if (age < 0) continue;
 
-                for (let j = 0; j < PARTICLE_COUNT; j++) {
-                    if (j === i) continue;
-                    const j3 = j * 3;
-                    const dx = ax - posArr[j3];
-                    const dy = ay - posArr[j3+1];
-                    const dz = az - posArr[j3+2];
-                    if (dx*dx + dy*dy + dz*dz < PROPAGATE_DIST_SQ) {
-                        const spread = nodePulse[i] * 0.35 * dt * 60;
-                        if (spread > nextPulse[j]) {
-                            nextPulse[j] = spread;
-                            if (!nodeColor[j] && nodeColor[i]) {
-                                nodeColor[j] = nodeColor[i];
-                            }
-                        }
+                    const fadeDuration = 1.5;
+                    const brightness = age < 0.15
+                        ? age / 0.15
+                        : Math.max(0, 1.0 - (age - 0.15) / fadeDuration);
+
+                    nodeBrightness[i] = brightness;
+
+                    if (brightness > 0.01) {
+                        const i3 = i * 3;
+                        const blend = Math.sin(arrival * 8 + time * 2) * 0.5 + 0.5;
+                        tmpColor.copy(pulseColorPair.c1).lerp(pulseColorPair.c2, blend);
+                        tmpColor.lerp(WHITE, brightness * 0.35);
+                        const base = new THREE.Color(colArr[i3], colArr[i3+1], colArr[i3+2]);
+                        base.lerp(tmpColor, brightness * 0.85);
+                        colArr[i3] = base.r; colArr[i3+1] = base.g; colArr[i3+2] = base.b;
+                        sizeArr[i] += brightness * 3.5;
                     }
                 }
-            }
 
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                nodePulse[i] = Math.max(nodePulse[i] - dt * 1.8, nextPulse[i], 0);
-
-                if (nodePulse[i] > 0.01) {
-                    const i3 = i * 3;
-                    const nc = nodeColor[i];
-                    if (nc) {
-                        const blend = Math.sin(time * 4 + i) * 0.5 + 0.5;
-                        tmpColor.copy(nc.c1).lerp(nc.c2, blend);
-                        tmpColor.lerp(WHITE, nodePulse[i] * 0.4);
-                        const base = new THREE.Color(colArr[i3], colArr[i3+1], colArr[i3+2]);
-                        base.lerp(tmpColor, nodePulse[i]);
-                        colArr[i3] = base.r; colArr[i3+1] = base.g; colArr[i3+2] = base.b;
-                    }
-                    sizeArr[i] += nodePulse[i] * 5.0;
-                } else {
-                    nodeColor[i] = null;
+                if (pulseTime > 6.0) {
+                    pulseTime = -1;
+                    nodeBrightness.fill(0);
                 }
             }
 
@@ -906,22 +925,19 @@
                         const palB = colorPalette[Math.min(palIdx + 1, colorPalette.length - 1)];
                         tmpColor.copy(palA).lerp(palB, palFrac);
 
-                        const pulseI = nodePulse[i], pulseJ = nodePulse[j];
-                        const edgePulse = Math.min(pulseI, pulseJ);
-                        if (edgePulse > 0.02) {
-                            const nc = nodeColor[i] || nodeColor[j];
-                            if (nc) {
-                                const ec = new THREE.Color().copy(nc.c1).lerp(nc.c2, 0.5);
-                                ec.lerp(WHITE, edgePulse * 0.5);
-                                tmpColor.lerp(ec, edgePulse);
-                            }
+                        const bI = nodeBrightness[i], bJ = nodeBrightness[j];
+                        const edgeBright = Math.min(bI, bJ);
+                        if (edgeBright > 0.02 && pulseColorPair) {
+                            const ec = new THREE.Color().copy(pulseColorPair.c1).lerp(pulseColorPair.c2, 0.5);
+                            ec.lerp(WHITE, edgeBright * 0.4);
+                            tmpColor.lerp(ec, edgeBright * 0.9);
                         }
 
                         lc[li6] = lc[li6+3] = tmpColor.r;
                         lc[li6+1] = lc[li6+4] = tmpColor.g;
                         lc[li6+2] = lc[li6+5] = tmpColor.b;
-                        const pulseAlpha = Math.max(pulseI, pulseJ) * 0.8;
-                        la[li2] = la[li2+1] = fade * fade * 0.5 + pulseAlpha;
+                        const edgeAlpha = Math.max(bI, bJ) * 0.7;
+                        la[li2] = la[li2+1] = fade * fade * 0.5 + edgeAlpha;
                         lineIdx++;
                     }
                 }
