@@ -3,7 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutureSpeak.AI | Intelligence, Architected.</title>
+    <title>FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster</title>
+    <meta name="description" content="FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.">
+    <meta name="keywords" content="enterprise AI consulting, AI strategy, agentic AI workflows, RAG architecture, AI transformation, Stephen C. Webster, FutureSpeak AI, Austin TX, Google Gemini training, pharmaceutical AI compliance, Fortune 500 AI consulting">
+    <meta name="author" content="Stephen C. Webster">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="canonical" href="https://futurespeak.ai">
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://futurespeak.ai">
+    <meta property="og:title" content="FutureSpeak.AI | Enterprise AI Strategy & Consulting">
+    <meta property="og:description" content="Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.">
+    <meta property="og:image" content="https://futurespeak.ai/og-image.png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="720">
+    <meta property="og:site_name" content="FutureSpeak.AI">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FutureSpeak.AI | Enterprise AI Strategy & Consulting">
+    <meta name="twitter:description" content="Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster.">
+    <meta name="twitter:image" content="https://futurespeak.ai/og-image.png">
+
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "FutureSpeak.AI",
+        "url": "https://futurespeak.ai",
+        "logo": "https://futurespeak.ai/favicon.png",
+        "image": "https://futurespeak.ai/og-image.png",
+        "description": "Enterprise AI strategy and consulting firm specializing in agentic workflow design, RAG-based architectures, and AI transformation for Fortune 500 companies in regulated industries.",
+        "founder": {
+            "@type": "Person",
+            "name": "Stephen C. Webster",
+            "jobTitle": "Founder & CEO",
+            "url": "https://www.linkedin.com/in/stephencwebster/",
+            "image": "https://futurespeak.ai/1760623171257.jpg",
+            "sameAs": [
+                "https://www.linkedin.com/in/stephencwebster/",
+                "https://www.rawstory.com/u/stephen-c-webster",
+                "https://progressive.org/topics/stephen-c.-webster/"
+            ],
+            "knowsAbout": ["Artificial Intelligence", "Enterprise AI Strategy", "Agentic AI Workflows", "RAG Architecture", "Pharmaceutical AI Compliance", "Google Gemini", "Meta LLaMA", "Investigative Journalism"]
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Austin",
+            "addressRegion": "TX",
+            "addressCountry": "US"
+        },
+        "areaServed": "Worldwide",
+        "serviceType": ["AI Strategy Consulting", "Agentic AI Workflow Design", "RAG Architecture Development", "Enterprise AI Transformation", "Pharmaceutical AI Compliance"],
+        "sameAs": [
+            "https://www.linkedin.com/in/stephencwebster/"
+        ]
+    }
+    </script>
+
+    <!-- Structured Data: Person (for founder bio page) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Stephen C. Webster",
+        "jobTitle": "Senior Director of Integrated Intelligence at Aquent Studios | Founder, FutureSpeak.AI",
+        "url": "https://futurespeak.ai",
+        "image": "https://futurespeak.ai/1760623171257.jpg",
+        "description": "Enterprise AI strategist and former award-winning investigative journalist with 20+ years architecting systems that bridge complex information with human understanding. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.",
+        "sameAs": [
+            "https://www.linkedin.com/in/stephencwebster/",
+            "https://www.rawstory.com/u/stephen-c-webster",
+            "https://progressive.org/topics/stephen-c.-webster/",
+            "https://www.imdb.com/title/tt29781021/"
+        ],
+        "worksFor": [
+            {
+                "@type": "Organization",
+                "name": "Aquent Studios",
+                "url": "https://aquent.com"
+            },
+            {
+                "@type": "Organization",
+                "name": "FutureSpeak.AI",
+                "url": "https://futurespeak.ai"
+            }
+        ],
+        "alumniOf": [
+            { "@type": "Organization", "name": "Accenture" },
+            { "@type": "Organization", "name": "Google" },
+            { "@type": "Organization", "name": "Raw Story" },
+            { "@type": "Organization", "name": "The Progressive Magazine" }
+        ],
+        "knowsAbout": ["Artificial Intelligence", "Enterprise AI Strategy", "Google Gemini", "Meta LLaMA 3", "Amazon Alexa", "Investigative Journalism", "RAG Architecture", "Pharmaceutical AI Compliance"]
+    }
+    </script>
+
     <!-- Three.js for 3D Background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,18 +203,18 @@
         }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-glow selection:text-navy-900">
+<body class="antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-glow selection:text-navy-900" itemscope itemtype="https://schema.org/WebPage">
 
     <!-- 3D WebGL Background -->
     <div id="canvas-container"></div>
 
     <!-- Navigation -->
-    <header class="fixed w-full top-0 z-50 glass-panel border-b border-white/5 transition-all duration-300">
+    <header class="fixed w-full top-0 z-50 glass-panel border-b border-white/5 transition-all duration-300" role="banner">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Brand / Logo -->
-                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onclick="navigate('home')">
-                    <svg class="w-10 h-10 text-cyan-glow group-hover:rotate-90 transition-transform duration-700" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <a href="/" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onclick="event.preventDefault(); navigate('home')" aria-label="FutureSpeak.AI - Home">
+                    <svg class="w-10 h-10 text-cyan-glow group-hover:rotate-90 transition-transform duration-700" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
                         <path d="M50 5L90 27.5V72.5L50 95L10 72.5V27.5L50 5Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill="rgba(0,240,255,0.02)"/>
                         <circle cx="50" cy="50" r="8" fill="currentColor"/>
                         <circle cx="30" cy="35" r="5" fill="currentColor"/>
@@ -124,17 +223,17 @@
                         <path d="M50 50L30 35M50 50L70 35M50 50L50 75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span class="font-bold text-2xl tracking-tight text-white/90">FutureSpeak<span class="text-cyan-glow/80">.AI</span></span>
-                </div>
+                </a>
                 
                 <!-- Desktop Menu -->
-                <nav class="hidden md:flex space-x-8">
+                <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
                     <button onclick="navigate('home')" id="nav-home" class="nav-link active text-gray-400 hover:text-white font-medium tracking-wide text-sm uppercase">Capabilities</button>
                     <button onclick="navigate('about')" id="nav-about" class="nav-link text-gray-400 hover:text-white font-medium tracking-wide text-sm uppercase">Leadership</button>
                 </nav>
 
                 <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white focus:outline-none" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     </button>
@@ -150,23 +249,23 @@
     </header>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow pt-20 relative z-10">
+    <main class="flex-grow pt-20 relative z-10" role="main">
 
-        <!-- ==================== HOME PAGE (VAGUE & CONCEPTUAL) ==================== -->
+        <!-- ==================== HOME PAGE ==================== -->
         <div id="home" class="page-section active">
             <!-- Hero Section -->
-            <section class="min-h-[85vh] flex items-center relative overflow-hidden">
+            <section class="min-h-[85vh] flex items-center relative overflow-hidden" aria-label="Enterprise AI consulting hero">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center md:text-left w-full">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 glass-panel text-gray-400 text-xs font-mono mb-8 uppercase tracking-widest">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow animate-pulse"></span>
-                        Enterprise AI Strategy
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow animate-pulse" aria-hidden="true"></span>
+                        Enterprise AI Strategy &amp; Consulting
                     </div>
                     <h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-6 leading-[1.1]">
                         Intelligence,<br />
                         <span class="gradient-text">Architected.</span>
                     </h1>
                     <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mb-12 font-light leading-relaxed">
-                        We operate at the frontier of machine cognition and enterprise reality. Orchestrating agentic systems that perceive, adapt, and execute.
+                        Enterprise AI strategy from the team that trained Google Gemini. We design agentic workflows, RAG architectures, and AI transformation strategies for Fortune 500 companies in regulated industries.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-6 md:justify-start justify-center items-center">
                         <button onclick="scrollToContact()" class="px-8 py-4 rounded-lg bg-white/5 hover:bg-cyan-glow text-white hover:text-navy-900 font-mono text-sm tracking-widest uppercase transition-all duration-300 border border-white/10 hover:border-transparent backdrop-blur-sm group">
@@ -178,35 +277,35 @@
             </section>
 
             <!-- Services/Features snippet -->
-            <section class="py-24 border-t border-white/5 glass-panel">
+            <section class="py-24 border-t border-white/5 glass-panel" aria-label="AI consulting services">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/80">Operational <span class="font-bold text-white">Vectors</span></h2>
+                    <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/80">AI Consulting <span class="font-bold text-white">Services</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
-                            <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity">01 //</div>
-                            <h3 class="text-xl font-bold mb-4">Autonomous Workflows</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Deploying sovereign multi-agent networks that execute complex organizational logic with minimal friction and maximum fidelity.</p>
-                        </div>
-                        <div class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
-                            <div class="text-purple-accent font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity">02 //</div>
-                            <h3 class="text-xl font-bold mb-4">Regulated Architectures</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Synthesizing frontier capabilities with impenetrable compliance frameworks. Proven implementation in the highest-stakes pharmaceutical environments.</p>
-                        </div>
-                        <div class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
-                            <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity">03 //</div>
-                            <h3 class="text-xl font-bold mb-4">Cognitive Grounding (RAG)</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Anchoring generative outputs to proprietary enterprise truth. Creating adaptive engines that reason rather than hallucinate.</p>
-                        </div>
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                            <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">01 //</div>
+                            <h3 class="text-xl font-bold mb-4">Agentic AI Workflow Design</h3>
+                            <p class="text-gray-400 text-sm font-light leading-relaxed">Multi-agent orchestration systems that automate complex enterprise processes. Custom autonomous workflows with built-in quality assurance and human-in-the-loop governance.</p>
+                        </article>
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                            <div class="text-purple-accent font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">02 //</div>
+                            <h3 class="text-xl font-bold mb-4">AI Compliance for Regulated Industries</h3>
+                            <p class="text-gray-400 text-sm font-light leading-relaxed">Enterprise AI architectures built for pharmaceutical, healthcare, and financial compliance. Proven deployment in Fortune 500 regulatory environments.</p>
+                        </article>
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                            <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">03 //</div>
+                            <h3 class="text-xl font-bold mb-4">RAG &amp; Knowledge Architecture</h3>
+                            <p class="text-gray-400 text-sm font-light leading-relaxed">Retrieval-augmented generation systems anchored to proprietary enterprise data. Reduce hallucination, increase accuracy, and build trustworthy AI-powered knowledge bases.</p>
+                        </article>
                     </div>
                 </div>
             </section>
 
             <!-- Contact Section -->
-            <section id="contact-section" class="py-32 relative">
+            <section id="contact-section" class="py-32 relative" aria-label="Contact FutureSpeak.AI for enterprise AI consulting">
                 <div class="max-w-3xl mx-auto px-6 lg:px-8">
                     <div class="text-center mb-16">
-                        <h2 class="text-4xl font-bold mb-4 tracking-tight">Get in Touch</h2>
-                        <p class="text-gray-400 font-light">Strategic consultation and enterprise partnerships.</p>
+                        <h2 class="text-4xl font-bold mb-4 tracking-tight">Schedule a Strategy Session</h2>
+                        <p class="text-gray-400 font-light">Enterprise AI consulting, strategic partnerships, and transformation inquiries.</p>
                     </div>
                     
                     <div class="glass-panel p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
