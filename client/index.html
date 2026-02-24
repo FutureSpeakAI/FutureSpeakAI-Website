@@ -125,6 +125,15 @@
             }
         }
     </script>
+    <!-- Import map to fix module resolution for Three.js in a module script -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;600;700&display=swap');
         
@@ -212,6 +221,12 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        /* Terminal Effect for Friday */
+        .terminal-container {
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.05), inset 0 0 20px rgba(0, 240, 255, 0.02);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(6, 11, 25, 0.9) 100%);
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-glow selection:text-navy-900" itemscope itemtype="https://schema.org/WebPage">
@@ -239,6 +254,7 @@
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
                     <button onclick="navigate('home')" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Capabilities</button>
+                    <button onclick="navigate('friday')" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Agent Friday</button>
                     <button onclick="navigate('about')" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Leadership</button>
                 </nav>
 
@@ -254,6 +270,7 @@
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-white/5">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <button onclick="navigate('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide">Capabilities</button>
+                <button onclick="navigate('friday'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Agent Friday</button>
                 <button onclick="navigate('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Leadership</button>
             </div>
         </div>
@@ -343,6 +360,97 @@
                                 Send Message
                             </button>
                         </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== AGENT FRIDAY PAGE ==================== -->
+        <div id="friday" class="page-section hidden">
+            <section class="pt-32 pb-24 min-h-[90vh] flex items-center content-backdrop" aria-label="Agent Friday AI Operating System Teaser">
+                <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                        
+                        <!-- Left Copy -->
+                        <div class="lg:col-span-7">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/30 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-8 uppercase tracking-widest shadow-[0_0_15px_rgba(138,43,226,0.2)]">
+                                <span class="w-1.5 h-1.5 rounded-full bg-purple-accent animate-pulse" aria-hidden="true"></span>
+                                In Active Development
+                            </div>
+                            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+                                Agent <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-glow to-purple-accent">Friday</span>
+                            </h1>
+                            <p class="text-xl text-gray-200 font-light leading-relaxed mb-6 max-w-2xl">
+                                Agent Friday isn't another chat app. It's a completely new paradigm for human-computer interaction. A truly custom, OS-native intelligence that learns your logic, adapts to your context, and grows alongside you.
+                            </p>
+                            <p class="text-lg text-gray-400 font-light leading-relaxed mb-8 max-w-2xl">
+                                Friday is capable of doing anything a human can do on a machine—only exponentially faster. While you converse with Friday, it silently deploys autonomous subagents that take control of your applications, manage your file system, and execute multiple complex workflows concurrently in the background.
+                            </p>
+                            
+                            <ul class="space-y-4 font-mono text-sm text-cyan-glow/80 mb-10 border-l border-white/10 pl-4">
+                                <li class="flex items-center gap-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Unrestricted OS-Level Action
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Concurrent Subagent Orchestration
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Bespoke Local Memory & Growth Engine
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Right Download Terminal (Teaser) -->
+                        <div class="lg:col-span-5">
+                            <div class="terminal-container rounded-2xl border border-cyan-glow/20 p-8 relative overflow-hidden group glass-panel">
+                                <!-- Decorative grid background -->
+                                <div class="absolute inset-0 bg-[linear-gradient(rgba(0,240,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+                                
+                                <div class="relative z-10 flex flex-col items-center text-center">
+                                    <div class="w-16 h-16 rounded-full bg-navy-900 border border-purple-accent/50 flex items-center justify-center mb-6 relative">
+                                        <div class="absolute inset-0 rounded-full border-t-2 border-cyan-glow animate-spin" style="animation-duration: 3s;"></div>
+                                        <svg class="w-6 h-6 text-purple-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-bold mb-2">Deployment Pending</h3>
+                                    <p class="text-gray-300 text-sm mb-8 font-light">The core operating engine is currently compiling.</p>
+                                    
+                                    <div class="w-full bg-navy-900/80 border border-cyan-glow/30 rounded-lg p-5 mb-8 text-left relative overflow-hidden">
+                                        <div class="absolute top-0 right-0 w-16 h-16 bg-cyan-glow/5 rounded-bl-full pointer-events-none"></div>
+                                        <div class="font-mono text-xs text-cyan-glow mb-2">> Access Protocol:</div>
+                                        <div class="text-white font-bold text-lg mb-2">100% Free Software</div>
+                                        <p class="text-gray-400 text-xs font-light leading-relaxed">Agent Friday will be released at zero cost to users. To unleash its capabilities on your machine, simply provide your own API key to the frontier model of your choice.</p>
+                                    </div>
+
+                                    <!-- Waitlist CTA -->
+                                    <div id="waitlist-form-container" class="w-full">
+                                        <form onsubmit="handleWaitlistSubmit(event)" class="flex flex-col gap-3">
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                    <span class="text-cyan-glow font-mono text-sm">></span>
+                                                </div>
+                                                <input type="email" id="waitlist-email" required class="w-full bg-navy-900/80 border border-cyan-glow/50 rounded-lg pl-8 pr-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow transition-all placeholder-gray-500 shadow-[inset_0_0_10px_rgba(0,240,255,0.05)]" placeholder="Enter email address...">
+                                            </div>
+                                            <button type="submit" class="w-full py-3 bg-transparent border border-cyan-glow text-cyan-glow font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-cyan-glow hover:text-navy-900 transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.1)] hover:shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2 group">
+                                                Join Waitlist
+                                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <div class="mt-6 flex justify-between w-full text-xs font-mono text-gray-500 uppercase tracking-widest border-t border-white/10 pt-4">
+                                        <span>Target: Win x64</span>
+                                        <span>Status: Restricted</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
@@ -529,13 +637,18 @@
             });
 
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active', 'text-white');
+                link.classList.remove('active', 'text-white', 'text-cyan-glow', 'font-bold');
                 link.classList.add('text-gray-300');
             });
             
             const activeNav = document.getElementById('nav-' + pageId);
             if(activeNav) {
-                activeNav.classList.add('active', 'text-white');
+                // Ensure Agent Friday link retains its special cyan styling when active
+                if(pageId === 'friday') {
+                    activeNav.classList.add('active', 'text-cyan-glow', 'font-bold');
+                } else {
+                    activeNav.classList.add('active', 'text-white');
+                }
                 activeNav.classList.remove('text-gray-300');
             }
 
@@ -551,6 +664,41 @@
                 setTimeout(() => { document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' }); }, 100);
             } else {
                 document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        async function handleWaitlistSubmit(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('waitlist-email');
+            const email = emailInput.value;
+            const formContainer = document.getElementById('waitlist-form-container');
+
+            try {
+                // NOTE FOR REPLIT: Uncomment the fetch call below when your backend route is ready.
+                // Your backend should have an endpoint like app.post('/api/waitlist', ...) 
+                // that appends the email to a .md file.
+                
+                /*
+                const response = await fetch('/api/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                if (!response.ok) throw new Error('Transmission failed');
+                */
+
+                // Show success UI (Simulated for now)
+                formContainer.innerHTML = `
+                    <div class="w-full py-4 bg-cyan-glow/10 border border-cyan-glow/50 rounded-lg text-cyan-glow font-mono text-xs text-left px-4 shadow-[0_0_15px_rgba(0,240,255,0.1)]">
+                        <span class="opacity-70">> STATUS: ACCEPTED</span><br/>
+                        <span class="font-bold text-white">> QUEUED: </span> ${email}<br/>
+                        <span class="opacity-70">> Awaiting deployment instructions...</span>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Transmission failed. Please check your connection and try again.');
             }
         }
 
