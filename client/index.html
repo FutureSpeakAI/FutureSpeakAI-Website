@@ -146,10 +146,22 @@
         }
 
         .glass-panel {
-            background: rgba(6, 11, 25, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(6, 11, 25, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .content-backdrop {
+            position: relative;
+        }
+        .content-backdrop::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(6,11,25,0.7) 0%, rgba(6,11,25,0.92) 30%, rgba(6,11,25,0.95) 100%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .nav-link {
@@ -226,12 +238,12 @@
                 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
-                    <button onclick="navigate('home')" id="nav-home" class="nav-link active text-gray-400 hover:text-white font-medium tracking-wide text-sm uppercase">Capabilities</button>
-                    <button onclick="navigate('about')" id="nav-about" class="nav-link text-gray-400 hover:text-white font-medium tracking-wide text-sm uppercase">Leadership</button>
+                    <button onclick="navigate('home')" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Capabilities</button>
+                    <button onclick="navigate('about')" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Leadership</button>
                 </nav>
 
                 <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white focus:outline-none" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <button onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white focus:outline-none" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -242,7 +254,7 @@
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-white/5">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <button onclick="navigate('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide">Capabilities</button>
-                <button onclick="navigate('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-400 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Leadership</button>
+                <button onclick="navigate('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Leadership</button>
             </div>
         </div>
     </header>
@@ -255,7 +267,7 @@
             <!-- Hero Section -->
             <section class="min-h-[85vh] flex items-center relative overflow-hidden" aria-label="Enterprise AI consulting hero">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center md:text-left w-full">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 glass-panel text-gray-400 text-xs font-mono mb-8 uppercase tracking-widest">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 glass-panel text-gray-300 text-xs font-mono mb-8 uppercase tracking-widest">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow animate-pulse" aria-hidden="true"></span>
                         Enterprise AI Strategy &amp; Consulting
                     </div>
@@ -263,7 +275,7 @@
                         Intelligence,<br />
                         <span class="gradient-text">Architected.</span>
                     </h1>
-                    <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-2xl mb-12 font-light leading-relaxed">
+                    <p class="mt-4 text-lg md:text-xl text-gray-300 max-w-2xl mb-12 font-light leading-relaxed">
                         Enterprise AI strategy from the team that trained Google Gemini. We design agentic workflows, RAG architectures, and AI transformation strategies for Fortune 500 companies in regulated industries.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-6 md:justify-start justify-center items-center">
@@ -276,35 +288,35 @@
             </section>
 
             <!-- Services/Features snippet -->
-            <section class="py-24 border-t border-white/5 glass-panel" aria-label="AI consulting services">
+            <section class="py-24 border-t border-white/5 glass-panel content-backdrop" aria-label="AI consulting services">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/80">AI Consulting <span class="font-bold text-white">Services</span></h2>
+                    <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/90">AI Consulting <span class="font-bold text-white">Services</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/60 hover:bg-navy-900/80 transition-colors group">
                             <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">01 //</div>
                             <h3 class="text-xl font-bold mb-4">Agentic AI Workflow Design</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Multi-agent orchestration systems that automate complex enterprise processes. Custom autonomous workflows with built-in quality assurance and human-in-the-loop governance.</p>
+                            <p class="text-gray-300 text-sm font-light leading-relaxed">Multi-agent orchestration systems that automate complex enterprise processes. Custom autonomous workflows with built-in quality assurance and human-in-the-loop governance.</p>
                         </article>
-                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/60 hover:bg-navy-900/80 transition-colors group">
                             <div class="text-purple-accent font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">02 //</div>
                             <h3 class="text-xl font-bold mb-4">AI Compliance for Regulated Industries</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Enterprise AI architectures built for pharmaceutical, healthcare, and financial compliance. Proven deployment in Fortune 500 regulatory environments.</p>
+                            <p class="text-gray-300 text-sm font-light leading-relaxed">Enterprise AI architectures built for pharmaceutical, healthcare, and financial compliance. Proven deployment in Fortune 500 regulatory environments.</p>
                         </article>
-                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/30 hover:bg-navy-900/50 transition-colors group">
+                        <article class="p-8 rounded-2xl border border-white/5 bg-navy-900/60 hover:bg-navy-900/80 transition-colors group">
                             <div class="text-cyan-glow font-mono text-sm mb-4 opacity-50 group-hover:opacity-100 transition-opacity" aria-hidden="true">03 //</div>
                             <h3 class="text-xl font-bold mb-4">RAG &amp; Knowledge Architecture</h3>
-                            <p class="text-gray-400 text-sm font-light leading-relaxed">Retrieval-augmented generation systems anchored to proprietary enterprise data. Reduce hallucination, increase accuracy, and build trustworthy AI-powered knowledge bases.</p>
+                            <p class="text-gray-300 text-sm font-light leading-relaxed">Retrieval-augmented generation systems anchored to proprietary enterprise data. Reduce hallucination, increase accuracy, and build trustworthy AI-powered knowledge bases.</p>
                         </article>
                     </div>
                 </div>
             </section>
 
             <!-- Contact Section -->
-            <section id="contact-section" class="py-32 relative" aria-label="Contact FutureSpeak.AI for enterprise AI consulting">
+            <section id="contact-section" class="py-32 relative content-backdrop" aria-label="Contact FutureSpeak.AI for enterprise AI consulting">
                 <div class="max-w-3xl mx-auto px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h2 class="text-4xl font-bold mb-4 tracking-tight">Schedule a Strategy Session</h2>
-                        <p class="text-gray-400 font-light">Enterprise AI consulting, strategic partnerships, and transformation inquiries.</p>
+                        <p class="text-gray-300 font-light">Enterprise AI consulting, strategic partnerships, and transformation inquiries.</p>
                     </div>
                     
                     <div class="glass-panel p-8 md:p-12 rounded-2xl border border-white/10 shadow-2xl">
@@ -338,7 +350,7 @@
 
         <!-- ==================== ABOUT PAGE (THE ARCHITECT) ==================== -->
         <div id="about" class="page-section hidden">
-            <section class="pt-32 pb-24">
+            <section class="pt-32 pb-24 content-backdrop">
                 <div class="max-w-5xl mx-auto px-6 lg:px-8">
                     
                     <div class="flex flex-col md:flex-row items-center md:items-start gap-12 mb-20">
@@ -351,7 +363,7 @@
                         
                         <div class="text-center md:text-left pt-4">
                             <h1 class="text-4xl md:text-6xl font-bold mb-3 tracking-tighter">Stephen C. Webster</h1>
-                            <h2 class="text-lg text-gray-400 font-mono mb-6 uppercase tracking-widest">Principal Architect</h2>
+                            <h2 class="text-lg text-gray-300 font-mono mb-6 uppercase tracking-widest">Principal Architect</h2>
                             <p class="text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl font-light">
                                 Bridging the chaotic geometry of frontier models with the structured demands of human enterprise. 20+ years decoding complex systems.
                             </p>
@@ -377,10 +389,10 @@
                             <div class="absolute -left-[3.25rem] top-12 w-4 h-4 rounded-full bg-navy-900 border-2 border-cyan-glow hidden md:block shadow-[0_0_10px_rgba(0,240,255,0.5)]"></div>
                             <h3 class="text-sm font-mono text-cyan-glow mb-2 uppercase tracking-widest">Frontier AI</h3>
                             <h4 class="text-2xl font-bold mb-4">Shaped the Models That Shape the World</h4>
-                            <p class="text-gray-400 font-light leading-relaxed mb-4">
+                            <p class="text-gray-300 font-light leading-relaxed mb-4">
                                 Directly contributed to the training, refinement, and safety frameworks of the world's leading AI systems, bridging raw computational capability with practical, safe human utility.
                             </p>
-                            <p class="text-gray-400 font-light leading-relaxed mb-6">
+                            <p class="text-gray-300 font-light leading-relaxed mb-6">
                                 Notably served as a training data specialist for Google Gemini during the 2024 U.S. presidential election cycle, developing response frameworks for politically sensitive queries with a focus on geopolitical context, ethical considerations, and factual accuracy&mdash;a mission-critical effort for Google at scale.
                             </p>
                             <div class="flex flex-wrap gap-4">
@@ -395,7 +407,7 @@
                             <div class="absolute -left-[3.25rem] top-12 w-4 h-4 rounded-full bg-navy-900 border-2 border-purple-accent hidden md:block shadow-[0_0_10px_rgba(138,43,226,0.5)]"></div>
                             <h3 class="text-sm font-mono text-purple-400 mb-2 uppercase tracking-widest">Enterprise AI</h3>
                             <h4 class="text-2xl font-bold mb-4">Aquent Studios</h4>
-                            <p class="text-gray-400 font-light leading-relaxed mb-2">
+                            <p class="text-gray-300 font-light leading-relaxed mb-2">
                                 Senior Director of Integrated Intelligence leading enterprise AI strategy and implementation for Fortune 500 clients in regulated industries. Developing AI transformation roadmaps, internal AI initiatives, and cutting-edge consulting deliverables.
                             </p>
                             <div class="font-mono text-xs text-white/50 border-t border-white/10 pt-4 mt-4">
@@ -408,7 +420,7 @@
                                 <div class="absolute -left-[5.25rem] top-10 w-4 h-4 rounded-full bg-navy-900 border-2 border-white/20 hidden md:block"></div>
                                 <h3 class="text-sm font-mono text-cyan-400 mb-2 uppercase tracking-widest">Consulting</h3>
                                 <h4 class="text-xl font-bold mb-4">FutureSpeak.AI</h4>
-                                <p class="text-gray-400 font-light text-sm leading-relaxed mb-4">
+                                <p class="text-gray-300 font-light text-sm leading-relaxed mb-4">
                                     Founded a consultancy connecting small-to-medium businesses with AI transformation strategy. Clients have included The Motley Fool, Kunai (fintech), and INNEX Energy.
                                 </p>
                                 <div class="font-mono text-xs text-white/50 border-t border-white/10 pt-4">
@@ -419,7 +431,7 @@
                             <div class="glass-panel p-8 rounded-2xl border border-white/5 relative group">
                                 <h3 class="text-sm font-mono text-purple-400 mb-2 uppercase tracking-widest">Big Tech</h3>
                                 <h4 class="text-xl font-bold mb-4">Accenture &middot; Google</h4>
-                                <p class="text-gray-400 font-light text-sm leading-relaxed mb-4">
+                                <p class="text-gray-300 font-light text-sm leading-relaxed mb-4">
                                     AI training specialist and technical writer on Google's account. Contributed to Bard remediation following public launch, developing response frameworks for factual accuracy. Managed content standards across a distributed team of 120+ writers.
                                 </p>
                                 <div class="font-mono text-xs text-white/50 border-t border-white/10 pt-4">
@@ -433,25 +445,25 @@
                             <div class="absolute -left-[3.25rem] top-12 w-4 h-4 rounded-full bg-navy-900 border-2 border-white/20 hidden md:block"></div>
                             <h3 class="text-sm font-mono text-cyan-glow mb-2 uppercase tracking-widest">Journalism & Media</h3>
                             <h4 class="text-2xl font-bold mb-4">Two Decades of Investigative Impact</h4>
-                            <p class="text-gray-400 font-light leading-relaxed mb-6">
+                            <p class="text-gray-300 font-light leading-relaxed mb-6">
                                 Award-winning investigative journalist whose career spans digital media entrepreneurship, editorial leadership, and breaking stories cited by The New York Times, The Washington Post, Wired, Rolling Stone, and used as evidence in ACLU federal civil rights litigation.
                             </p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <h5 class="text-sm font-bold text-white mb-2"><a href="https://www.rawstory.com/u/stephen-c-webster" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-glow transition-colors">Raw Story <svg class="w-3 h-3 inline-block ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></h5>
-                                    <p class="text-xs text-gray-400 leading-relaxed">Scaled from 50,000 to 5 million monthly readers. Rose from night editor to editor-in-chief. Investigation on military social media manipulation named #2 "Most Censored" story of 2011.</p>
+                                    <p class="text-xs text-gray-300 leading-relaxed">Scaled from 50,000 to 5 million monthly readers. Rose from night editor to editor-in-chief. Investigation on military social media manipulation named #2 "Most Censored" story of 2011.</p>
                                 </div>
                                 <div>
                                     <h5 class="text-sm font-bold text-white mb-2"><a href="https://austin.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-glow transition-colors">Austin.com <svg class="w-3 h-3 inline-block ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></h5>
-                                    <p class="text-xs text-gray-400 leading-relaxed">Founded digital media network delivering 50M+ brand impressions. Acquired and integrated a top competitor. Mentored activists with VP Al Gore, influencing the ending of his Oscar-nominated documentary.</p>
+                                    <p class="text-xs text-gray-300 leading-relaxed">Founded digital media network delivering 50M+ brand impressions. Acquired and integrated a top competitor. Mentored activists with VP Al Gore, influencing the ending of his Oscar-nominated documentary.</p>
                                 </div>
                                 <div>
                                     <h5 class="text-sm font-bold text-white mb-2"><a href="https://progressive.org/topics/stephen-c.-webster/" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-glow transition-colors">The Progressive <svg class="w-3 h-3 inline-block ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></h5>
-                                    <p class="text-xs text-gray-400 leading-relaxed">Led digital transformation for legacy progressive magazine, growing online readership 200%. Broke exclusive stories on Governor Scott Walker controversies and hosted Senator Bernie Sanders speeches.</p>
+                                    <p class="text-xs text-gray-300 leading-relaxed">Led digital transformation for legacy progressive magazine, growing online readership 200%. Broke exclusive stories on Governor Scott Walker controversies and hosted Senator Bernie Sanders speeches.</p>
                                 </div>
                                 <div>
                                     <h5 class="text-sm font-bold text-white mb-2"><a href="https://www.imdb.com/title/tt29781021/" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-glow transition-colors">True-Crime Documentary <svg class="w-3 h-3 inline-block ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></h5>
-                                    <p class="text-xs text-gray-400 leading-relaxed">Original journalism inspired <a href="https://www.imdb.com/title/tt29781021/" target="_blank" rel="noopener noreferrer" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors">"Never Get Busted!"</a> by the producer of "Tiger King," which premiered at Sundance 2025.</p>
+                                    <p class="text-xs text-gray-300 leading-relaxed">Original journalism inspired <a href="https://www.imdb.com/title/tt29781021/" target="_blank" rel="noopener noreferrer" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors">"Never Get Busted!"</a> by the producer of "Tiger King," which premiered at Sundance 2025.</p>
                                 </div>
                             </div>
                             <div class="font-mono text-xs text-white/50 border-t border-white/10 pt-4">
@@ -518,13 +530,13 @@
 
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active', 'text-white');
-                link.classList.add('text-gray-400');
+                link.classList.add('text-gray-300');
             });
             
             const activeNav = document.getElementById('nav-' + pageId);
             if(activeNav) {
                 activeNav.classList.add('active', 'text-white');
-                activeNav.classList.remove('text-gray-400');
+                activeNav.classList.remove('text-gray-300');
             }
 
             const targetPage = document.getElementById(pageId);
