@@ -599,14 +599,14 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(NAVY, 1);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.8;
+        renderer.toneMappingExposure = 1.3;
         container.appendChild(renderer.domElement);
 
         const composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
         const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            2.2, 0.4, 0.05
+            1.5, 0.5, 0.15
         );
         composer.addPass(bloomPass);
 
@@ -633,7 +633,7 @@
                 float innerGlow = 1.0 - smoothstep(0.0, 0.25, d);
                 float outerGlow = 1.0 - smoothstep(0.0, 0.5, d);
                 outerGlow = pow(outerGlow, 1.1);
-                float brightness = outerGlow * 2.5 + innerGlow * 1.5 + core * 2.0;
+                float brightness = outerGlow * 1.8 + innerGlow * 1.2 + core * 1.5;
                 float alpha = outerGlow * (1.0 - vFog * 0.6);
                 gl_FragColor = vec4(mix(vColor, vec3(1.0), core * 0.7) * brightness, alpha);
             }
