@@ -729,6 +729,32 @@
             mouseY = (e.clientY / window.innerHeight) - 0.5;
         });
 
+        const pulses = [];
+        const pulseColors = [CYAN, PINK, GOLD, LIME, PURPLE, CORAL, TEAL];
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button, a, input, textarea, select, label, nav, form')) return;
+            const ndcX = (e.clientX / window.innerWidth) * 2 - 1;
+            const ndcY = -(e.clientY / window.innerHeight) * 2 + 1;
+            const clickVec = new THREE.Vector3(ndcX, ndcY, 0.5);
+            clickVec.unproject(camera);
+            const dir = clickVec.sub(camera.position).normalize();
+            const origin = camera.position.clone().add(dir.multiplyScalar(200));
+            const color1 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
+            let color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
+            while (color2 === color1) color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
+            pulses.push({
+                origin: origin,
+                radius: 0,
+                maxRadius: 500,
+                speed: 180,
+                color1: color1,
+                color2: color2,
+                life: 1.0,
+                width: 60
+            });
+        });
+
         let rotX = 0, rotY = 0;
         let prevTime = performance.now() / 1000;
         let elapsedTime = 0;
@@ -793,6 +819,34 @@
                 sizeArr[i] = 2.5 + sizePulse * 1.0 + pulse * 0.5;
                 speeds[i] = colorIdx;
             }
+
+            for (let p = pulses.length - 1; p >= 0; p--) {
+                const pl = pulses[p];
+                pl.radius += pl.speed * dt;
+                pl.life = 1.0 - (pl.radius / pl.maxRadius);
+                if (pl.life <= 0) { pulses.splice(p, 1); continue; }
+
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const i3 = i * 3;
+                    const dx = posArr[i3] - pl.origin.x;
+                    const dy = posArr[i3+1] - pl.origin.y;
+                    const dz = posArr[i3+2] - pl.origin.z;
+                    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    const ringDist = Math.abs(dist - pl.radius);
+
+                    if (ringDist < pl.width) {
+                        const intensity = (1.0 - ringDist / pl.width) * pl.life;
+                        const blend = Math.sin(dist * 0.05 + time * 2) * 0.5 + 0.5;
+                        tmpColor.set(colArr[i3], colArr[i3+1], colArr[i3+2]);
+                        const pulseColor = tmpColor.clone().copy(pl.color1).lerp(pl.color2, blend);
+                        tmpColor.set(colArr[i3], colArr[i3+1], colArr[i3+2]);
+                        tmpColor.lerp(pulseColor, intensity * 0.9);
+                        colArr[i3] = tmpColor.r; colArr[i3+1] = tmpColor.g; colArr[i3+2] = tmpColor.b;
+                        sizeArr[i] += intensity * 4.0;
+                    }
+                }
+            }
+
             particleGeo.attributes.position.needsUpdate = true;
             particleGeo.attributes.customColor.needsUpdate = true;
             particleGeo.attributes.size.needsUpdate = true;
