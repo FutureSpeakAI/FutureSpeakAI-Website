@@ -104,8 +104,6 @@
     }
     </script>
 
-    <!-- Three.js for 3D Background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -556,156 +554,294 @@
             setTimeout(() => { document.getElementById('contactForm').reset(); }, 1000);
         }
 
-        // --- THREE.JS 3D BACKGROUND LOGIC ---
-        window.onload = function() {
-            // Scene Setup
-            const container = document.getElementById('canvas-container');
-            const scene = new THREE.Scene();
-            
-            // Camera Setup
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 150;
-
-            // Renderer Setup
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            // Particles (Nodes)
-            const particleCount = 250;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const velocities = [];
-
-            const spread = 400;
-
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * spread;     // x
-                positions[i * 3 + 1] = (Math.random() - 0.5) * spread; // y
-                positions[i * 3 + 2] = (Math.random() - 0.5) * spread; // z
-                
-                velocities.push({
-                    x: (Math.random() - 0.5) * 0.25,
-                    y: (Math.random() - 0.5) * 0.25,
-                    z: (Math.random() - 0.5) * 0.25
-                });
-            }
-
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            // Material for the nodes
-            const material = new THREE.PointsMaterial({
-                color: 0x00F0FF,
-                size: 2.5,
-                transparent: true,
-                opacity: 0.9,
-                blending: THREE.AdditiveBlending
-            });
-
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            // Lines connecting the nodes (The Network)
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color: 0x00F0FF,
-                transparent: true,
-                opacity: 0.25,
-                blending: THREE.AdditiveBlending
-            });
-            
-            // Mouse Interaction variables
-            let mouseX = 0;
-            let mouseY = 0;
-            let targetX = 0;
-            let targetY = 0;
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
-            });
-
-            // Animation Loop
-            function animate() {
-                requestAnimationFrame(animate);
-
-                // Gentle rotation based on mouse
-                targetX = mouseX * 0.001;
-                targetY = mouseY * 0.001;
-                
-                particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
-                particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
-                particles.rotation.z += 0.001; // Constant slow rotation
-
-                // Update particle positions
-                const posAttribute = geometry.attributes.position;
-                for (let i = 0; i < particleCount; i++) {
-                    posAttribute.array[i * 3] += velocities[i].x;
-                    posAttribute.array[i * 3 + 1] += velocities[i].y;
-                    posAttribute.array[i * 3 + 2] += velocities[i].z;
-
-                    // Boundary checking (bounce back)
-                    if (Math.abs(posAttribute.array[i * 3]) > spread/2) velocities[i].x *= -1;
-                    if (Math.abs(posAttribute.array[i * 3 + 1]) > spread/2) velocities[i].y *= -1;
-                    if (Math.abs(posAttribute.array[i * 3 + 2]) > spread/2) velocities[i].z *= -1;
-                }
-                posAttribute.needsUpdate = true;
-
-                // Dynamic Lines drawing between close points
-                // We create a new geometry every frame for lines (inefficient for large systems, but okay for this small aesthetic effect)
-                const lineGeometry = new THREE.BufferGeometry();
-                const linePositions = [];
-                
-                // Only connect a subset to save performance, and only if they are close
-                const connectionDistance = 60;
-                for (let i = 0; i < particleCount; i++) {
-                    for (let j = i + 1; j < particleCount; j++) {
-                        const dx = posAttribute.array[i*3] - posAttribute.array[j*3];
-                        const dy = posAttribute.array[i*3+1] - posAttribute.array[j*3+1];
-                        const dz = posAttribute.array[i*3+2] - posAttribute.array[j*3+2];
-                        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                        
-                        if (dist < connectionDistance) {
-                            linePositions.push(
-                                posAttribute.array[i*3], posAttribute.array[i*3+1], posAttribute.array[i*3+2],
-                                posAttribute.array[j*3], posAttribute.array[j*3+1], posAttribute.array[j*3+2]
-                            );
-                        }
-                    }
-                }
-                
-                lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-                
-                // Remove old lines, add new ones
-                const oldLines = scene.getObjectByName('networkLines');
-                if (oldLines) {
-                    scene.remove(oldLines);
-                    oldLines.geometry.dispose();
-                }
-                
-                const newLines = new THREE.LineSegments(lineGeometry, lineMaterial);
-                newLines.name = 'networkLines';
-                // Inherit the rotation of the particle system so lines stay attached
-                newLines.rotation.copy(particles.rotation); 
-                scene.add(newLines);
-
-                renderer.render(scene, camera);
-            }
-
-            animate();
-
-            // Handle Window Resize
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        };
-
         // Initialize state
         navigate('home');
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+        const CYAN = new THREE.Color(0x00F0FF);
+        const PURPLE = new THREE.Color(0x8A2BE2);
+        const NAVY = 0x060B19;
+        const PARTICLE_COUNT = 500;
+        const SPREAD = 400;
+        const CONNECTION_DIST = 55;
+        const MAX_LINES = PARTICLE_COUNT * 12;
+        const REPEL_RADIUS = 80;
+        const REPEL_STRENGTH = 4.0;
+        const SPRING_DAMPING = 0.94;
+        const SPRING_STIFFNESS = 0.008;
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(NAVY, 0.0035);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 150;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(NAVY, 1);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.4, 0.6, 0.15
+        );
+        composer.addPass(bloomPass);
+
+        const particleVertexShader = `
+            attribute vec3 customColor;
+            attribute float size;
+            varying vec3 vColor;
+            varying float vFog;
+            void main() {
+                vColor = customColor;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = size * (200.0 / -mvPosition.z);
+                gl_Position = projectionMatrix * mvPosition;
+                vFog = smoothstep(100.0, 400.0, -mvPosition.z);
+            }
+        `;
+        const particleFragmentShader = `
+            varying vec3 vColor;
+            varying float vFog;
+            void main() {
+                float d = length(gl_PointCoord - vec2(0.5));
+                if (d > 0.5) discard;
+                float glow = 1.0 - smoothstep(0.0, 0.5, d);
+                glow = pow(glow, 1.5);
+                float alpha = glow * (1.0 - vFog * 0.8);
+                gl_FragColor = vec4(vColor * glow * 1.8, alpha);
+            }
+        `;
+
+        const lineVertexShader = `
+            attribute vec3 customColor;
+            attribute float alpha;
+            varying vec3 vColor;
+            varying float vAlpha;
+            void main() {
+                vColor = customColor;
+                vAlpha = alpha;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `;
+        const lineFragmentShader = `
+            varying vec3 vColor;
+            varying float vAlpha;
+            void main() {
+                gl_FragColor = vec4(vColor, vAlpha);
+            }
+        `;
+
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const homePositions = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
+        const sizes = new Float32Array(PARTICLE_COUNT);
+        const velocities = new Float32Array(PARTICLE_COUNT * 3);
+        const speeds = new Float32Array(PARTICLE_COUNT);
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const i3 = i * 3;
+            const x = (Math.random() - 0.5) * SPREAD;
+            const y = (Math.random() - 0.5) * SPREAD;
+            const z = (Math.random() - 0.5) * SPREAD;
+            positions[i3] = homePositions[i3] = x;
+            positions[i3+1] = homePositions[i3+1] = y;
+            positions[i3+2] = homePositions[i3+2] = z;
+            velocities[i3] = (Math.random() - 0.5) * 0.2;
+            velocities[i3+1] = (Math.random() - 0.5) * 0.2;
+            velocities[i3+2] = (Math.random() - 0.5) * 0.2;
+            sizes[i] = 2.0 + Math.random() * 2.5;
+            const t = Math.random();
+            const c = new THREE.Color().copy(CYAN).lerp(PURPLE, t);
+            colors[i3] = c.r; colors[i3+1] = c.g; colors[i3+2] = c.b;
+        }
+
+        const particleGeo = new THREE.BufferGeometry();
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particleGeo.setAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+        particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const particleMat = new THREE.ShaderMaterial({
+            vertexShader: particleVertexShader,
+            fragmentShader: particleFragmentShader,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+        });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleSystem);
+
+        const linePositions = new Float32Array(MAX_LINES * 6);
+        const lineColors = new Float32Array(MAX_LINES * 6);
+        const lineAlphas = new Float32Array(MAX_LINES * 2);
+        const lineGeo = new THREE.BufferGeometry();
+        lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+        lineGeo.setAttribute('customColor', new THREE.BufferAttribute(lineColors, 3));
+        lineGeo.setAttribute('alpha', new THREE.BufferAttribute(lineAlphas, 1));
+        lineGeo.setDrawRange(0, 0);
+
+        const lineMat = new THREE.ShaderMaterial({
+            vertexShader: lineVertexShader,
+            fragmentShader: lineFragmentShader,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+        });
+        const lineSystem = new THREE.LineSegments(lineGeo, lineMat);
+        scene.add(lineSystem);
+
+        const mouse = new THREE.Vector2(9999, 9999);
+        const mouseWorld = new THREE.Vector3();
+        const raycaster = new THREE.Raycaster();
+        const repelPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.ray.intersectPlane(repelPlane, mouseWorld);
+        });
+        document.addEventListener('mouseleave', () => {
+            mouse.set(9999, 9999);
+            mouseWorld.set(9999, 9999, 9999);
+        });
+
+        let rotTargetX = 0, rotTargetY = 0;
+        let prevTime = performance.now() / 1000;
+        let elapsedTime = 0;
+        const tmpColor = new THREE.Color();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const now = performance.now() / 1000;
+            const dt = Math.min(now - prevTime, 0.05);
+            prevTime = now;
+            elapsedTime += dt;
+            const time = elapsedTime;
+
+            rotTargetX += ((mouse.y * 0.15) - rotTargetX) * 0.02;
+            rotTargetY += ((mouse.x * 0.25) - rotTargetY) * 0.02;
+            particleSystem.rotation.x = rotTargetX;
+            particleSystem.rotation.y = rotTargetY;
+            particleSystem.rotation.z += 0.0003;
+            lineSystem.rotation.copy(particleSystem.rotation);
+
+            const posArr = particleGeo.attributes.position.array;
+            const colArr = particleGeo.attributes.customColor.array;
+            const sizeArr = particleGeo.attributes.size.array;
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let vx = velocities[i3], vy = velocities[i3+1], vz = velocities[i3+2];
+                let px = posArr[i3], py = posArr[i3+1], pz = posArr[i3+2];
+
+                const dx = px - mouseWorld.x;
+                const dy = py - mouseWorld.y;
+                const distMouse = Math.sqrt(dx*dx + dy*dy);
+                if (distMouse < REPEL_RADIUS && distMouse > 0.1) {
+                    const force = (1.0 - distMouse / REPEL_RADIUS) * REPEL_STRENGTH;
+                    const nx = dx / distMouse;
+                    const ny = dy / distMouse;
+                    vx += nx * force;
+                    vy += ny * force;
+                }
+
+                const hx = homePositions[i3], hy = homePositions[i3+1], hz = homePositions[i3+2];
+                vx += (hx - px) * SPRING_STIFFNESS;
+                vy += (hy - py) * SPRING_STIFFNESS;
+                vz += (hz - pz) * SPRING_STIFFNESS;
+
+                vx *= SPRING_DAMPING; vy *= SPRING_DAMPING; vz *= SPRING_DAMPING;
+
+                homePositions[i3] += (Math.sin(time * 0.3 + i * 0.1) * 0.08);
+                homePositions[i3+1] += (Math.cos(time * 0.25 + i * 0.07) * 0.08);
+                homePositions[i3+2] += (Math.sin(time * 0.2 + i * 0.13) * 0.05);
+
+                if (Math.abs(homePositions[i3]) > SPREAD/2) homePositions[i3] *= 0.99;
+                if (Math.abs(homePositions[i3+1]) > SPREAD/2) homePositions[i3+1] *= 0.99;
+                if (Math.abs(homePositions[i3+2]) > SPREAD/2) homePositions[i3+2] *= 0.99;
+
+                px += vx; py += vy; pz += vz;
+                posArr[i3] = px; posArr[i3+1] = py; posArr[i3+2] = pz;
+                velocities[i3] = vx; velocities[i3+1] = vy; velocities[i3+2] = vz;
+
+                const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
+                speeds[i] = speed;
+                const colorMix = Math.min(speed * 2.0, 1.0);
+                tmpColor.copy(CYAN).lerp(PURPLE, colorMix * 0.6 + Math.sin(time * 0.5 + i * 0.3) * 0.2);
+                colArr[i3] = tmpColor.r; colArr[i3+1] = tmpColor.g; colArr[i3+2] = tmpColor.b;
+
+                sizeArr[i] = 2.0 + Math.min(speed * 1.5, 3.0) + Math.sin(time * 2 + i) * 0.3;
+            }
+            particleGeo.attributes.position.needsUpdate = true;
+            particleGeo.attributes.customColor.needsUpdate = true;
+            particleGeo.attributes.size.needsUpdate = true;
+
+            let lineIdx = 0;
+            const lp = lineGeo.attributes.position.array;
+            const lc = lineGeo.attributes.customColor.array;
+            const la = lineGeo.attributes.alpha.array;
+
+            for (let i = 0; i < PARTICLE_COUNT && lineIdx < MAX_LINES; i++) {
+                const i3 = i * 3;
+                const ax = posArr[i3], ay = posArr[i3+1], az = posArr[i3+2];
+                for (let j = i + 1; j < PARTICLE_COUNT && lineIdx < MAX_LINES; j++) {
+                    const j3 = j * 3;
+                    const dx = ax - posArr[j3];
+                    const dy = ay - posArr[j3+1];
+                    const dz = az - posArr[j3+2];
+                    const distSq = dx*dx + dy*dy + dz*dz;
+                    if (distSq < CONNECTION_DIST * CONNECTION_DIST) {
+                        const dist = Math.sqrt(distSq);
+                        const li6 = lineIdx * 6;
+                        const li2 = lineIdx * 2;
+                        lp[li6] = ax; lp[li6+1] = ay; lp[li6+2] = az;
+                        lp[li6+3] = posArr[j3]; lp[li6+4] = posArr[j3+1]; lp[li6+5] = posArr[j3+2];
+
+                        const fade = 1.0 - (dist / CONNECTION_DIST);
+                        const avgSpeed = (speeds[i] + speeds[j]) * 0.5;
+                        const lineMix = Math.min(avgSpeed * 1.5, 1.0);
+                        tmpColor.copy(CYAN).lerp(PURPLE, lineMix * 0.5);
+                        lc[li6] = lc[li6+3] = tmpColor.r;
+                        lc[li6+1] = lc[li6+4] = tmpColor.g;
+                        lc[li6+2] = lc[li6+5] = tmpColor.b;
+                        la[li2] = la[li2+1] = fade * 0.35;
+                        lineIdx++;
+                    }
+                }
+            }
+
+            lineGeo.setDrawRange(0, lineIdx * 2);
+            lineGeo.attributes.position.needsUpdate = true;
+            lineGeo.attributes.customColor.needsUpdate = true;
+            lineGeo.attributes.alpha.needsUpdate = true;
+
+            composer.render();
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            const w = window.innerWidth, h = window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+            composer.setSize(w, h);
+            bloomPass.resolution.set(w, h);
+        });
     </script>
 </body>
 </html>
