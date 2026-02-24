@@ -646,23 +646,27 @@
         `;
 
         const positions = new Float32Array(PARTICLE_COUNT * 3);
-        const homePositions = new Float32Array(PARTICLE_COUNT * 3);
+        const basePositions = new Float32Array(PARTICLE_COUNT * 3);
         const colors = new Float32Array(PARTICLE_COUNT * 3);
         const sizes = new Float32Array(PARTICLE_COUNT);
         const velocities = new Float32Array(PARTICLE_COUNT * 3);
         const speeds = new Float32Array(PARTICLE_COUNT);
+        const phaseOffsets = new Float32Array(PARTICLE_COUNT * 3);
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const i3 = i * 3;
             const x = (Math.random() - 0.5) * SPREAD;
             const y = (Math.random() - 0.5) * SPREAD;
             const z = (Math.random() - 0.5) * SPREAD;
-            positions[i3] = homePositions[i3] = x;
-            positions[i3+1] = homePositions[i3+1] = y;
-            positions[i3+2] = homePositions[i3+2] = z;
-            velocities[i3] = (Math.random() - 0.5) * 0.2;
-            velocities[i3+1] = (Math.random() - 0.5) * 0.2;
-            velocities[i3+2] = (Math.random() - 0.5) * 0.2;
+            positions[i3] = basePositions[i3] = x;
+            positions[i3+1] = basePositions[i3+1] = y;
+            positions[i3+2] = basePositions[i3+2] = z;
+            velocities[i3] = (Math.random() - 0.5) * 0.1;
+            velocities[i3+1] = (Math.random() - 0.5) * 0.1;
+            velocities[i3+2] = (Math.random() - 0.5) * 0.1;
+            phaseOffsets[i3] = Math.random() * Math.PI * 2;
+            phaseOffsets[i3+1] = Math.random() * Math.PI * 2;
+            phaseOffsets[i3+2] = Math.random() * Math.PI * 2;
             sizes[i] = 2.0 + Math.random() * 2.5;
             const t = Math.random();
             const c = new THREE.Color().copy(CYAN).lerp(PURPLE, t);
@@ -704,9 +708,11 @@
         scene.add(lineSystem);
 
         const mouse = new THREE.Vector2(9999, 9999);
-        const mouseWorld = new THREE.Vector3();
+        const mouseWorld = new THREE.Vector3(9999, 9999, 9999);
+        const mouseLocal = new THREE.Vector3(9999, 9999, 9999);
         const raycaster = new THREE.Raycaster();
         const repelPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        const inverseMatrix = new THREE.Matrix4();
 
         document.addEventListener('mousemove', (e) => {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -732,12 +738,15 @@
             elapsedTime += dt;
             const time = elapsedTime;
 
-            rotTargetX += ((mouse.y * 0.15) - rotTargetX) * 0.02;
-            rotTargetY += ((mouse.x * 0.25) - rotTargetY) * 0.02;
+            rotTargetX += ((mouse.y * 0.08) - rotTargetX) * 0.015;
+            rotTargetY += ((mouse.x * 0.12) - rotTargetY) * 0.015;
             particleSystem.rotation.x = rotTargetX;
             particleSystem.rotation.y = rotTargetY;
-            particleSystem.rotation.z += 0.0003;
+            particleSystem.rotation.z += 0.0002;
             lineSystem.rotation.copy(particleSystem.rotation);
+
+            inverseMatrix.copy(particleSystem.matrixWorld).invert();
+            mouseLocal.copy(mouseWorld).applyMatrix4(inverseMatrix);
 
             const posArr = particleGeo.attributes.position.array;
             const colArr = particleGeo.attributes.customColor.array;
@@ -748,31 +757,24 @@
                 let vx = velocities[i3], vy = velocities[i3+1], vz = velocities[i3+2];
                 let px = posArr[i3], py = posArr[i3+1], pz = posArr[i3+2];
 
-                const dx = px - mouseWorld.x;
-                const dy = py - mouseWorld.y;
-                const distMouse = Math.sqrt(dx*dx + dy*dy);
-                if (distMouse < REPEL_RADIUS && distMouse > 0.1) {
-                    const force = (1.0 - distMouse / REPEL_RADIUS) * REPEL_STRENGTH;
-                    const nx = dx / distMouse;
-                    const ny = dy / distMouse;
-                    vx += nx * force;
-                    vy += ny * force;
+                const dx = px - mouseLocal.x;
+                const dy = py - mouseLocal.y;
+                const distSq = dx*dx + dy*dy;
+                if (distSq < REPEL_RADIUS * REPEL_RADIUS && distSq > 1) {
+                    const dist = Math.sqrt(distSq);
+                    const force = (1.0 - dist / REPEL_RADIUS) * REPEL_STRENGTH;
+                    vx += (dx / dist) * force;
+                    vy += (dy / dist) * force;
                 }
 
-                const hx = homePositions[i3], hy = homePositions[i3+1], hz = homePositions[i3+2];
+                const hx = basePositions[i3] + Math.sin(time * 0.15 + phaseOffsets[i3]) * 8;
+                const hy = basePositions[i3+1] + Math.cos(time * 0.12 + phaseOffsets[i3+1]) * 8;
+                const hz = basePositions[i3+2] + Math.sin(time * 0.1 + phaseOffsets[i3+2]) * 5;
                 vx += (hx - px) * SPRING_STIFFNESS;
                 vy += (hy - py) * SPRING_STIFFNESS;
                 vz += (hz - pz) * SPRING_STIFFNESS;
 
                 vx *= SPRING_DAMPING; vy *= SPRING_DAMPING; vz *= SPRING_DAMPING;
-
-                homePositions[i3] += (Math.sin(time * 0.3 + i * 0.1) * 0.08);
-                homePositions[i3+1] += (Math.cos(time * 0.25 + i * 0.07) * 0.08);
-                homePositions[i3+2] += (Math.sin(time * 0.2 + i * 0.13) * 0.05);
-
-                if (Math.abs(homePositions[i3]) > SPREAD/2) homePositions[i3] *= 0.99;
-                if (Math.abs(homePositions[i3+1]) > SPREAD/2) homePositions[i3+1] *= 0.99;
-                if (Math.abs(homePositions[i3+2]) > SPREAD/2) homePositions[i3+2] *= 0.99;
 
                 px += vx; py += vy; pz += vz;
                 posArr[i3] = px; posArr[i3+1] = py; posArr[i3+2] = pz;
@@ -780,11 +782,11 @@
 
                 const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
                 speeds[i] = speed;
-                const colorMix = Math.min(speed * 2.0, 1.0);
-                tmpColor.copy(CYAN).lerp(PURPLE, colorMix * 0.6 + Math.sin(time * 0.5 + i * 0.3) * 0.2);
+                const colorMix = Math.min(speed * 0.8, 1.0);
+                tmpColor.copy(CYAN).lerp(PURPLE, colorMix * 0.4 + Math.sin(time * 0.3 + phaseOffsets[i3]) * 0.15 + 0.1);
                 colArr[i3] = tmpColor.r; colArr[i3+1] = tmpColor.g; colArr[i3+2] = tmpColor.b;
 
-                sizeArr[i] = 2.0 + Math.min(speed * 1.5, 3.0) + Math.sin(time * 2 + i) * 0.3;
+                sizeArr[i] = 2.0 + Math.min(speed * 0.8, 2.0) + Math.sin(time * 1.5 + phaseOffsets[i3+1]) * 0.3;
             }
             particleGeo.attributes.position.needsUpdate = true;
             particleGeo.attributes.customColor.needsUpdate = true;
