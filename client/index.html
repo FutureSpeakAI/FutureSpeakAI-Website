@@ -729,28 +729,9 @@
             mouseY = (e.clientY / window.innerHeight) - 0.5;
         });
 
-        const pulses = [];
         const pulseColors = [CYAN, PINK, GOLD, LIME, PURPLE, CORAL, TEAL];
-        const pulseRings = [];
-
-        function createPulseRing(origin, color) {
-            const ringGeo = new THREE.RingGeometry(1, 3, 64);
-            const ringMat = new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 1.0,
-                side: THREE.DoubleSide,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.position.copy(origin);
-            ring.lookAt(camera.position);
-            scene.add(ring);
-            return ring;
-        }
-
-        const particleVelocities = new Float32Array(PARTICLE_COUNT * 3);
+        const nodePulse = new Float32Array(PARTICLE_COUNT);
+        const nodeColor = new Array(PARTICLE_COUNT).fill(null);
 
         document.addEventListener('click', (e) => {
             if (e.target.closest('button, a, input, textarea, select, label, nav, form')) return;
@@ -759,27 +740,24 @@
             const clickVec = new THREE.Vector3(ndcX, ndcY, 0.5);
             clickVec.unproject(camera);
             const dir = clickVec.sub(camera.position).normalize();
-            const origin = camera.position.clone().add(dir.multiplyScalar(180));
+            const clickOrigin = camera.position.clone().add(dir.multiplyScalar(180));
+
             const color1 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
             let color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
             while (color2 === color1) color2 = pulseColors[Math.floor(Math.random() * pulseColors.length)];
 
-            const ring1 = createPulseRing(origin, color1);
-            const ring2 = createPulseRing(origin, color2);
-
-            pulses.push({
-                origin: origin,
-                radius: 0,
-                maxRadius: 600,
-                speed: 250,
-                color1: color1,
-                color2: color2,
-                life: 1.0,
-                width: 80,
-                ring1: ring1,
-                ring2: ring2,
-                flashTime: 0.3
-            });
+            const posArr = particleGeo.attributes.position.array;
+            let closestIdx = 0, closestDist = Infinity;
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                const dx = posArr[i3] - clickOrigin.x;
+                const dy = posArr[i3+1] - clickOrigin.y;
+                const dz = posArr[i3+2] - clickOrigin.z;
+                const d = dx*dx + dy*dy + dz*dz;
+                if (d < closestDist) { closestDist = d; closestIdx = i; }
+            }
+            nodePulse[closestIdx] = 1.0;
+            nodeColor[closestIdx] = { c1: color1, c2: color2 };
         });
 
         let rotX = 0, rotY = 0;
@@ -847,65 +825,51 @@
                 speeds[i] = colorIdx;
             }
 
-            for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
-                particleVelocities[i] *= 0.92;
-            }
+            const nextPulse = new Float32Array(PARTICLE_COUNT);
+            const PROPAGATE_DIST = CONNECTION_DIST * 1.3;
+            const PROPAGATE_DIST_SQ = PROPAGATE_DIST * PROPAGATE_DIST;
 
-            for (let p = pulses.length - 1; p >= 0; p--) {
-                const pl = pulses[p];
-                pl.radius += pl.speed * dt;
-                pl.life = 1.0 - (pl.radius / pl.maxRadius);
-                pl.flashTime -= dt;
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                if (nodePulse[i] < 0.05) continue;
+                const i3 = i * 3;
+                const ax = posArr[i3], ay = posArr[i3+1], az = posArr[i3+2];
 
-                if (pl.life <= 0) {
-                    scene.remove(pl.ring1);
-                    scene.remove(pl.ring2);
-                    pl.ring1.geometry.dispose(); pl.ring1.material.dispose();
-                    pl.ring2.geometry.dispose(); pl.ring2.material.dispose();
-                    pulses.splice(p, 1);
-                    continue;
-                }
-
-                const ringScale = pl.radius * 1.2;
-                pl.ring1.scale.set(ringScale, ringScale, ringScale);
-                pl.ring1.material.opacity = pl.life * 0.8;
-                pl.ring2.scale.set(ringScale * 0.85, ringScale * 0.85, ringScale * 0.85);
-                pl.ring2.material.opacity = pl.life * 0.5;
-
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const i3 = i * 3;
-                    const dx = posArr[i3] - pl.origin.x;
-                    const dy = posArr[i3+1] - pl.origin.y;
-                    const dz = posArr[i3+2] - pl.origin.z;
-                    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.01;
-                    const ringDist = Math.abs(dist - pl.radius);
-
-                    if (ringDist < pl.width) {
-                        const intensity = (1.0 - ringDist / pl.width) * pl.life;
-                        const intensitySq = intensity * intensity;
-
-                        const pushStrength = intensitySq * 120;
-                        particleVelocities[i3] += (dx / dist) * pushStrength * dt;
-                        particleVelocities[i3+1] += (dy / dist) * pushStrength * dt;
-                        particleVelocities[i3+2] += (dz / dist) * pushStrength * dt;
-
-                        const blend = Math.sin(dist * 0.08 + time * 3) * 0.5 + 0.5;
-                        const pulseColor = new THREE.Color().copy(pl.color1).lerp(pl.color2, blend);
-                        pulseColor.lerp(WHITE, intensitySq * 0.6);
-                        tmpColor.set(colArr[i3], colArr[i3+1], colArr[i3+2]);
-                        tmpColor.lerp(pulseColor, intensity);
-                        colArr[i3] = tmpColor.r; colArr[i3+1] = tmpColor.g; colArr[i3+2] = tmpColor.b;
-
-                        sizeArr[i] += intensitySq * 8.0;
+                for (let j = 0; j < PARTICLE_COUNT; j++) {
+                    if (j === i) continue;
+                    const j3 = j * 3;
+                    const dx = ax - posArr[j3];
+                    const dy = ay - posArr[j3+1];
+                    const dz = az - posArr[j3+2];
+                    if (dx*dx + dy*dy + dz*dz < PROPAGATE_DIST_SQ) {
+                        const spread = nodePulse[i] * 0.35 * dt * 60;
+                        if (spread > nextPulse[j]) {
+                            nextPulse[j] = spread;
+                            if (!nodeColor[j] && nodeColor[i]) {
+                                nodeColor[j] = nodeColor[i];
+                            }
+                        }
                     }
                 }
             }
 
             for (let i = 0; i < PARTICLE_COUNT; i++) {
-                const i3 = i * 3;
-                posArr[i3] += particleVelocities[i3];
-                posArr[i3+1] += particleVelocities[i3+1];
-                posArr[i3+2] += particleVelocities[i3+2];
+                nodePulse[i] = Math.max(nodePulse[i] - dt * 1.8, nextPulse[i], 0);
+
+                if (nodePulse[i] > 0.01) {
+                    const i3 = i * 3;
+                    const nc = nodeColor[i];
+                    if (nc) {
+                        const blend = Math.sin(time * 4 + i) * 0.5 + 0.5;
+                        tmpColor.copy(nc.c1).lerp(nc.c2, blend);
+                        tmpColor.lerp(WHITE, nodePulse[i] * 0.4);
+                        const base = new THREE.Color(colArr[i3], colArr[i3+1], colArr[i3+2]);
+                        base.lerp(tmpColor, nodePulse[i]);
+                        colArr[i3] = base.r; colArr[i3+1] = base.g; colArr[i3+2] = base.b;
+                    }
+                    sizeArr[i] += nodePulse[i] * 5.0;
+                } else {
+                    nodeColor[i] = null;
+                }
             }
 
             particleGeo.attributes.position.needsUpdate = true;
@@ -941,10 +905,23 @@
                         const palA = colorPalette[Math.min(palIdx, colorPalette.length - 1)];
                         const palB = colorPalette[Math.min(palIdx + 1, colorPalette.length - 1)];
                         tmpColor.copy(palA).lerp(palB, palFrac);
+
+                        const pulseI = nodePulse[i], pulseJ = nodePulse[j];
+                        const edgePulse = Math.min(pulseI, pulseJ);
+                        if (edgePulse > 0.02) {
+                            const nc = nodeColor[i] || nodeColor[j];
+                            if (nc) {
+                                const ec = new THREE.Color().copy(nc.c1).lerp(nc.c2, 0.5);
+                                ec.lerp(WHITE, edgePulse * 0.5);
+                                tmpColor.lerp(ec, edgePulse);
+                            }
+                        }
+
                         lc[li6] = lc[li6+3] = tmpColor.r;
                         lc[li6+1] = lc[li6+4] = tmpColor.g;
                         lc[li6+2] = lc[li6+5] = tmpColor.b;
-                        la[li2] = la[li2+1] = fade * fade * 0.5;
+                        const pulseAlpha = Math.max(pulseI, pulseJ) * 0.8;
+                        la[li2] = la[li2+1] = fade * fade * 0.5 + pulseAlpha;
                         lineIdx++;
                     }
                 }
