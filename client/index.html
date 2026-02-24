@@ -558,145 +558,338 @@
 
         // --- THREE.JS 3D BACKGROUND LOGIC ---
         window.onload = function() {
-            // Scene Setup
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
-            
-            // Camera Setup
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 150;
+            const clock = new THREE.Clock();
 
-            // Renderer Setup
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.z = 200;
+
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            // Particles (Nodes)
-            const particleCount = 250;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const velocities = [];
+            // --- LAYER 1: Deep background star field ---
+            const starCount = 600;
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = new Float32Array(starCount * 3);
+            const starSizes = new Float32Array(starCount);
+            for (let i = 0; i < starCount; i++) {
+                starPos[i * 3] = (Math.random() - 0.5) * 1200;
+                starPos[i * 3 + 1] = (Math.random() - 0.5) * 1200;
+                starPos[i * 3 + 2] = (Math.random() - 0.5) * 800 - 200;
+                starSizes[i] = Math.random() * 1.5 + 0.3;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            starGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+            const starMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 1,
+                transparent: true,
+                opacity: 0.4,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
 
+            // --- LAYER 2: Nebula glow clouds ---
+            const nebulaGroup = new THREE.Group();
+            const nebulaColors = [0x00F0FF, 0x8A2BE2, 0x0066AA, 0x4400AA];
+            for (let n = 0; n < 5; n++) {
+                const nebulaGeo = new THREE.SphereGeometry(40 + Math.random() * 60, 16, 16);
+                const nebulaMat = new THREE.MeshBasicMaterial({
+                    color: nebulaColors[n % nebulaColors.length],
+                    transparent: true,
+                    opacity: 0.015 + Math.random() * 0.01,
+                    blending: THREE.AdditiveBlending,
+                    side: THREE.DoubleSide,
+                    wireframe: false,
+                    depthWrite: false
+                });
+                const nebula = new THREE.Mesh(nebulaGeo, nebulaMat);
+                nebula.position.set(
+                    (Math.random() - 0.5) * 300,
+                    (Math.random() - 0.5) * 200,
+                    (Math.random() - 0.5) * 200 - 100
+                );
+                nebula.scale.set(1 + Math.random(), 0.6 + Math.random() * 0.8, 1 + Math.random());
+                nebula.userData = {
+                    baseOpacity: nebulaMat.opacity,
+                    phaseOffset: Math.random() * Math.PI * 2,
+                    pulseSpeed: 0.3 + Math.random() * 0.4,
+                    driftX: (Math.random() - 0.5) * 0.02,
+                    driftY: (Math.random() - 0.5) * 0.02
+                };
+                nebulaGroup.add(nebula);
+            }
+            scene.add(nebulaGroup);
+
+            // --- LAYER 3: Main network particles (dual-color, varied sizes) ---
+            const particleCount = 300;
+            const netGeo = new THREE.BufferGeometry();
+            const netPos = new Float32Array(particleCount * 3);
+            const netColors = new Float32Array(particleCount * 3);
+            const netSizes = new Float32Array(particleCount);
+            const velocities = [];
+            const particleData = [];
             const spread = 400;
 
+            const cyan = new THREE.Color(0x00F0FF);
+            const purple = new THREE.Color(0x8A2BE2);
+            const white = new THREE.Color(0xFFFFFF);
+
             for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * spread;     // x
-                positions[i * 3 + 1] = (Math.random() - 0.5) * spread; // y
-                positions[i * 3 + 2] = (Math.random() - 0.5) * spread; // z
-                
+                netPos[i * 3] = (Math.random() - 0.5) * spread;
+                netPos[i * 3 + 1] = (Math.random() - 0.5) * spread;
+                netPos[i * 3 + 2] = (Math.random() - 0.5) * spread;
+
+                const colorMix = Math.random();
+                let col;
+                if (colorMix < 0.5) col = cyan.clone().lerp(white, Math.random() * 0.3);
+                else if (colorMix < 0.85) col = purple.clone().lerp(cyan, Math.random() * 0.4);
+                else col = white.clone();
+
+                netColors[i * 3] = col.r;
+                netColors[i * 3 + 1] = col.g;
+                netColors[i * 3 + 2] = col.b;
+
+                netSizes[i] = 1 + Math.random() * 3;
+
                 velocities.push({
-                    x: (Math.random() - 0.5) * 0.25,
-                    y: (Math.random() - 0.5) * 0.25,
-                    z: (Math.random() - 0.5) * 0.25
+                    x: (Math.random() - 0.5) * 0.2,
+                    y: (Math.random() - 0.5) * 0.2,
+                    z: (Math.random() - 0.5) * 0.2
+                });
+
+                particleData.push({
+                    baseSize: netSizes[i],
+                    pulsePhase: Math.random() * Math.PI * 2,
+                    pulseSpeed: 0.5 + Math.random() * 2
                 });
             }
 
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            netGeo.setAttribute('position', new THREE.BufferAttribute(netPos, 3));
+            netGeo.setAttribute('color', new THREE.BufferAttribute(netColors, 3));
 
-            // Material for the nodes
-            const material = new THREE.PointsMaterial({
-                color: 0x00F0FF,
+            const netMat = new THREE.PointsMaterial({
                 size: 2.5,
                 transparent: true,
                 opacity: 0.9,
-                blending: THREE.AdditiveBlending
+                blending: THREE.AdditiveBlending,
+                vertexColors: true,
+                sizeAttenuation: true,
+                depthWrite: false
             });
 
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
+            const networkParticles = new THREE.Points(netGeo, netMat);
+            scene.add(networkParticles);
 
-            // Lines connecting the nodes (The Network)
+            // --- LAYER 4: Shooting streaks (occasional) ---
+            const streakCount = 4;
+            const streaks = [];
+            for (let s = 0; s < streakCount; s++) {
+                const streakGeo = new THREE.BufferGeometry();
+                const trail = 12;
+                const streakPositions = new Float32Array(trail * 3);
+                const streakOpacities = new Float32Array(trail);
+                for (let t = 0; t < trail; t++) {
+                    streakPositions[t * 3] = 0;
+                    streakPositions[t * 3 + 1] = 0;
+                    streakPositions[t * 3 + 2] = 0;
+                    streakOpacities[t] = 1.0 - (t / trail);
+                }
+                streakGeo.setAttribute('position', new THREE.BufferAttribute(streakPositions, 3));
+                const streakMat = new THREE.LineBasicMaterial({
+                    color: Math.random() > 0.5 ? 0x00F0FF : 0x8A2BE2,
+                    transparent: true,
+                    opacity: 0,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false
+                });
+                const streakLine = new THREE.Line(streakGeo, streakMat);
+                streakLine.userData = {
+                    active: false,
+                    timer: Math.random() * 200,
+                    interval: 150 + Math.random() * 300,
+                    speed: 3 + Math.random() * 4,
+                    head: new THREE.Vector3(),
+                    dir: new THREE.Vector3(),
+                    trail: trail,
+                    life: 0,
+                    maxLife: 60 + Math.random() * 40
+                };
+                scene.add(streakLine);
+                streaks.push(streakLine);
+            }
+
+            function resetStreak(streak) {
+                const d = streak.userData;
+                const edge = spread * 0.6;
+                d.head.set(
+                    (Math.random() - 0.5) * edge,
+                    (Math.random() - 0.5) * edge,
+                    (Math.random() - 0.5) * edge * 0.5
+                );
+                d.dir.set(
+                    (Math.random() - 0.5),
+                    (Math.random() - 0.5),
+                    (Math.random() - 0.5) * 0.3
+                ).normalize();
+                d.life = 0;
+                d.active = true;
+                streak.material.opacity = 0.6;
+                streak.material.color.setHex(Math.random() > 0.5 ? 0x00F0FF : 0x8A2BE2);
+            }
+
+            // Connection lines material
             const lineMaterial = new THREE.LineBasicMaterial({
                 color: 0x00F0FF,
                 transparent: true,
-                opacity: 0.25,
-                blending: THREE.AdditiveBlending
+                opacity: 0.12,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
             });
-            
-            // Mouse Interaction variables
-            let mouseX = 0;
-            let mouseY = 0;
-            let targetX = 0;
-            let targetY = 0;
+
+            // Mouse tracking
+            let mouseX = 0, mouseY = 0;
+            let smoothMouseX = 0, smoothMouseY = 0;
             const windowHalfX = window.innerWidth / 2;
             const windowHalfY = window.innerHeight / 2;
+            let mouseInfluence = 0;
 
             document.addEventListener('mousemove', (event) => {
                 mouseX = (event.clientX - windowHalfX);
                 mouseY = (event.clientY - windowHalfY);
+                mouseInfluence = Math.min(mouseInfluence + 0.05, 1);
             });
 
-            // Animation Loop
+            // Animation
             function animate() {
                 requestAnimationFrame(animate);
+                const elapsed = clock.getElapsedTime();
+                const delta = clock.getDelta();
 
-                // Gentle rotation based on mouse
-                targetX = mouseX * 0.001;
-                targetY = mouseY * 0.001;
-                
-                particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
-                particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
-                particles.rotation.z += 0.001; // Constant slow rotation
+                smoothMouseX += (mouseX - smoothMouseX) * 0.03;
+                smoothMouseY += (mouseY - smoothMouseY) * 0.03;
+                mouseInfluence *= 0.995;
 
-                // Update particle positions
-                const posAttribute = geometry.attributes.position;
+                // Camera subtle sway
+                camera.position.x = smoothMouseX * 0.02;
+                camera.position.y = -smoothMouseY * 0.02;
+                camera.lookAt(0, 0, 0);
+
+                // Stars slow drift
+                stars.rotation.y = elapsed * 0.008;
+                stars.rotation.x = elapsed * 0.003;
+
+                // Nebula breathing
+                nebulaGroup.children.forEach(nebula => {
+                    const d = nebula.userData;
+                    nebula.material.opacity = d.baseOpacity * (0.7 + 0.3 * Math.sin(elapsed * d.pulseSpeed + d.phaseOffset));
+                    nebula.position.x += d.driftX;
+                    nebula.position.y += d.driftY;
+                    nebula.rotation.z += 0.001;
+                    if (Math.abs(nebula.position.x) > 300) d.driftX *= -1;
+                    if (Math.abs(nebula.position.y) > 200) d.driftY *= -1;
+                });
+
+                // Network rotation
+                const rotTargetX = smoothMouseX * 0.0008;
+                const rotTargetY = smoothMouseY * 0.0008;
+                networkParticles.rotation.y += 0.04 * (rotTargetX - networkParticles.rotation.y);
+                networkParticles.rotation.x += 0.04 * (rotTargetY - networkParticles.rotation.x);
+                networkParticles.rotation.z += 0.0008;
+
+                // Update particles with wave effect
+                const posAttr = netGeo.attributes.position;
                 for (let i = 0; i < particleCount; i++) {
-                    posAttribute.array[i * 3] += velocities[i].x;
-                    posAttribute.array[i * 3 + 1] += velocities[i].y;
-                    posAttribute.array[i * 3 + 2] += velocities[i].z;
+                    posAttr.array[i * 3] += velocities[i].x;
+                    posAttr.array[i * 3 + 1] += velocities[i].y;
+                    posAttr.array[i * 3 + 2] += velocities[i].z;
 
-                    // Boundary checking (bounce back)
-                    if (Math.abs(posAttribute.array[i * 3]) > spread/2) velocities[i].x *= -1;
-                    if (Math.abs(posAttribute.array[i * 3 + 1]) > spread/2) velocities[i].y *= -1;
-                    if (Math.abs(posAttribute.array[i * 3 + 2]) > spread/2) velocities[i].z *= -1;
+                    const wave = Math.sin(elapsed * particleData[i].pulseSpeed + particleData[i].pulsePhase) * 0.08;
+                    posAttr.array[i * 3 + 1] += wave;
+
+                    if (Math.abs(posAttr.array[i * 3]) > spread / 2) velocities[i].x *= -1;
+                    if (Math.abs(posAttr.array[i * 3 + 1]) > spread / 2) velocities[i].y *= -1;
+                    if (Math.abs(posAttr.array[i * 3 + 2]) > spread / 2) velocities[i].z *= -1;
                 }
-                posAttribute.needsUpdate = true;
+                posAttr.needsUpdate = true;
 
-                // Dynamic Lines drawing between close points
-                // We create a new geometry every frame for lines (inefficient for large systems, but okay for this small aesthetic effect)
+                // Pulse particle opacity
+                netMat.opacity = 0.75 + 0.15 * Math.sin(elapsed * 0.5);
+
+                // Network connection lines
                 const lineGeometry = new THREE.BufferGeometry();
                 const linePositions = [];
-                
-                // Only connect a subset to save performance, and only if they are close
-                const connectionDistance = 60;
+                const connectionDistance = 55;
                 for (let i = 0; i < particleCount; i++) {
-                    for (let j = i + 1; j < particleCount; j++) {
-                        const dx = posAttribute.array[i*3] - posAttribute.array[j*3];
-                        const dy = posAttribute.array[i*3+1] - posAttribute.array[j*3+1];
-                        const dz = posAttribute.array[i*3+2] - posAttribute.array[j*3+2];
-                        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                        
+                    let connections = 0;
+                    for (let j = i + 1; j < particleCount && connections < 3; j++) {
+                        const dx = posAttr.array[i * 3] - posAttr.array[j * 3];
+                        const dy = posAttr.array[i * 3 + 1] - posAttr.array[j * 3 + 1];
+                        const dz = posAttr.array[i * 3 + 2] - posAttr.array[j * 3 + 2];
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
                         if (dist < connectionDistance) {
                             linePositions.push(
-                                posAttribute.array[i*3], posAttribute.array[i*3+1], posAttribute.array[i*3+2],
-                                posAttribute.array[j*3], posAttribute.array[j*3+1], posAttribute.array[j*3+2]
+                                posAttr.array[i * 3], posAttr.array[i * 3 + 1], posAttr.array[i * 3 + 2],
+                                posAttr.array[j * 3], posAttr.array[j * 3 + 1], posAttr.array[j * 3 + 2]
                             );
+                            connections++;
                         }
                     }
                 }
-                
                 lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-                
-                // Remove old lines, add new ones
+
                 const oldLines = scene.getObjectByName('networkLines');
-                if (oldLines) {
-                    scene.remove(oldLines);
-                    oldLines.geometry.dispose();
-                }
-                
+                if (oldLines) { scene.remove(oldLines); oldLines.geometry.dispose(); }
                 const newLines = new THREE.LineSegments(lineGeometry, lineMaterial);
                 newLines.name = 'networkLines';
-                // Inherit the rotation of the particle system so lines stay attached
-                newLines.rotation.copy(particles.rotation); 
+                newLines.rotation.copy(networkParticles.rotation);
                 scene.add(newLines);
+
+                // Animate streaks
+                streaks.forEach(streak => {
+                    const d = streak.userData;
+                    if (!d.active) {
+                        d.timer++;
+                        if (d.timer > d.interval) {
+                            d.timer = 0;
+                            resetStreak(streak);
+                        }
+                        return;
+                    }
+                    d.head.add(d.dir.clone().multiplyScalar(d.speed));
+                    d.life++;
+
+                    const positions = streak.geometry.attributes.position.array;
+                    for (let t = d.trail - 1; t > 0; t--) {
+                        positions[t * 3] = positions[(t - 1) * 3];
+                        positions[t * 3 + 1] = positions[(t - 1) * 3 + 1];
+                        positions[t * 3 + 2] = positions[(t - 1) * 3 + 2];
+                    }
+                    positions[0] = d.head.x;
+                    positions[1] = d.head.y;
+                    positions[2] = d.head.z;
+                    streak.geometry.attributes.position.needsUpdate = true;
+
+                    const lifeRatio = d.life / d.maxLife;
+                    streak.material.opacity = lifeRatio < 0.1 ? lifeRatio * 6 : Math.max(0, 0.6 * (1 - lifeRatio));
+
+                    if (d.life >= d.maxLife) {
+                        d.active = false;
+                        streak.material.opacity = 0;
+                        d.interval = 100 + Math.random() * 250;
+                    }
+                });
 
                 renderer.render(scene, camera);
             }
 
             animate();
 
-            // Handle Window Resize
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
