@@ -781,7 +781,7 @@
                     const j3 = j * 3;
                     const dx = ax - posArr[j3], dy = ay - posArr[j3+1], dz = az - posArr[j3+2];
                     if (dx*dx + dy*dy + dz*dz < LINK_DIST_SQ) {
-                        const nextTime = hopTime + 0.12 + Math.random() * 0.08;
+                        const nextTime = hopTime + 0.18 + Math.random() * 0.12;
                         if (nextTime < 4.0) {
                             nodeArrival[j] = nextTime;
                             visited.add(j);
@@ -877,11 +877,11 @@
                         const i3 = i * 3;
                         const blend = Math.sin(arrival * 8 + time * 2) * 0.5 + 0.5;
                         tmpColor.copy(pulseColorPair.c1).lerp(pulseColorPair.c2, blend);
-                        tmpColor.lerp(WHITE, brightness * 0.35);
+                        tmpColor.lerp(WHITE, brightness * 0.1);
                         const base = new THREE.Color(colArr[i3], colArr[i3+1], colArr[i3+2]);
-                        base.lerp(tmpColor, brightness * 0.85);
+                        base.lerp(tmpColor, brightness * 0.2);
                         colArr[i3] = base.r; colArr[i3+1] = base.g; colArr[i3+2] = base.b;
-                        sizeArr[i] += brightness * 3.5;
+                        sizeArr[i] += brightness * 0.9;
                     }
                 }
 
@@ -929,14 +929,14 @@
                         const edgeBright = Math.min(bI, bJ);
                         if (edgeBright > 0.02 && pulseColorPair) {
                             const ec = new THREE.Color().copy(pulseColorPair.c1).lerp(pulseColorPair.c2, 0.5);
-                            ec.lerp(WHITE, edgeBright * 0.4);
-                            tmpColor.lerp(ec, edgeBright * 0.9);
+                            ec.lerp(WHITE, edgeBright * 0.1);
+                            tmpColor.lerp(ec, edgeBright * 0.2);
                         }
 
                         lc[li6] = lc[li6+3] = tmpColor.r;
                         lc[li6+1] = lc[li6+4] = tmpColor.g;
                         lc[li6+2] = lc[li6+5] = tmpColor.b;
-                        const edgeAlpha = Math.max(bI, bJ) * 0.7;
+                        const edgeAlpha = Math.max(bI, bJ) * 0.18;
                         la[li2] = la[li2+1] = fade * fade * 0.5 + edgeAlpha;
                         lineIdx++;
                     }
