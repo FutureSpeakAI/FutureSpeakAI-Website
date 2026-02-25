@@ -656,6 +656,31 @@
             targetPage.classList.remove('hidden');
             setTimeout(() => { targetPage.classList.add('active'); }, 50);
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (pageId === 'friday') {
+                updateMeta('og:title', 'Agent Friday | A New Paradigm in Human-Computer Interaction');
+                updateMeta('og:description', 'Agent Friday is an OS-native AI that learns your logic, deploys autonomous subagents, and executes complex workflows concurrently. 100% free software. Join the waitlist.');
+                updateMeta('og:image', 'https://futurespeak.ai/og-friday.png');
+                updateMeta('og:url', 'https://futurespeak.ai/#friday');
+                updateMeta('twitter:title', 'Agent Friday | A New Paradigm in Human-Computer Interaction');
+                updateMeta('twitter:description', 'An OS-native AI that learns your logic, deploys autonomous subagents, and executes complex workflows concurrently. 100% free. Join the waitlist.');
+                updateMeta('twitter:image', 'https://futurespeak.ai/og-friday.png');
+                document.title = 'Agent Friday | FutureSpeak.AI';
+            } else {
+                updateMeta('og:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
+                updateMeta('og:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
+                updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
+                updateMeta('og:url', 'https://futurespeak.ai');
+                updateMeta('twitter:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
+                updateMeta('twitter:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster.');
+                updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
+                document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
+            }
+        }
+
+        function updateMeta(nameOrProp, content) {
+            let el = document.querySelector(`meta[property="${nameOrProp}"]`) || document.querySelector(`meta[name="${nameOrProp}"]`);
+            if (el) el.setAttribute('content', content);
         }
 
         function scrollToContact() {
