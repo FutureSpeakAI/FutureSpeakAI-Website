@@ -404,31 +404,10 @@
                         </div>
 
                         <div class="lg:col-span-5">
-                            <div class="terminal-container rounded-2xl border border-cyan-glow/20 p-6 relative overflow-hidden glass-panel" data-testid="card-friday-quickstart">
-                                <div class="absolute inset-0 bg-[linear-gradient(rgba(0,240,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
-                                <div class="relative z-10">
-                                    <div class="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
-                                        <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
-                                        <span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
-                                        <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
-                                        <span class="ml-3 text-xs font-mono text-gray-500">terminal</span>
-                                    </div>
-                                    <pre class="font-mono text-xs leading-relaxed text-gray-300 overflow-x-auto"><code><span class="text-cyan-glow">$</span> git clone https://github.com/FutureSpeakAI/Agent-Friday.git
-<span class="text-cyan-glow">$</span> cd agent-friday
-<span class="text-cyan-glow">$</span> npm install
-<span class="text-cyan-glow">$</span> cp .env.example .env
-<span class="text-gray-500"># Add your API keys to .env</span>
-<span class="text-cyan-glow">$</span> npm run dev
-
-<span class="text-purple-accent">✓</span> <span class="text-gray-400">Electron app launched</span>
-<span class="text-purple-accent">✓</span> <span class="text-gray-400">Gemini Live connected</span>
-<span class="text-purple-accent">✓</span> <span class="text-gray-400">14 connectors loaded (175+ tools)</span>
-<span class="text-purple-accent">✓</span> <span class="text-gray-400">Memory system initialized</span>
-<span class="text-cyan-glow">Friday:</span> <span class="text-white">Good morning. What are we working on?</span></code></pre>
-                                    <div class="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs font-mono text-gray-500 uppercase tracking-widest">
-                                        <span>Electron + React + Vite</span>
-                                        <span>TypeScript</span>
-                                    </div>
+                            <div class="relative w-full aspect-square max-w-[480px] mx-auto" data-testid="card-friday-cube">
+                                <div id="friday-cube-canvas" class="absolute inset-0 rounded-2xl overflow-hidden"></div>
+                                <div class="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+                                    <span class="text-xs font-mono text-gray-500/60 tracking-widest uppercase">Click to pulse</span>
                                 </div>
                             </div>
                         </div>
@@ -1258,6 +1237,231 @@
             composer.setSize(w, h);
             bloomPass.resolution.set(w, h);
         });
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        (function initFridayCube() {
+            const container = document.getElementById('friday-cube-canvas');
+            if (!container) return;
+
+            let initialized = false;
+
+            function tryInit() {
+                if (initialized) return;
+                if (container.clientWidth === 0 || container.clientHeight === 0) return;
+                initialized = true;
+                buildCube();
+            }
+
+            const initObserver = new MutationObserver(() => tryInit());
+            initObserver.observe(document.getElementById('friday'), { attributes: true, attributeFilter: ['class'] });
+            tryInit();
+
+            function buildCube() {
+
+            const scene = new THREE.Scene();
+            scene.background = null;
+
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+            camera.position.z = 18;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            function resizeRenderer() {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                renderer.setSize(w, h);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+            }
+            resizeRenderer();
+
+            const CYAN = new THREE.Color(0x00F0FF);
+            const PURPLE = new THREE.Color(0x8A2BE2);
+            const PINK = new THREE.Color(0xFF00AA);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(CYAN, 80, 50);
+            pointLight1.position.set(8, 6, 10);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(PURPLE, 60, 50);
+            pointLight2.position.set(-8, -4, 8);
+            scene.add(pointLight2);
+
+            const coreGroup = new THREE.Group();
+
+            const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+            const coreMat = new THREE.MeshStandardMaterial({
+                color: 0x15192a,
+                roughness: 0.85,
+                metalness: 0.2,
+                flatShading: true
+            });
+
+            const edgesGeo = new THREE.EdgesGeometry(cubeGeo);
+
+            const corePieces = [];
+            const gridSize = 3;
+            const spacing = 1.15;
+            const offset = (gridSize * spacing) / 2 - (spacing / 2);
+
+            for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridSize; y++) {
+                    for (let z = 0; z < gridSize; z++) {
+                        if (Math.random() > 0.82) continue;
+
+                        const piece = new THREE.Mesh(cubeGeo, coreMat.clone());
+
+                        const edgeColor = new THREE.Color().copy(CYAN).lerp(PURPLE, Math.random());
+                        const edgesMat = new THREE.LineBasicMaterial({
+                            color: edgeColor,
+                            transparent: true,
+                            opacity: 0.35
+                        });
+                        const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+                        piece.add(wireframe);
+
+                        const posX = (x * spacing) - offset;
+                        const posY = (y * spacing) - offset;
+                        const posZ = (z * spacing) - offset;
+
+                        piece.userData = {
+                            basePos: new THREE.Vector3(posX, posY, posZ),
+                            randomDir: new THREE.Vector3(posX, posY, posZ).normalize(),
+                            noiseOffset: Math.random() * Math.PI * 2,
+                            edgeMat: edgesMat,
+                            baseEdgeColor: edgeColor.clone()
+                        };
+
+                        piece.position.copy(piece.userData.basePos);
+                        coreGroup.add(piece);
+                        corePieces.push(piece);
+                    }
+                }
+            }
+
+            coreGroup.scale.set(2.8, 2.8, 2.8);
+            scene.add(coreGroup);
+
+            const miniParticleGeo = new THREE.BoxGeometry(0.06, 0.06, 0.06);
+            const miniParticleMat = new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.3 });
+            const floaters = [];
+            for (let p = 0; p < 40; p++) {
+                const m = new THREE.Mesh(miniParticleGeo, miniParticleMat.clone());
+                m.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 14
+                );
+                m.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+                m.userData.floatSpeed = Math.random() * 0.03 + 0.005;
+                m.userData.rotSpeed = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.015,
+                    (Math.random() - 0.5) * 0.015,
+                    0
+                );
+                m.material.color.copy(Math.random() > 0.5 ? CYAN : PURPLE);
+                m.material.opacity = 0.15 + Math.random() * 0.2;
+                scene.add(m);
+                floaters.push(m);
+            }
+
+            let cubeMouseX = 0, cubeMouseY = 0;
+            let clickPulse = 0;
+
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                cubeMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+                cubeMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+            });
+
+            container.addEventListener('click', () => {
+                clickPulse = 1.0;
+            });
+
+            const clock = new THREE.Clock();
+            let animId = null;
+
+            function animate() {
+                animId = requestAnimationFrame(animate);
+                const time = clock.getElapsedTime();
+
+                clickPulse += (0 - clickPulse) * 0.06;
+
+                coreGroup.rotation.y = time * 0.12 + cubeMouseX * 0.3;
+                coreGroup.rotation.x = time * 0.08 + cubeMouseY * 0.2;
+
+                const coreScale = 2.8 + clickPulse * 0.4;
+                coreGroup.scale.set(coreScale, coreScale, coreScale);
+
+                corePieces.forEach((piece) => {
+                    const d = piece.userData;
+                    const breathe = Math.sin(time * 1.5 + d.noiseOffset) * 0.08;
+                    const expand = breathe + clickPulse * 1.2;
+
+                    piece.position.x = d.basePos.x + d.randomDir.x * expand;
+                    piece.position.y = d.basePos.y + d.randomDir.y * expand;
+                    piece.position.z = d.basePos.z + d.randomDir.z * expand;
+
+                    piece.rotation.x += 0.003;
+                    piece.rotation.y += 0.004;
+
+                    const edgePulse = Math.max(0, clickPulse);
+                    d.edgeMat.opacity = 0.35 + edgePulse * 0.65;
+                    const flashColor = new THREE.Color().copy(d.baseEdgeColor).lerp(new THREE.Color(0xffffff), edgePulse * 0.6);
+                    d.edgeMat.color.copy(flashColor);
+                });
+
+                pointLight1.position.x = Math.sin(time * 0.4) * 10;
+                pointLight1.position.y = Math.cos(time * 0.3) * 6;
+                pointLight1.intensity = 80 + clickPulse * 120;
+
+                pointLight2.position.x = Math.cos(time * 0.35) * 8;
+                pointLight2.position.y = Math.sin(time * 0.45) * 5;
+                pointLight2.intensity = 60 + clickPulse * 80;
+
+                floaters.forEach((f) => {
+                    f.position.y += f.userData.floatSpeed;
+                    f.rotation.x += f.userData.rotSpeed.x;
+                    f.rotation.y += f.userData.rotSpeed.y;
+                    if (f.position.y > 12) f.position.y = -12;
+                    f.material.opacity = (0.15 + Math.random() * 0.05) + clickPulse * 0.3;
+                });
+
+                camera.position.x += (cubeMouseX * 1.5 - camera.position.x) * 0.03;
+                camera.position.y += (-cubeMouseY * 1.5 - camera.position.y) * 0.03;
+                camera.lookAt(0, 0, 0);
+
+                renderer.render(scene, camera);
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !animId) {
+                        clock.start();
+                        animate();
+                    } else if (!entry.isIntersecting && animId) {
+                        cancelAnimationFrame(animId);
+                        animId = null;
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(container);
+
+            const ro = new ResizeObserver(() => resizeRenderer());
+            ro.observe(container);
+
+            animate();
+            }
+        })();
     </script>
 </body>
 </html>

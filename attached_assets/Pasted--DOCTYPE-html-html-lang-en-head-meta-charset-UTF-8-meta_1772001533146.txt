@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Audio-Reactive 3D Desktop</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #09090b;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Holographic Clock Overlay */
+        #clock-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #clock {
+            font-size: 8vw;
+            color: #ffffff; /* Stark white */
+            font-weight: 200; /* Ultra-light for elegance */
+            letter-spacing: -0.04em;
+            white-space: nowrap;
+            opacity: 0.6;
+            transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* OS State Controls */
+        #os-controls {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .os-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .os-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .os-btn.active {
+            background: #ffffff;
+            color: #09090b;
+            border-color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Start Button overlay */
+        #start-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            transition: opacity 0.5s ease;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.0rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            background: #ffffff;
+            color: #09090b;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        p.subtitle {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: #666;
+            text-align: center;
+            max-width: 400px;
+            font-family: monospace;
+        }
+    </style>
+    <!-- Import Map for modern Three.js modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="start-overlay">
+        <button id="start-btn">INITIALIZE SYSTEM</button>
+        <p class="subtitle">Enabling generative audio matrix for reactive visualization.</p>
+    </div>
+
+    <div id="os-controls">
+        <button class="os-btn active" data-state="IDLE">IDLE</button>
+        <button class="os-btn" data-state="THINKING">THINKING</button>
+        <button class="os-btn" data-state="SEARCHING">SEARCHING</button>
+        <button class="os-btn" data-state="COMPILING">COMPILING</button>
+    </div>
+
+    <div id="clock-container">
+        <div id="clock">12:00 AM</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- CLOCK LOGIC ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('clock').innerText = `${hours}:${minutes} ${ampm}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- AUDIO ENGINE (Generative Synth) ---
+        // For your agents: To use actual system audio, replace this logic with a stream from 
+        // navigator.mediaDevices.getDisplayMedia({audio: true}) -> ctx.createMediaStreamSource()
+        let audioCtx, analyser, dataArray;
+        
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            // Create a cyberpunk drone/pulse
+            const osc1 = audioCtx.createOscillator(); // Bass
+            const osc2 = audioCtx.createOscillator(); // Pad
+            const gainNode = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(40, audioCtx.currentTime); // Deep bass
+
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(120, audioCtx.currentTime);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(100, audioCtx.currentTime);
+
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Keep volume reasonable
+
+            // Rhythmic LFO for the pulse effect
+            const lfo = audioCtx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = 1.5; // BPM / Pulse speed
+            const lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 800;
+            lfo.connect(lfoGain);
+            lfoGain.connect(filter.frequency);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            osc1.start();
+            osc2.start();
+            lfo.start();
+        }
+
+        // --- THREE.JS SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        // Initialize with a base color, we will update these dynamically
+        scene.background = new THREE.Color(0x09090b);
+        scene.fog = new THREE.FogExp2(0x09090b, 0.035); 
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 25;
+
+        // Re-enabled true antialiasing for sharp, flat edges
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+        container.appendChild(renderer.domElement);
+
+        // --- SCENE OBJECTS ---
+
+        // 0. The AI Network (Connected Reactive Wires weaving through the background)
+        const networkCount = 120;
+        const maxLines = (networkCount * (networkCount - 1)) / 2;
+        const networkPositions = new Float32Array(networkCount * 3);
+        const networkVelocities = [];
+
+        for (let i = 0; i < networkCount; i++) {
+            // Weave through and deeply behind the monolithic background cubes
+            networkPositions[i * 3] = (Math.random() - 0.5) * 60;
+            networkPositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+            networkPositions[i * 3 + 2] = -5 - Math.random() * 35; 
+            
+            networkVelocities.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            });
+        }
+
+        const networkGeo = new THREE.BufferGeometry();
+        networkGeo.setAttribute('position', new THREE.BufferAttribute(networkPositions, 3));
+        
+        const networkPointsMat = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.15,
+            transparent: true,
+            opacity: 0.8
+        });
+        const networkPoints = new THREE.Points(networkGeo, networkPointsMat);
+        scene.add(networkPoints);
+
+        const linePositions = new Float32Array(maxLines * 6);
+        const linesGeo = new THREE.BufferGeometry();
+        linesGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+        
+        const linesMat = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.2
+        });
+        const networkLines = new THREE.LineSegments(linesGeo, linesMat);
+        scene.add(networkLines);
+
+        // 1. The Background (Textured Dark Cubes)
+        const bgGroup = new THREE.Group();
+        const bgGeo = new THREE.BoxGeometry(1, 1, 1);
+        const bgMat = new THREE.MeshStandardMaterial({ 
+            color: 0x121214, // Slightly lighter than background
+            roughness: 1.0,  // Pure matte
+            metalness: 0.0 
+        });
+
+        const bgInstancedMesh = new THREE.InstancedMesh(bgGeo, bgMat, 500);
+        const dummy = new THREE.Object3D();
+        let i = 0;
+        for(let x = -10; x < 10; x++) {
+            for(let y = -10; y < 10; y++) {
+                // Skip the very center to leave room for the main object
+                if (Math.abs(x) < 3 && Math.abs(y) < 3) continue;
+                
+                dummy.position.set(x * 4, y * 4, -15 - Math.random() * 10);
+                dummy.scale.set(3.8, 3.8, 2 + Math.random() * 8);
+                dummy.updateMatrix();
+                bgInstancedMesh.setMatrixAt(i, dummy.matrix);
+                i++;
+            }
+        }
+        bgGroup.add(bgInstancedMesh);
+        scene.add(bgGroup);
+
+        // 2. The Core (Fractured Central Cube)
+        const coreGroup = new THREE.Group();
+        const coreGeo = new THREE.BoxGeometry(1, 1, 1);
+        
+        // Flat, elegant matte material
+        const coreMat = new THREE.MeshStandardMaterial({
+            color: 0x27272a, // Zinc-800
+            roughness: 1.0,
+            metalness: 0.1,
+            flatShading: true // Architectural clean look
+        });
+
+        const edgesGeo = new THREE.EdgesGeometry(coreGeo);
+        // Clean white architectural lines, made more pronounced (0.4 opacity instead of 0.2)
+        const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+
+        const corePieces = [];
+        const gridSize = 3;
+        const spacing = 1.1;
+        const offset = (gridSize * spacing) / 2 - (spacing / 2);
+
+        for(let x = 0; x < gridSize; x++) {
+            for(let y = 0; y < gridSize; y++) {
+                for(let z = 0; z < gridSize; z++) {
+                    // Randomly omit some blocks for a fractured look
+                    if (Math.random() > 0.8) continue; 
+
+                    const piece = new THREE.Mesh(coreGeo, coreMat.clone());
+                    
+                    // Add futuristic wireframe edges to each cube
+                    const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+                    piece.add(wireframe);
+                    
+                    // Base positions
+                    const posX = (x * spacing) - offset;
+                    const posY = (y * spacing) - offset;
+                    const posZ = (z * spacing) - offset;
+                    
+                    piece.userData = {
+                        id: corePieces.length,
+                        basePos: new THREE.Vector3(posX, posY, posZ),
+                        randomDir: new THREE.Vector3(posX, posY, posZ).normalize(), // Direction to expand outward
+                        noiseOffset: Math.random() * Math.PI * 2,
+                        rotX: 0,
+                        rotY: 0
+                    };
+
+                    piece.position.copy(piece.userData.basePos);
+                    
+                    coreGroup.add(piece);
+                    corePieces.push(piece);
+                }
+            }
+        }
+        // Scale up the whole core
+        coreGroup.scale.set(3.5, 3.5, 3.5);
+        scene.add(coreGroup);
+
+        // 3. Floating Particles (Small Cubes)
+        const particleGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08); // Even smaller, subtle specks
+        const particleMat = new THREE.MeshBasicMaterial({
+            color: 0x71717a, // Flat grey, no glow
+            transparent: true,
+            opacity: 0.6
+        });
+        const particleGroup = new THREE.Group();
+        const particles = [];
+
+        for(let p=0; p < 80; p++) {
+            const mesh = new THREE.Mesh(particleGeo, particleMat.clone());
+            mesh.position.set(
+                (Math.random() - 0.5) * 30,
+                (Math.random() - 0.5) * 30,
+                (Math.random() - 0.5) * 20
+            );
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+            mesh.userData = {
+                rotSpeed: new THREE.Vector3(Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01, 0),
+                floatSpeed: Math.random() * 0.05 + 0.01
+            };
+            particleGroup.add(mesh);
+            particles.push(mesh);
+        }
+        scene.add(particleGroup);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Clean white ambient
+        scene.add(ambientLight);
+
+        // We will animate this light's position and color for an elegant flourish
+        const pointLight = new THREE.PointLight(0xffffff, 300, 100); 
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // --- INTERACTIVITY (Parallax) ---
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        let systemState = 'IDLE';
+        let clickPulse = 0;
+
+        // UI State Switcher
+        document.querySelectorAll('.os-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.os-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                systemState = e.target.getAttribute('data-state');
+                e.stopPropagation(); // Prevent background click pulse on UI interaction
+            });
+        });
+
+        // Global Click Pulse interaction
+        window.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('os-btn') && e.target.id !== 'start-btn') {
+                clickPulse = 1.0;
+            }
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // --- ANIMATION LOOP ---
+        const clock = new THREE.Clock();
+        
+        // Smoothing variables for audio data
+        let currentBass = 0;
+        let currentTreble = 0;
+        let currentHue = 0.6; // Start around a deep blue/purple phase
+        const clockElement = document.getElementById('clock');
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            let bassLevel = 0;
+            let trebleLevel = 0;
+
+            if (analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                
+                let bassSum = 0;
+                for(let i = 0; i < 10; i++) bassSum += dataArray[i];
+                bassLevel = bassSum / 10 / 255;
+
+                let trebleSum = 0;
+                for(let i = 50; i < 100; i++) trebleSum += dataArray[i];
+                trebleLevel = trebleSum / 50 / 255;
+            }
+
+            // Extreme smoothing for fluid, elegant transitions (changed from 0.15 to 0.03)
+            currentBass += (bassLevel - currentBass) * 0.03;
+            currentTreble += (trebleLevel - currentTreble) * 0.03;
+
+            // --- GLOBAL PULSE DECAY ---
+            clickPulse += (0 - clickPulse) * 0.1;
+
+            // --- ELEGANT COLOR PHASE SHIFTING ---
+            // Slowly advance hue over time. Audio bass pushes the phase slightly faster.
+            currentHue += 0.0003 + (currentBass * 0.002); 
+            if (currentHue > 1) currentHue -= 1; // Loop back around color wheel
+
+            // 1. Environment Tint (Deep, desaturated elegant shift)
+            scene.background.setHSL(currentHue, 0.1, 0.04);
+            scene.fog.color.copy(scene.background);
+
+            // 2. Geometry Tint (Slightly lighter than background)
+            bgMat.color.setHSL(currentHue, 0.15, 0.08);
+            coreMat.color.setHSL(currentHue, 0.2, 0.12);
+
+            // 3. Accent Colors (Wireframes & Particles)
+            // Bass pulses the saturation and lightness of the structural lines. Click adds a bright flash.
+            const edgeSat = 0.3 + (currentBass * 0.7) + (clickPulse * 0.5); 
+            const edgeLight = 0.5 + (currentBass * 0.4) + (clickPulse * 0.5);
+            // Edges are shifted slightly ahead on the color wheel (+0.05) for contrast
+            edgesMat.color.setHSL((currentHue + 0.05) % 1, Math.min(1, edgeSat), Math.min(1, edgeLight));
+            edgesMat.opacity = 0.4 + (clickPulse * 0.6); // Flare opacity to 1.0 on click
+
+            // Particles use a neighboring analog color (+0.15)
+            particleMat.color.setHSL((currentHue + 0.15) % 1, 0.5, 0.6);
+
+            // Network background uses a bright complementary phase (+0.3)
+            networkPointsMat.color.setHSL((currentHue + 0.3) % 1, 0.8, 0.6);
+            linesMat.color.setHSL((currentHue + 0.3) % 1, 0.8, 0.15 + (currentBass * 0.3));
+
+            // 4. Orbiting Light Flourish
+            // Casts a complementary color (+0.5 phase) gradient across the flat surfaces
+            pointLight.color.setHSL((currentHue + 0.5) % 1, 0.8, 0.5);
+            pointLight.position.x = Math.sin(time * 0.3) * 15;
+            pointLight.position.z = Math.cos(time * 0.3) * 15;
+            pointLight.position.y = Math.sin(time * 0.2) * 5;
+
+
+            // 0. Audio-Reactive Clock (Elegant Flat UI)
+            if (currentBass > 0.05) {
+                // Modulate opacity and subtle scale instead of glowing
+                const targetOpacity = 0.6 + (currentBass * 0.4);
+                const targetScale = 1 + (currentBass * 0.02);
+                clockElement.style.opacity = targetOpacity;
+                clockElement.style.transform = `scale(${targetScale})`;
+            } else {
+                clockElement.style.opacity = 0.6;
+                clockElement.style.transform = `scale(1)`;
+            }
+
+            // 1. Animate Core Group Scale
+            const coreScale = 3.5 + (clickPulse * 0.3); // Core expands slightly on global click
+            coreGroup.scale.set(coreScale, coreScale, coreScale);
+            
+            // Smoother, constant rotation for the whole group
+            coreGroup.rotation.y = time * 0.05 + (currentBass * 0.2);
+            coreGroup.rotation.x = time * 0.03;
+
+            corePieces.forEach((piece, idx) => {
+                let targetX = piece.userData.basePos.x;
+                let targetY = piece.userData.basePos.y;
+                let targetZ = piece.userData.basePos.z;
+                
+                // Track continuous, smooth rotation internally to prevent wrapping glitches
+                piece.userData.rotX += (systemState === 'THINKING' ? 0.04 + currentTreble * 0.1 : 0.005);
+                piece.userData.rotY += (systemState === 'THINKING' ? 0.04 + currentTreble * 0.1 : 0.005);
+                
+                let targetRotX = piece.userData.rotX;
+                let targetRotY = piece.userData.rotY;
+
+                // --- OS LOADING STATES ---
+                if (systemState === 'IDLE') {
+                    // Organic breathing offset + audio expansion + click push
+                    const organicBreathe = Math.sin(time * 2 + piece.userData.noiseOffset) * 0.05;
+                    const expandAmt = organicBreathe + (currentBass * 0.6) + (clickPulse * 0.8); 
+                    
+                    targetX += piece.userData.randomDir.x * expandAmt;
+                    targetY += piece.userData.randomDir.y * expandAmt;
+                    targetZ += piece.userData.randomDir.z * expandAmt;
+                } 
+                else if (systemState === 'THINKING') {
+                    // Core compresses inward tightly and vibrates with the high frequencies (treble)
+                    const compressAmt = -0.4 + (currentBass * 0.2);
+                    targetX += piece.userData.randomDir.x * compressAmt;
+                    targetY += piece.userData.randomDir.y * compressAmt;
+                    targetZ += piece.userData.randomDir.z * compressAmt;
+                }
+                else if (systemState === 'SEARCHING') {
+                    // Geometric pieces align and ripple like a 3D wave scanner
+                    const wave = Math.sin(time * 4 + piece.userData.basePos.x * 2) * (0.8 + currentBass * 1.5);
+                    targetY += wave;
+                    targetX += piece.userData.randomDir.x * 0.2; // Slight spread
+                    targetZ += piece.userData.randomDir.z * 0.2;
+                    
+                    // Rotate to follow the curve of the wave
+                    targetRotX = Math.sin(time * 4 + piece.userData.basePos.x * 2) * 0.5; 
+                    targetRotY = 0;
+                }
+                else if (systemState === 'COMPILING') {
+                    // Pieces structurally detach and re-assemble into a vertical helix (DNA) stack
+                    const t = (idx * 0.4) + (time * 2);
+                    const radius = 1.0 + (currentBass * 0.8);
+                    
+                    targetX = Math.cos(t) * radius;
+                    targetZ = Math.sin(t) * radius;
+                    targetY = (idx - 13) * 0.25; // Stack the 27 blocks vertically
+                    
+                    targetRotX = 0; // Flat
+                    targetRotY = -t; // Face inward/outward
+                }
+
+                // Smoothly lerp actual position toward calculated targets for buttery state transitions
+                piece.position.x += (targetX - piece.position.x) * 0.1;
+                piece.position.y += (targetY - piece.position.y) * 0.1;
+                piece.position.z += (targetZ - piece.position.z) * 0.1;
+
+                // Smoothly lerp actual rotations
+                piece.rotation.x += (targetRotX - piece.rotation.x) * 0.1;
+                piece.rotation.y += (targetRotY - piece.rotation.y) * 0.1;
+            });
+
+            // 2. Animate Particles
+            particleGroup.rotation.y = time * -0.02;
+            particles.forEach((p, idx) => {
+                p.rotation.x += p.userData.rotSpeed.x;
+                p.rotation.y += p.userData.rotSpeed.y;
+                p.position.y += p.userData.floatSpeed * 0.3; // Very slow, calm float
+                
+                if (p.position.y > 20) p.position.y = -20;
+
+                // Modulate opacity slightly on treble instead of flashing brightness
+                p.material.opacity = 0.3 + (currentTreble * 0.5);
+            });
+
+            // 3. Animate Background
+            bgGroup.position.z = (time * 0.5) % 4; // Much slower, monolithic scroll
+
+            // 3.5. Animate Network
+            const positions = networkPoints.geometry.attributes.position.array;
+            let lineIndex = 0;
+            
+            // Expand connection radius heavily on bass to create reactive flashes of synapses
+            const connectDistance = 6.0 + (currentBass * 6.0); 
+
+            for (let i = 0; i < networkCount; i++) {
+                // Gentle floating accelerated by treble
+                positions[i * 3] += networkVelocities[i].x * (1 + currentTreble * 3);
+                positions[i * 3 + 1] += networkVelocities[i].y * (1 + currentTreble * 3);
+                positions[i * 3 + 2] += networkVelocities[i].z * (1 + currentTreble * 3);
+
+                // Boundary bounce
+                if (positions[i * 3] > 30 || positions[i * 3] < -30) networkVelocities[i].x *= -1;
+                if (positions[i * 3 + 1] > 20 || positions[i * 3 + 1] < -20) networkVelocities[i].y *= -1;
+                if (positions[i * 3 + 2] > -2 || positions[i * 3 + 2] < -45) networkVelocities[i].z *= -1;
+
+                // Check connections
+                for (let j = i + 1; j < networkCount; j++) {
+                    const dx = positions[i * 3] - positions[j * 3];
+                    const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+                    const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+                    const distSq = dx * dx + dy * dy + dz * dz;
+
+                    if (distSq < connectDistance * connectDistance) {
+                        linePositions[lineIndex++] = positions[i * 3];
+                        linePositions[lineIndex++] = positions[i * 3 + 1];
+                        linePositions[lineIndex++] = positions[i * 3 + 2];
+
+                        linePositions[lineIndex++] = positions[j * 3];
+                        linePositions[lineIndex++] = positions[j * 3 + 1];
+                        linePositions[lineIndex++] = positions[j * 3 + 2];
+                    }
+                }
+            }
+            networkPoints.geometry.attributes.position.needsUpdate = true;
+            networkLines.geometry.setDrawRange(0, lineIndex / 3);
+            networkLines.geometry.attributes.position.needsUpdate = true;
+
+
+            // 4. Camera Parallax Effect (Smoother)
+            targetX = mouseX * 0.002;
+            targetY = mouseY * 0.002;
+            
+            camera.position.x += (targetX - camera.position.x) * 0.02;
+            camera.position.y += (-targetY - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+
+            // Render directly, no post-processing bloom
+            renderer.render(scene, camera);
+        }
+
+        // --- RESIZE HANDLER ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- START SEQUENCE ---
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('start-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('start-overlay').style.display = 'none';
+            }, 500);
+            
+            // Initialize audio on user gesture
+            initAudio();
+            animate();
+        });
+
+    </script>
+</body>
+</html>
