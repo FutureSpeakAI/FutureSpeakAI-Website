@@ -1376,17 +1376,18 @@
                 floaters.push(m);
             }
 
-            let cubeMouseX = 0, cubeMouseY = 0;
+            let rawMouseX = 0, rawMouseY = 0;
+            let smoothMouseX = 0, smoothMouseY = 0;
 
             container.addEventListener('mousemove', (e) => {
                 const rect = container.getBoundingClientRect();
-                cubeMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-                cubeMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+                rawMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+                rawMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
             });
 
             container.addEventListener('mouseleave', () => {
-                cubeMouseX = 0;
-                cubeMouseY = 0;
+                rawMouseX = 0;
+                rawMouseY = 0;
             });
 
             const clock = new THREE.Clock();
@@ -1396,11 +1397,14 @@
                 animId = requestAnimationFrame(animate);
                 const time = clock.getElapsedTime();
 
+                smoothMouseX += (rawMouseX - smoothMouseX) * 0.015;
+                smoothMouseY += (rawMouseY - smoothMouseY) * 0.015;
+
                 const cyclePhase = (time * 0.08) % 1.0;
                 const breatheIntensity = 0.5 + 0.5 * Math.sin(cyclePhase * Math.PI * 2);
 
-                coreGroup.rotation.y = time * 0.06 + cubeMouseX * 0.25;
-                coreGroup.rotation.x = time * 0.035 + cubeMouseY * 0.15;
+                coreGroup.rotation.y = time * 0.06 + smoothMouseX * 0.25;
+                coreGroup.rotation.x = time * 0.035 + smoothMouseY * 0.15;
 
                 const scaleBreath = 2.8 + Math.sin(time * 0.5) * 0.06;
                 coreGroup.scale.set(scaleBreath, scaleBreath, scaleBreath);
@@ -1445,8 +1449,8 @@
                     if (Math.abs(f.position.x) > 10) f.userData.driftX *= -1;
                 });
 
-                camera.position.x += (cubeMouseX * 1.2 - camera.position.x) * 0.02;
-                camera.position.y += (-cubeMouseY * 1.2 - camera.position.y) * 0.02;
+                camera.position.x += (smoothMouseX * 1.0 - camera.position.x) * 0.01;
+                camera.position.y += (-smoothMouseY * 1.0 - camera.position.y) * 0.01;
                 camera.lookAt(0, 0, 0);
 
                 renderer.render(scene, camera);
