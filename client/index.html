@@ -406,9 +406,6 @@
                         <div class="lg:col-span-5">
                             <div class="relative w-full aspect-square max-w-[480px] mx-auto" data-testid="card-friday-cube">
                                 <div id="friday-cube-canvas" class="absolute inset-0 rounded-2xl overflow-hidden"></div>
-                                <div class="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-                                    <span class="text-xs font-mono text-gray-500/60 tracking-widest uppercase">Click to pulse</span>
-                                </div>
                             </div>
                         </div>
 
@@ -1283,16 +1280,15 @@
 
             const CYAN = new THREE.Color(0x00F0FF);
             const PURPLE = new THREE.Color(0x8A2BE2);
-            const PINK = new THREE.Color(0xFF00AA);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
             scene.add(ambientLight);
 
-            const pointLight1 = new THREE.PointLight(CYAN, 80, 50);
+            const pointLight1 = new THREE.PointLight(CYAN, 60, 50);
             pointLight1.position.set(8, 6, 10);
             scene.add(pointLight1);
 
-            const pointLight2 = new THREE.PointLight(PURPLE, 60, 50);
+            const pointLight2 = new THREE.PointLight(PURPLE, 45, 50);
             pointLight2.position.set(-8, -4, 8);
             scene.add(pointLight2);
 
@@ -1300,9 +1296,9 @@
 
             const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
             const coreMat = new THREE.MeshStandardMaterial({
-                color: 0x15192a,
-                roughness: 0.85,
-                metalness: 0.2,
+                color: 0x12162a,
+                roughness: 0.9,
+                metalness: 0.15,
                 flatShading: true
             });
 
@@ -1311,34 +1307,37 @@
             const corePieces = [];
             const gridSize = 3;
             const spacing = 1.15;
-            const offset = (gridSize * spacing) / 2 - (spacing / 2);
+            const gOffset = (gridSize * spacing) / 2 - (spacing / 2);
 
             for (let x = 0; x < gridSize; x++) {
                 for (let y = 0; y < gridSize; y++) {
                     for (let z = 0; z < gridSize; z++) {
-                        if (Math.random() > 0.82) continue;
+                        if (Math.random() > 0.85) continue;
 
                         const piece = new THREE.Mesh(cubeGeo, coreMat.clone());
 
-                        const edgeColor = new THREE.Color().copy(CYAN).lerp(PURPLE, Math.random());
+                        const edgeLerp = Math.random();
+                        const edgeColor = new THREE.Color().copy(CYAN).lerp(PURPLE, edgeLerp);
                         const edgesMat = new THREE.LineBasicMaterial({
                             color: edgeColor,
                             transparent: true,
-                            opacity: 0.35
+                            opacity: 0.3
                         });
                         const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
                         piece.add(wireframe);
 
-                        const posX = (x * spacing) - offset;
-                        const posY = (y * spacing) - offset;
-                        const posZ = (z * spacing) - offset;
+                        const posX = (x * spacing) - gOffset;
+                        const posY = (y * spacing) - gOffset;
+                        const posZ = (z * spacing) - gOffset;
 
                         piece.userData = {
                             basePos: new THREE.Vector3(posX, posY, posZ),
                             randomDir: new THREE.Vector3(posX, posY, posZ).normalize(),
                             noiseOffset: Math.random() * Math.PI * 2,
+                            phaseOffset: Math.random() * Math.PI * 2,
                             edgeMat: edgesMat,
-                            baseEdgeColor: edgeColor.clone()
+                            baseEdgeColor: edgeColor.clone(),
+                            edgeLerp: edgeLerp
                         };
 
                         piece.position.copy(piece.userData.basePos);
@@ -1351,31 +1350,33 @@
             coreGroup.scale.set(2.8, 2.8, 2.8);
             scene.add(coreGroup);
 
-            const miniParticleGeo = new THREE.BoxGeometry(0.06, 0.06, 0.06);
-            const miniParticleMat = new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.3 });
+            const miniParticleGeo = new THREE.BoxGeometry(0.05, 0.05, 0.05);
             const floaters = [];
-            for (let p = 0; p < 40; p++) {
-                const m = new THREE.Mesh(miniParticleGeo, miniParticleMat.clone());
+            for (let p = 0; p < 30; p++) {
+                const mat = new THREE.MeshBasicMaterial({
+                    color: Math.random() > 0.5 ? CYAN : PURPLE,
+                    transparent: true,
+                    opacity: 0.1 + Math.random() * 0.15
+                });
+                const m = new THREE.Mesh(miniParticleGeo, mat);
                 m.position.set(
-                    (Math.random() - 0.5) * 20,
-                    (Math.random() - 0.5) * 20,
-                    (Math.random() - 0.5) * 14
+                    (Math.random() - 0.5) * 18,
+                    (Math.random() - 0.5) * 18,
+                    (Math.random() - 0.5) * 12
                 );
                 m.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-                m.userData.floatSpeed = Math.random() * 0.03 + 0.005;
+                m.userData.floatSpeed = Math.random() * 0.015 + 0.003;
+                m.userData.driftX = (Math.random() - 0.5) * 0.005;
                 m.userData.rotSpeed = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.015,
-                    (Math.random() - 0.5) * 0.015,
+                    (Math.random() - 0.5) * 0.01,
+                    (Math.random() - 0.5) * 0.01,
                     0
                 );
-                m.material.color.copy(Math.random() > 0.5 ? CYAN : PURPLE);
-                m.material.opacity = 0.15 + Math.random() * 0.2;
                 scene.add(m);
                 floaters.push(m);
             }
 
             let cubeMouseX = 0, cubeMouseY = 0;
-            let clickPulse = 0;
 
             container.addEventListener('mousemove', (e) => {
                 const rect = container.getBoundingClientRect();
@@ -1383,8 +1384,9 @@
                 cubeMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
             });
 
-            container.addEventListener('click', () => {
-                clickPulse = 1.0;
+            container.addEventListener('mouseleave', () => {
+                cubeMouseX = 0;
+                cubeMouseY = 0;
             });
 
             const clock = new THREE.Clock();
@@ -1394,50 +1396,57 @@
                 animId = requestAnimationFrame(animate);
                 const time = clock.getElapsedTime();
 
-                clickPulse += (0 - clickPulse) * 0.06;
+                const cyclePhase = (time * 0.08) % 1.0;
+                const breatheIntensity = 0.5 + 0.5 * Math.sin(cyclePhase * Math.PI * 2);
 
-                coreGroup.rotation.y = time * 0.12 + cubeMouseX * 0.3;
-                coreGroup.rotation.x = time * 0.08 + cubeMouseY * 0.2;
+                coreGroup.rotation.y = time * 0.06 + cubeMouseX * 0.25;
+                coreGroup.rotation.x = time * 0.035 + cubeMouseY * 0.15;
 
-                const coreScale = 2.8 + clickPulse * 0.4;
-                coreGroup.scale.set(coreScale, coreScale, coreScale);
+                const scaleBreath = 2.8 + Math.sin(time * 0.5) * 0.06;
+                coreGroup.scale.set(scaleBreath, scaleBreath, scaleBreath);
 
                 corePieces.forEach((piece) => {
                     const d = piece.userData;
-                    const breathe = Math.sin(time * 1.5 + d.noiseOffset) * 0.08;
-                    const expand = breathe + clickPulse * 1.2;
+
+                    const breathe = Math.sin(time * 0.8 + d.noiseOffset) * 0.06 * breatheIntensity;
+                    const wave = Math.sin(time * 0.6 + d.basePos.x * 1.5 + d.basePos.y * 0.8) * 0.04;
+                    const drift = Math.sin(time * 0.3 + d.phaseOffset) * 0.025;
+                    const expand = breathe + wave + drift;
 
                     piece.position.x = d.basePos.x + d.randomDir.x * expand;
                     piece.position.y = d.basePos.y + d.randomDir.y * expand;
                     piece.position.z = d.basePos.z + d.randomDir.z * expand;
 
-                    piece.rotation.x += 0.003;
-                    piece.rotation.y += 0.004;
+                    piece.rotation.x += 0.0015;
+                    piece.rotation.y += 0.002;
 
-                    const edgePulse = Math.max(0, clickPulse);
-                    d.edgeMat.opacity = 0.35 + edgePulse * 0.65;
-                    const flashColor = new THREE.Color().copy(d.baseEdgeColor).lerp(new THREE.Color(0xffffff), edgePulse * 0.6);
-                    d.edgeMat.color.copy(flashColor);
+                    const edgePulse = 0.5 + 0.5 * Math.sin(time * 0.7 + d.noiseOffset * 2);
+                    d.edgeMat.opacity = 0.2 + edgePulse * 0.2;
+
+                    const hueShift = Math.sin(time * 0.15 + d.edgeLerp * Math.PI) * 0.5 + 0.5;
+                    d.edgeMat.color.copy(CYAN).lerp(PURPLE, hueShift);
                 });
 
-                pointLight1.position.x = Math.sin(time * 0.4) * 10;
-                pointLight1.position.y = Math.cos(time * 0.3) * 6;
-                pointLight1.intensity = 80 + clickPulse * 120;
+                const lightDrift = Math.sin(time * 0.2) * 0.3 + 0.7;
+                pointLight1.position.x = Math.sin(time * 0.25) * 10;
+                pointLight1.position.y = Math.cos(time * 0.2) * 6;
+                pointLight1.intensity = 50 + lightDrift * 20;
 
-                pointLight2.position.x = Math.cos(time * 0.35) * 8;
-                pointLight2.position.y = Math.sin(time * 0.45) * 5;
-                pointLight2.intensity = 60 + clickPulse * 80;
+                pointLight2.position.x = Math.cos(time * 0.22) * 8;
+                pointLight2.position.y = Math.sin(time * 0.28) * 5;
+                pointLight2.intensity = 35 + (1 - lightDrift) * 20;
 
                 floaters.forEach((f) => {
                     f.position.y += f.userData.floatSpeed;
+                    f.position.x += f.userData.driftX;
                     f.rotation.x += f.userData.rotSpeed.x;
                     f.rotation.y += f.userData.rotSpeed.y;
-                    if (f.position.y > 12) f.position.y = -12;
-                    f.material.opacity = (0.15 + Math.random() * 0.05) + clickPulse * 0.3;
+                    if (f.position.y > 10) f.position.y = -10;
+                    if (Math.abs(f.position.x) > 10) f.userData.driftX *= -1;
                 });
 
-                camera.position.x += (cubeMouseX * 1.5 - camera.position.x) * 0.03;
-                camera.position.y += (-cubeMouseY * 1.5 - camera.position.y) * 0.03;
+                camera.position.x += (cubeMouseX * 1.2 - camera.position.x) * 0.02;
+                camera.position.y += (-cubeMouseY * 1.2 - camera.position.y) * 0.02;
                 camera.lookAt(0, 0, 0);
 
                 renderer.render(scene, camera);
