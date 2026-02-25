@@ -1,0 +1,369 @@
+Agent Friday
+Your AI Chief of Staff — a desktop-native voice assistant built on Gemini Live, Claude Opus, and ElevenLabs. Agent Friday lives on your desktop, sees your screen, remembers your preferences across sessions, manages background tasks through a team of specialist sub-agents, controls your installed software, monitors the world in real-time, and can even join your video calls.
+
+Built by FutureSpeak.AI
+
+"Like having a brilliant chief of staff who never sleeps, never forgets, and can see everything on your screen."
+
+Highlights
+Voice-first — Real-time bidirectional audio conversation via Gemini Live
+Dual-LLM — Gemini handles conversation; Claude Opus handles deep reasoning
+Screen-aware — Continuously sees your screen and understands context
+175+ dynamic tools — 14 connector modules that auto-detect installed software
+Real-time global intelligence — World Monitor integration with 44 API endpoints across 17 domains
+Multi-agent team — Background specialists with distinct voices (Atlas, Nova, Cipher)
+Persistent memory — Three-tier system: short-term, medium-term, and long-term with automatic consolidation
+Live call participation — Joins Google Meet / Zoom / Teams as a voice participant
+Self-improving — Can read and propose changes to its own source code (user-approved)
+What It Does
+Agent Friday is an always-on, voice-first AI companion that runs as a native desktop app (Electron). Think Jarvis, but real:
+
+Category	Capabilities
+Voice & Vision	Real-time voice via Gemini Live, screen capture, webcam vision (tool-gated)
+Memory	Short/medium/long-term tiers, episodic recall, semantic search, automatic consolidation
+Agents	Background research, code review, email drafting, summarization — each with unique voice
+Desktop	File management, app launching, keyboard simulation, window management
+Browser	Web navigation, form filling, content extraction via Puppeteer
+Calls	Join Google Meet / Zoom / Teams via virtual audio routing (VB-Cable)
+Calendar	Google Calendar read/write, pre-meeting briefings with attendee context
+Communications	Email/message drafting and refinement with full memory context
+Documents	Ingest PDFs, Word docs, text files into searchable memory
+Projects	Watch code repos, understand git state, framework, structure
+Intelligence	Background research cron jobs, clipboard monitoring, notification capture
+Software Control	175+ tools across 14 modules — Adobe, Blender, VS Code, OBS, Office, and more
+World Monitor	Real-time geopolitics, conflicts, markets, military, cyber, climate, earthquakes
+Customization	Full personality onboarding — name, voice, accent, backstory, traits
+Architecture
++---------------------------------------------------+
+|                  Electron App                      |
++--------------------------+------------------------+
+|    Main Process          |   Renderer (React)     |
+|                          |                        |
+|  personality.ts          |  App.tsx               |
+|  memory.ts               |  VoiceOrb.tsx          |
+|  agents/                 |  useGeminiLive.ts      |
+|  desktop-tools.ts        |  AudioPlaybackEngine   |
+|  browser.ts              |  SessionManager.ts     |
+|  call-integration.ts     |  StatusBar / Dashboard |
+|  calendar.ts             |  ActionFeed / Settings |
+|  connectors/ (14)        |  ChatHistory           |
+|  world-monitor.ts        |                        |
+|  ...50+ modules          |                        |
++--------------------------+------------------------+
+|              IPC Bridge (preload.ts)               |
+|                   window.eve API                   |
++---------------------------------------------------+
+        |              |               |
+   Gemini Live    Claude Opus    ElevenLabs
+   (voice/audio)  (deep reason)  (agent voices)
+        |
+   World Monitor
+   (17 intel domains)
+Voice Pipeline: Gemini Live WebSocket with bidirectional PCM audio at 24kHz. Gapless playback via Web Audio API scheduling.
+
+Dual-LLM: Gemini handles real-time conversation; Claude Opus is invoked via tool call (ask_claude) for complex reasoning, code generation, and deep analysis.
+
+Multi-Agent Voices: Sub-agents (Atlas, Nova, Cipher) use Gemini 2.5 Flash for intelligence + ElevenLabs TTS for distinct, cinema-quality voices.
+
+Quick Start
+Prerequisites
+Node.js 18+ and npm
+Gemini API key (required) — Get one here
+Anthropic API key (recommended) — Sign up for Claude Opus deep reasoning
+ElevenLabs API key (optional) — Sign up for multi-agent distinct voices
+VB-Cable (optional) — Download for live call participation
+Setup
+# Clone the repo
+git clone https://github.com/FutureSpeakAI/agent-friday.git
+cd agent-friday
+
+# Install dependencies
+npm install
+
+# Create environment file
+cp .env.example .env
+# Edit .env and add your API keys
+
+# Run in development mode
+npm run dev
+Build & Package
+# Production build (TypeScript + Vite)
+npm run build
+
+# Package as installer + portable ZIP
+npm run package
+# Output: release/Agent Friday Setup 1.0.0.exe (installer)
+#         release/Agent Friday-1.0.0-win.zip   (portable)
+First Launch
+On first run, Agent Friday guides you through a personality onboarding flow:
+
+Choose your agent's name (or keep "Friday")
+Select a voice and accent
+Define personality traits and an optional backstory
+Enter your name so the agent knows who you are
+Set up API keys if not already in .env
+After onboarding, the agent remembers everything and gets smarter over time.
+
+Configuration
+API keys can be set via:
+
+.env file in the project root (for development)
+Settings panel in the app (gear icon > API Keys) — persists across sessions
+Key	Required	Purpose
+GEMINI_API_KEY	Yes	Gemini Live voice + Gemini Flash for agents
+ANTHROPIC_API_KEY	Recommended	Claude Opus deep reasoning (ask_claude tool)
+ELEVENLABS_API_KEY	Optional	Distinct voices for sub-agents (Atlas, Nova, Cipher)
+Optional Integrations
+Integration	How to Enable
+Google Calendar	Authenticate via Settings panel (OAuth2 flow)
+Obsidian	Set vault path in Settings for bidirectional memory sync
+VB-Cable	Install the driver — auto-detected at startup
+MCP Servers	Configure in settings for extended tool capabilities
+World Monitor	Install from GitHub — auto-detected by the connector
+Key Features
+Voice & Audio
+Bidirectional WebSocket streaming at 24kHz PCM via Gemini Live. Audio captured from the microphone via AudioWorklet (with ScriptProcessorNode fallback). Playback uses precise Web Audio scheduling (source.start(exactTime)) for gapless chunk playback.
+
+Memory System
+Three-tier memory with automatic consolidation:
+
+Tier	Retention	Example
+Short-term	Current session	Recent conversation turns
+Medium-term	Cross-session patterns	"User often asks about React" (promoted after 3+ occurrences)
+Long-term	Permanent facts	"User's name is Stephen", "User prefers dark mode"
+Memory extraction runs every 5 minutes. Episodic memory captures full session summaries with topics, emotional tone, and key decisions. Semantic search enables natural-language queries across all memory types.
+
+Multi-Agent System
+Friday orchestrates a team of specialist agents:
+
+Agent	Voice	Role	Best For
+Atlas	Adam (ElevenLabs)	Research Director	Deep research, analysis, fact-checking
+Nova	Bella (ElevenLabs)	Creative Strategist	Writing, brainstorming, communications
+Cipher	Daniel (ElevenLabs)	Technical Lead	Code review, architecture, debugging
+Sub-agents run on Gemini 2.5 Flash (text mode) with ElevenLabs TTS for distinct voices. They execute in the background and speak their findings in their own voice.
+
+Live Call Participation
+Join video calls (Google Meet, Zoom, Teams) using virtual audio routing:
+
+Friday's voice --> VB-Cable Virtual Mic --> Meeting app (as "microphone")
+Meeting audio --> System speakers --> Friday's mic input
+Requires VB-Cable (free). Select "CABLE Output" as the microphone in your meeting app.
+
+Reconnection Hardening
+Self-managed retry loop with:
+
+Linear backoff (3s to 30s cap) over 15 attempts
+Network-aware: pauses when offline, resumes on navigator.onLine
+Conversation context preserved across reconnects via session summary
+Voice/accent anchoring maintained through reconnection
+Universal Software Mastery (Connector System)
+Agent Friday dynamically extends its capabilities based on installed software. The connector system auto-detects applications at startup and loads only the relevant tool sets.
+
++-----------------------------------------------------+
+|                 Connector Registry                    |
+|  * Auto-detects installed software at startup        |
+|  * Loads only available connector modules            |
+|  * Routes tool calls to correct connector            |
+|  * Injects tool declarations into Gemini session     |
++-----------------------------------------------------+
+|                                                      |
+|   Foundation          Creative & Office              |
+|   +-- PowerShell      +-- Adobe CC (PS/AI/PR/AE)    |
+|   +-- Terminal         +-- 3D/VFX (Blender/Unity/UE)|
+|   +-- VS Code         +-- Media (OBS/FFmpeg)        |
+|                        +-- Office (Word/Excel/PPT)   |
+|                                                      |
+|   DevOps              Communication & System         |
+|   +-- Git/GitHub       +-- Comms (Slack/Discord/etc) |
+|   +-- Dev Environments +-- System Management         |
+|     (Jupyter/Docker/     (Services/Firewall/         |
+|      Conda/Databases)     Packages/Scheduling)       |
+|                                                      |
+|   Intelligence                                       |
+|   +-- World Monitor (17 global intel domains)        |
++-----------------------------------------------------+
+14 connector modules — 175+ tools total:
+
+Module	Tools	Capabilities
+PowerShell	10	Script execution, module management, remote sessions, registry ops
+Terminal Sessions	8	Persistent shell sessions, command chaining, output streaming
+VS Code	10	Open files/workspaces, install extensions, run tasks, navigate symbols
+Git & DevOps	10+	Commits, branches, PRs, CI/CD status, GitHub Actions
+Office	10+	Create/edit Word docs, Excel spreadsheets, PowerPoint decks
+UI Automation	10+	Window management, element inspection, click/type automation
+Adobe CC	10	Photoshop/Illustrator JSX scripting, Premiere/AE ExtendScript
+3D & VFX	10	Blender Python, Unity Editor methods, Unreal commandlets
+Media & Streaming	14	OBS scene/source control, FFmpeg transcoding, audio devices
+Communications	7	Slack/Discord/Teams webhooks, SMTP email, HTTP requests, toasts
+Dev Environments	15	Jupyter, Python venvs, Conda, Docker Compose, SQL databases
+System Management	17	Services, scheduled tasks, firewall, package managers, perf monitoring
+World Monitor	47	Real-time global intelligence across 17 domains (see below)
+World Monitor Intelligence
+Agent Friday integrates with World Monitor — a real-time global intelligence dashboard. When installed, the connector provides 47 tools across 17 service domains:
+
+Domain	Example Tools	What You Can Ask
+Intelligence	Risk scores, intel briefs, GDELT search	"What's the instability index for Iran?"
+Conflict	ACLED events, UCDP data, humanitarian	"Show me active conflicts in Africa"
+Military	Flight tracking, theater posture, fleet	"Any unusual military flights over Europe?"
+Markets	Quotes, crypto, commodities, ETFs	"How are the markets looking today?"
+Economics	FRED data, macro signals, energy prices	"What's the current US unemployment rate?"
+Cyber	Threat intel, APT campaigns	"Any critical cyber threats this week?"
+Infrastructure	Outages, cable health, service status	"Is AWS having issues right now?"
+Seismology	Earthquake data from USGS	"Any major earthquakes today?"
+Wildfire	NASA FIRMS satellite detections	"Active wildfires in California?"
+Climate	Temperature anomalies, ENSO indices	"What's the current El Nino status?"
+Maritime	AIS vessel tracking, nav warnings	"Vessel traffic in the Strait of Hormuz?"
+Aviation	Airport delays worldwide	"Any major airport delays?"
+Displacement	Refugee flows, population exposure	"Displacement crisis in Sudan?"
+Unrest	Protests, riots, demonstrations	"Civil unrest events in France?"
+News	AI article summarization	"Summarize this article for me"
+Research	arXiv papers, GitHub trending, HN	"Trending AI papers this week?"
+Prediction	Polymarket/Metaculus probabilities	"What are prediction markets saying about X?"
+The agent starts the World Monitor server automatically when you ask about global events. Use it for morning briefings, crisis monitoring, or real-time market analysis.
+
+Project Structure
+src/
++-- main/                        # Electron main process (50+ modules)
+|   +-- index.ts                 # App lifecycle & IPC handler registration
+|   +-- preload.ts               # Context bridge (window.eve API)
+|   +-- server.ts                # Express API server
+|   +-- personality.ts           # System prompt builder & prompt budget
+|   +-- memory.ts                # 3-tier memory (short/medium/long)
+|   +-- memory-consolidation.ts  # Automatic memory tier promotion
+|   +-- episodic-memory.ts       # Session-level conversation recall
+|   +-- semantic-search.ts       # Vector search across all memory types
+|   +-- agents/                  # Multi-agent system
+|   |   +-- agent-runner.ts      # Task execution engine
+|   |   +-- agent-personas.ts    # Atlas, Nova, Cipher definitions
+|   |   +-- agent-voice.ts       # ElevenLabs TTS for agent voices
+|   |   +-- orchestrator.ts      # Multi-agent coordination
+|   |   +-- builtin-agents.ts    # Research, summarize, code-review, draft-email
+|   +-- desktop-tools.ts         # File ops, app launch, keyboard, screenshots
+|   +-- browser.ts               # Puppeteer-based web automation
+|   +-- call-integration.ts      # VB-Cable detection & virtual audio routing
+|   +-- calendar.ts              # Google Calendar OAuth + CRUD
+|   +-- meeting-prep.ts          # Pre-meeting briefing with attendee context
+|   +-- communications.ts        # Email/message drafting with Claude
+|   +-- scheduler.ts             # Cron & one-shot task scheduling
+|   +-- screen-capture.ts        # Continuous screen capture for Gemini vision
+|   +-- ambient.ts               # App usage tracking & task inference
+|   +-- clipboard-intelligence.ts # Clipboard monitoring & contextual help
+|   +-- notifications.ts         # Desktop notification capture
+|   +-- sentiment.ts             # Emotional tone analysis & adaptation
+|   +-- intelligence.ts          # Background research agent system
+|   +-- document-ingestion.ts    # PDF/DOCX/text ingestion & search
+|   +-- project-awareness.ts     # Code project profiling (git, framework)
+|   +-- onboarding.ts            # First-run agent customization flow
+|   +-- self-improve.ts          # Agent reads/proposes own code changes
+|   +-- connectors/              # Universal Software Mastery (14 modules)
+|   |   +-- registry.ts          # Central hub: detect, load, route
+|   |   +-- powershell.ts        # PowerShell scripting & COM automation
+|   |   +-- terminal-sessions.ts # Persistent terminal management
+|   |   +-- vscode.ts            # VS Code workspace & extension control
+|   |   +-- git-devops.ts        # Git, GitHub, CI/CD pipelines
+|   |   +-- office.ts            # Microsoft Office / LibreOffice
+|   |   +-- ui-automation.ts     # Win32 UI automation & accessibility
+|   |   +-- adobe.ts             # Photoshop, Illustrator, Premiere, AE
+|   |   +-- creative-3d.ts       # Blender, Unity, Unreal Engine
+|   |   +-- media-streaming.ts   # OBS Studio, FFmpeg, audio devices
+|   |   +-- comms-hub.ts         # Slack, Discord, Teams, email
+|   |   +-- dev-environments.ts  # Jupyter, venvs, Conda, Docker, DBs
+|   |   +-- system-management.ts # Services, tasks, firewall, packages
+|   |   +-- world-monitor.ts     # Real-time global intelligence (17 domains)
+|   +-- session-health.ts        # Connection metrics & diagnostics
+|   +-- prompt-budget.ts         # Token budget management
+|   +-- settings.ts              # Persistent settings store
+|   +-- mcp-client.ts            # Model Context Protocol client
+|
++-- renderer/                    # React frontend (Vite)
+    +-- App.tsx                  # Main app shell & state orchestration
+    +-- main.tsx                 # React entry point
+    +-- types.d.ts               # Window.eve type declarations
+    +-- hooks/
+    |   +-- useGeminiLive.ts     # Core hook: WebSocket, audio, tools, state
+    |   +-- useWakeWord.ts       # Wake word detection
+    +-- audio/
+    |   +-- AudioPlaybackEngine.ts   # Gapless Web Audio playback (24kHz PCM)
+    +-- session/
+    |   +-- SessionManager.ts    # 13-min session rotation & continuity
+    |   +-- IdleBehavior.ts      # Idle detection & proactive engagement
+    +-- components/
+    |   +-- VoiceOrb.tsx         # Animated voice orb (main UI element)
+    |   +-- StatusBar.tsx        # Connection, webcam, call indicators
+    |   +-- ActionFeed.tsx       # Live tool execution & agent activity
+    |   +-- Dashboard.tsx        # Memory explorer, agent dashboard
+    |   +-- Settings.tsx         # Configuration panel
+    |   +-- ChatHistory.tsx      # Conversation sidebar
+    |   +-- ...                  # QuickActions, TextInput, ParticleBackground
+    +-- styles/                  # Global CSS + animations
+Scripts
+Command	Description
+npm run dev	Start dev server (Vite HMR + Electron hot reload)
+npm run build	Production build (Vite + TypeScript compilation)
+npm run package	Build + package installer + portable ZIP
+npm run typecheck	TypeScript type checking only
+npm start	Build and run production Electron app
+Tech Stack
+Layer	Technology
+Desktop shell	Electron 33
+Frontend	React 19 + Vite 6
+Voice AI	Gemini Live (native audio WebSocket)
+Deep reasoning	Claude Opus (Anthropic SDK)
+Agent voices	ElevenLabs TTS (Turbo v2.5)
+Agent intelligence	Gemini 2.5 Flash (text mode)
+Browser automation	Puppeteer Core
+Calendar	Google APIs (OAuth2)
+Software mastery	14 connector modules (175+ dynamic tools)
+Global intelligence	World Monitor (17 service domains, 44 RPCs)
+Tool protocol	Model Context Protocol (MCP) SDK
+Language	TypeScript 5.7 (strict mode)
+Packaging	electron-builder (NSIS + ZIP)
+System Requirements
+Requirement	Minimum	Recommended
+OS	Windows 10 (64-bit)	Windows 11
+RAM	4 GB	8+ GB
+Node.js	18.x	20.x LTS
+Internet	Required for API calls	Broadband for voice streaming
+Microphone	Any input device	Quality USB/headset mic
+Display	1280x720	1920x1080+
+macOS and Linux builds are supported but primarily tested on Windows.
+
+Privacy & Security
+API keys are stored locally in Electron's userData directory (encrypted at rest by the OS)
+No telemetry — Agent Friday does not phone home or collect usage data
+Screen capture is local-only — images are sent directly to Gemini for context and never stored
+Memory is stored locally on disk in JSON format in your user data directory
+Webcam access is tool-gated — the agent must explicitly request permission
+Self-improvement changes require explicit user approval before any code is modified
+Connector tools run locally on your machine — no data leaves your system except for API calls you initiate
+Troubleshooting
+Issue	Solution
+No voice response	Check Gemini API key in Settings; ensure microphone permissions are granted
+"MCP client failed to connect"	Install @anthropic-ai/desktop-commander globally or ensure npx works
+Agents have no voice	Add an ElevenLabs API key in Settings
+Can't join calls	Install VB-Cable and select "CABLE Output" as meeting mic
+Connector tools missing	The connector auto-detects software at startup; restart the app after installing new software
+World Monitor not available	Install World Monitor (npm install in its directory) — the connector detects it automatically
+Build fails	Run npm run typecheck to identify TypeScript errors
+Packaged app shows blank screen	Ensure npm run build succeeds before npm run package
+Contributing
+Agent Friday is developed by FutureSpeak.AI. We welcome contributions:
+
+Fork the repository
+Create a feature branch (git checkout -b feature/amazing-feature)
+Commit your changes (git commit -m 'Add amazing feature')
+Push to the branch (git push origin feature/amazing-feature)
+Open a Pull Request
+Please ensure npm run typecheck passes with zero errors before submitting.
+
+Acknowledgments
+Google Gemini — Real-time voice AI
+Anthropic Claude — Deep reasoning engine
+ElevenLabs — Multi-agent voice synthesis
+World Monitor — Real-time global intelligence
+Electron — Desktop application framework
+Model Context Protocol — Tool integration standard
+License
+Proprietary — FutureSpeak.AI. All rights reserved.
+
+For licensing inquiries, contact: hello@futurespeak.ai
