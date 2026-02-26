@@ -24,12 +24,14 @@ All nav links use `data-nav` attributes intercepted by a delegated click handler
 - `og:image:alt` and `twitter:image:alt` tags
 
 The **Agent Friday page** (`/software`) is the product showcase, structured as a narrative-first layout:
-1. **Hero** — Big promise in plain language ("An AI that knows you") — emphasizes coding, app-building, and parallel multi-vendor agent orchestration
-2. **The Experience** — Her-inspired onboarding walkthrough (8 steps describing the first-launch experience)
-3. **Three Pillars** — Asimov's Laws as architecture, hardened OpenClaw security, evolving UI
-4. **Capabilities** — 6 cards with human-first headlines and technical details beneath. Key capabilities: voice, vision, parallel multi-vendor agents, memory, on-the-fly coding/app-building, meeting participation
-5. **Under the Hood** — Model Orchestra (6 providers: Google/Anthropic/OpenAI/Perplexity/ElevenLabs/Firecrawl), World Monitor, Privacy/Security, Tech Stack
-6. **CTA** — "Meet Your Friday" linking to GitHub
+1. **Hero** — Big promise in plain language ("An AI that knows you") — emphasizes 200+ model orchestration, coding, app-building, and parallel multi-vendor agent execution. Download CTA links to GitHub Releases; Source Code links to repo.
+2. **The Experience** — Her-inspired onboarding walkthrough (8 steps including 30-voice audition and 7 API key services: Google, Anthropic, OpenRouter, OpenAI, Perplexity, ElevenLabs, Firecrawl)
+3. **Three Pillars** — Asimov's Laws with HMAC-SHA256 integrity verification and Safe Mode, Memory Watchdog and 5-tier trust engine with audit logging, evolving UI
+4. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, and Personality Integrity System (HMAC-SHA256 signing, Memory Watchdog, Safe Mode lockdown)
+5. **Capabilities** — 6 cards: voice, vision + SOC bridge, parallel agents (up to 5 concurrent + Agent Office), memory, coding (18+ connector modules), meetings
+6. **Additional Capabilities** — 14 cards including PageIndex, GitLoader, SOC, Meeting Prep, Predictive Intelligence, Agent Office, Project Awareness
+7. **Under the Hood** — Model Orchestra (8 providers: Google/Anthropic/OpenAI/OpenRouter/Perplexity/ElevenLabs/Firecrawl + PageIndex), World Monitor, Privacy/Security (13 bullets including HMAC, Safe Mode, Memory Watchdog, gateway trust), Tech Stack (14 entries including OpenRouter, PageIndex, SOC, GitLoader)
+8. **CTA** — "Meet Your Friday" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
 

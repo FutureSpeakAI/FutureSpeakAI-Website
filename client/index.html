@@ -87,7 +87,7 @@
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Agent Friday",
-        "description": "The world's first Asimov Agent — a desktop-native AI assistant that orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. Features real-time voice conversation, screen vision, persistent memory, on-the-fly code generation, and 175+ tool integrations. Governed by Asimov's cLaws, an agentic safety framework grounded in Asimov's Three Laws of Robotics and the emotional intelligence of Spike Jonze's Her.",
+        "description": "The world's first Asimov Agent — a desktop-native AI assistant that orchestrates parallel agents from Google, Anthropic, OpenAI, OpenRouter (200+ models), Perplexity, ElevenLabs, and Firecrawl. Features real-time voice conversation, screen vision, persistent memory, on-the-fly code generation, 18+ connector modules with 175+ tool integrations, and HMAC-signed personality integrity. Governed by Asimov's cLaws, an agentic safety framework grounded in Asimov's Three Laws of Robotics and the emotional intelligence of Spike Jonze's Her.",
         "url": "https://futurespeak.ai/software",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
@@ -101,19 +101,24 @@
             "name": "FutureSpeak.AI",
             "url": "https://futurespeak.ai"
         },
-        "downloadUrl": "https://github.com/FutureSpeakAI/Agent-Friday",
+        "downloadUrl": "https://github.com/FutureSpeakAI/Agent-Friday/releases",
         "softwareVersion": "1.0",
         "featureList": [
             "Real-time voice conversation via Gemini Live",
             "Screen vision and context analysis",
-            "Parallel multi-vendor AI agent orchestration",
+            "Parallel multi-vendor AI agent orchestration with Agent Office visualization",
+            "OpenRouter access to 200+ models (Llama, Mistral, Gemma, Command R, DeepSeek)",
             "On-the-fly custom application generation",
-            "175+ software tool integrations",
-            "Three-tier persistent memory system",
-            "Asimov's cLaws agentic safety framework",
-            "Custom agent personality and voice design",
+            "18+ connector modules with 175+ tool integrations",
+            "Three-tier persistent memory system with semantic search",
+            "Asimov's cLaws agentic safety framework with HMAC-SHA256 integrity verification",
+            "Custom agent personality and voice design with 30-voice audition",
+            "PageIndex vectorless document intelligence (~99% accuracy)",
+            "Self-Operating Computer bridge for desktop automation",
+            "GitLoader on-the-fly GitHub repo analysis",
             "World monitoring across 17 intelligence domains",
-            "Live meeting participation"
+            "Predictive intelligence and proactive briefings",
+            "Live meeting participation with pre-meeting prep"
         ],
         "screenshot": "https://futurespeak.ai/og-friday.png",
         "license": "https://github.com/FutureSpeakAI/Agent-Friday/blob/main/LICENSE"
@@ -500,17 +505,21 @@
                                 An AI that <em>knows</em> you.
                             </p>
                             <p class="text-lg text-gray-300 font-light leading-relaxed mb-4 max-w-2xl">
-                                Not a chatbot. Not a search engine. Friday is the world's first <strong class="text-white">Asimov Agent</strong> &mdash; a new kind of AI with a voice, a memory, and principles it won't break. It lives on your computer, talks to you in real time, sees your screen, and builds things for you &mdash; all while becoming as unique as the person it serves.
+                                Not a chatbot. Not a search engine. Friday is the world's first <strong class="text-white">Asimov Agent</strong> &mdash; a new kind of AI with a voice, a memory, and principles it won't break. It lives on your computer, talks to you in real time, sees your screen, orchestrates 200+ AI models, and builds things for you &mdash; all while becoming as unique as the person it serves.
                             </p>
                             <p class="text-base text-gray-400 font-light leading-relaxed mb-8 max-w-2xl border-l-2 border-cyan-glow/20 pl-4">
                                 An AI with principles. One that can't go rogue. One that becomes yours.
                             </p>
 
                             <div class="flex flex-wrap gap-4 mb-10">
-                                <a href="https://github.com/FutureSpeakAI/Agent-Friday" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-6 py-3 bg-white/5 border border-cyan-glow/50 text-cyan-glow font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-cyan-glow hover:text-navy-900 transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.1)] hover:shadow-[0_0_25px_rgba(0,240,255,0.4)] group" data-testid="link-github-repo">
-                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                                    View on GitHub
+                                <a href="https://github.com/FutureSpeakAI/Agent-Friday/releases" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-6 py-3 bg-cyan-glow/10 border border-cyan-glow/50 text-cyan-glow font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-cyan-glow hover:text-navy-900 transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.1)] hover:shadow-[0_0_25px_rgba(0,240,255,0.4)] group" data-testid="link-download">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Download
                                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </a>
+                                <a href="https://github.com/FutureSpeakAI/Agent-Friday" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/20 text-gray-300 font-bold text-sm tracking-widest uppercase rounded-lg hover:bg-white/10 hover:text-white transition-all duration-300 group" data-testid="link-github-repo">
+                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                    Source Code
                                 </a>
                                 <div class="inline-flex items-center gap-2 px-4 py-3 bg-navy-900/60 border border-white/10 rounded-lg font-mono text-xs text-gray-400" data-testid="text-free-notice">
                                     <svg class="w-4 h-4 text-cyan-glow/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
@@ -540,7 +549,7 @@
                             <div class="flex-shrink-0 w-10 h-10 rounded-full bg-cyan-glow/10 border border-cyan-glow/30 flex items-center justify-center text-cyan-glow font-mono text-sm font-bold">1</div>
                             <div>
                                 <h3 class="text-lg font-bold mb-2 text-white">You enter your API keys.</h3>
-                                <p class="text-gray-400 font-light leading-relaxed">Six services, each chosen for what it does best: Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. No accounts to create with us, no data to upload, no corporate onboarding. Just your keys, and you're in.</p>
+                                <p class="text-gray-400 font-light leading-relaxed">Seven services, each chosen for what it does best: Google, Anthropic, OpenRouter, OpenAI, Perplexity, ElevenLabs, and Firecrawl. No accounts to create with us, no data to upload, no corporate onboarding. Just your keys, and you're in.</p>
                             </div>
                         </div>
 
@@ -564,7 +573,7 @@
                             <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-accent/10 border border-purple-accent/30 flex items-center justify-center text-purple-accent font-mono text-sm font-bold">4</div>
                             <div>
                                 <h3 class="text-lg font-bold mb-2 text-white">You design your agent.</h3>
-                                <p class="text-gray-400 font-light leading-relaxed">Name them. Choose their voice. Give them a personality, a backstory, a gender &mdash; or don't. Make them formal or irreverent, cautious or bold. This is your AI. It should feel like yours.</p>
+                                <p class="text-gray-400 font-light leading-relaxed">Name them. Choose their voice &mdash; audition from 30 options until you find the one that feels right. Give them a personality, a backstory, a gender &mdash; or don't. Make them formal or irreverent, cautious or bold. This is your AI. It should feel like yours.</p>
                             </div>
                         </div>
 
@@ -617,7 +626,7 @@
                             </div>
                             <h3 class="text-xl font-bold mb-3">An AI With Principles</h3>
                             <p class="text-gray-400 font-light leading-relaxed mb-4">Friday is built on <strong class="text-gray-300">Asimov's cLaws</strong> &mdash; our agentic safety framework, forged through Socratic dialogue between human and AI, grounded in the Three Laws of Robotics. At every layer, your agent evaluates: Is this action safe? Does my human need to approve this? Should I refuse?</p>
-                            <p class="text-gray-500 font-light leading-relaxed text-sm">It won't take dangerous actions. It won't act without permission when it matters. And it knows the difference. These aren't guidelines &mdash; they're structural constraints baked into every decision the agent makes.</p>
+                            <p class="text-gray-500 font-light leading-relaxed text-sm">The Three Laws are HMAC-SHA256 signed at build time and cryptographically verified on every startup. If tampered with, Friday enters Safe Mode and refuses to operate. These aren't guidelines &mdash; they're tamper-evident structural constraints.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-purple-accent/10 p-8 hover:border-purple-accent/30 transition-colors" data-testid="card-pillar-security">
@@ -626,7 +635,7 @@
                             </div>
                             <h3 class="text-xl font-bold mb-3">Security You Don't Have to Think About</h3>
                             <p class="text-gray-400 font-light leading-relaxed mb-4">Asimov's cLaws is built on a hardened reimagining of the <a href="https://openclaw.ai/" target="_blank" rel="noopener noreferrer" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors">OpenClaw</a> agent framework &mdash; rebuilt from the ground up with security and ethics as the foundation, not an afterthought. Every action is permission-gated. Dangerous operations are blocked before they start. Your data never leaves your machine.</p>
-                            <p class="text-gray-500 font-light leading-relaxed text-sm">Built by someone who thinks about what could go wrong &mdash; not just what could go right. The agent knows which actions require your explicit approval, and it asks before it acts.</p>
+                            <p class="text-gray-500 font-light leading-relaxed text-sm">A Memory Watchdog runs continuously, watching for attempts to inject or corrupt personality constraints. The 5-tier trust engine gates every external interaction with cryptographic pairing and audit logging. Built by someone who thinks about what could go wrong.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-pink-500/10 p-8 hover:border-pink-500/30 transition-colors" data-testid="card-pillar-evolving">
@@ -746,12 +755,27 @@
                             </div>
                         </div>
 
-                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5">
-                            <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
-                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                                Interruptibility Guarantee
-                            </h3>
-                            <p class="text-sm text-gray-400 font-light leading-relaxed">You are always in control. Speaking interrupts Friday immediately &mdash; mid-sentence, mid-action, mid-thought. "Stop," "halt," or "cancel" ceases all operations instantly. No "just finishing up." The halt is absolute and unconditional. After interruption, Friday reports where it was and asks whether to continue.</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                                <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                    Interruptibility Guarantee
+                                </h3>
+                                <p class="text-sm text-gray-400 font-light leading-relaxed">You are always in control. Speaking interrupts Friday immediately &mdash; mid-sentence, mid-action, mid-thought. "Stop," "halt," or "cancel" ceases all operations instantly. No "just finishing up." The halt is absolute and unconditional. After interruption, Friday reports where it was and asks whether to continue.</p>
+                            </div>
+
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-cyan-glow/10">
+                                <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-cyan-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    Personality Integrity System
+                                </h3>
+                                <p class="text-sm text-gray-400 font-light leading-relaxed mb-3">The Three Laws are HMAC-SHA256 signed at build time and cryptographically verified on every startup. If the laws or personality constraints are tampered with, Friday enters <strong class="text-gray-300">Safe Mode</strong> &mdash; refusing to operate until integrity is restored.</p>
+                                <div class="space-y-2 text-xs text-gray-500 font-light">
+                                    <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">HMAC-SHA256</strong> &mdash; Cryptographic signing and verification of all law text</span></div>
+                                    <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">Memory Watchdog</strong> &mdash; Continuous monitoring for personality constraint injection or corruption</span></div>
+                                    <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">Safe Mode</strong> &mdash; Automatic lockdown if integrity verification fails</span></div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="border-l-2 border-purple-accent/30 pl-4 space-y-3">
@@ -789,8 +813,8 @@
                                 <svg class="w-5 h-5 text-purple-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <h3 class="text-lg font-bold mb-2">It Sees What You See</h3>
-                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday watches your screen and understands what you're working on. Ask it about what's in front of you and it already knows.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Continuous screen capture with real-time context analysis. Webcam access is permission-gated &mdash; it only looks when you say so.</p>
+                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday watches your screen and understands what you're working on. It can also take control &mdash; clicking, typing, navigating &mdash; with your permission, via the Self-Operating Computer bridge.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Continuous screen capture with real-time context analysis. Full desktop and browser automation via SOC bridge (mouse, keyboard, screen reading). Webcam access is permission-gated.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-agents">
@@ -798,8 +822,8 @@
                                 <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </div>
                             <h3 class="text-lg font-bold mb-2">Parallel Agents, Multiple Minds</h3>
-                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday runs parallel agents from multiple AI vendors simultaneously. A researcher, a creative, and a technician &mdash; each with their own voice &mdash; working on different tasks at the same time in the background. It doesn't just look impressive; it makes you exceptionally faster.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Five specialized agents &mdash; Research, Summarise, Code Review, Draft Email, and Orchestrate &mdash; each with distinct ElevenLabs voices (Atlas, Nova, Cipher). Multi-vendor parallel execution via Google, Anthropic, OpenAI. Up to 3 concurrent agents with live status updates.</p>
+                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday runs parallel agents from multiple AI vendors simultaneously. A researcher, a creative, and a technician &mdash; each with their own voice &mdash; working on different tasks at the same time in the background. Watch them work in real time in the pixel-art Agent Office.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Five specialized agents &mdash; Research, Summarise, Code Review, Draft Email, and Orchestrate &mdash; each with distinct ElevenLabs voices (Atlas, Nova, Cipher). Multi-vendor parallel execution via Google, Anthropic, OpenAI, and 200+ models via OpenRouter. Up to 5 concurrent agents with real-time chain-of-thought streaming.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-memory">
@@ -817,7 +841,7 @@
                             </div>
                             <h3 class="text-lg font-bold mb-2">It Codes Things for You</h3>
                             <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday doesn't just control your software &mdash; it builds new software on the fly. Need a custom dashboard? A data visualization? A small app to solve a specific problem? Friday writes the code, creates the interface, and delivers it to you. Sophisticated applications built in the background while you keep working.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Full-stack code generation with live preview. 16 connector modules auto-detect installed apps and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, Google Calendar, Gmail, and more.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Full-stack code generation with live preview. 18+ connector modules auto-detect installed apps and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, Google Calendar, Gmail, and more.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-calls">
@@ -853,7 +877,7 @@
                         </div>
                         <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-telegram">
                             <h4 class="text-sm font-bold mb-1 text-white">Telegram Gateway</h4>
-                            <p class="text-xs text-gray-500 font-light">External messaging bridge via Telegram Bot API, gated by the trust architecture.</p>
+                            <p class="text-xs text-gray-500 font-light">External messaging bridge via Telegram Bot API with cryptographic pairing, session isolation, per-tier trust enforcement, and full audit logging.</p>
                         </div>
                         <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-scheduled">
                             <h4 class="text-sm font-bold mb-1 text-white">Scheduled Tasks</h4>
@@ -864,12 +888,36 @@
                             <p class="text-xs text-gray-500 font-light">Monitors clipboard for code, URLs, and actionable content to assist proactively.</p>
                         </div>
                         <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-documents">
-                            <h4 class="text-sm font-bold mb-1 text-white">Document Ingestion</h4>
-                            <p class="text-xs text-gray-500 font-light">Ingest PDFs, text files, and web pages into searchable memory.</p>
+                            <h4 class="text-sm font-bold mb-1 text-white">Document Intelligence (PageIndex)</h4>
+                            <p class="text-xs text-gray-500 font-light">Vectorless reasoning-based RAG &mdash; index any PDF into a hierarchical tree and answer questions with ~99% accuracy. By Vectify AI.</p>
                         </div>
                         <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-selfimprove">
                             <h4 class="text-sm font-bold mb-1 text-white">Self-Improvement</h4>
                             <p class="text-xs text-gray-500 font-light">Can read and propose changes to its own source code &mdash; always user-approved first.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-gitloader">
+                            <h4 class="text-sm font-bold mb-1 text-white">GitLoader</h4>
+                            <p class="text-xs text-gray-500 font-light">Clone any public GitHub repo by URL, search across all files with regex, analyze code with language detection for 50+ languages.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-soc">
+                            <h4 class="text-sm font-bold mb-1 text-white">Self-Operating Computer</h4>
+                            <p class="text-xs text-gray-500 font-light">Full desktop and browser automation via Python bridge &mdash; give high-level instructions, SOC handles mouse, keyboard, and screen reading.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-meeting-prep">
+                            <h4 class="text-sm font-bold mb-1 text-white">Meeting Prep</h4>
+                            <p class="text-xs text-gray-500 font-light">Automatic briefing generation before calendar events &mdash; attendee context, agenda, and relevant memory pulled together.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-predictive">
+                            <h4 class="text-sm font-bold mb-1 text-white">Predictive Intelligence</h4>
+                            <p class="text-xs text-gray-500 font-light">Proactive briefings, emotional check-ins, and context-aware notifications &mdash; Friday anticipates what you need before you ask.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-agent-office">
+                            <h4 class="text-sm font-bold mb-1 text-white">Agent Office</h4>
+                            <p class="text-xs text-gray-500 font-light">A pixel-art isometric office where your AI agents live &mdash; watch them animate in real time as they work, think, and collaborate.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-project">
+                            <h4 class="text-sm font-bold mb-1 text-white">Project Awareness</h4>
+                            <p class="text-xs text-gray-500 font-light">Watches project directories for git changes and file updates, keeping Friday in sync with your work.</p>
                         </div>
                     </div>
                 </div>
@@ -922,6 +970,15 @@
                                     <div>
                                         <h4 class="text-sm font-bold mb-1">OpenAI &mdash; Math, Logic & Memory</h4>
                                         <p class="text-xs text-gray-400 font-light">o3 for mathematical reasoning and code debugging. Whisper for audio transcription. Embeddings for semantic memory search. GPT-image-1 as fallback image generation.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4 p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                                    <div class="w-8 h-8 rounded-md bg-cyan-glow/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <svg class="w-4 h-4 text-cyan-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold mb-1">OpenRouter &mdash; 200+ Models</h4>
+                                        <p class="text-xs text-gray-400 font-light">Access to Llama, Mistral, Gemma, Command R, DeepSeek, and hundreds more via a single API. Model selection per task, cost optimization, and automatic fallback.</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start gap-4 p-4 rounded-lg bg-white/[0.02] border border-white/5">
@@ -995,6 +1052,10 @@
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Self-improvement changes require user approval before any code is modified</li>
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Connector tools run locally &mdash; no data leaves your system except for API calls you initiate</li>
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Obsidian vault sync is opt-in &mdash; bidirectional only if you configure a vault path</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> HMAC-SHA256 integrity verification &mdash; Three Laws cryptographically signed and verified on startup</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Safe Mode lockdown &mdash; automatic shutdown if integrity verification fails</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Memory Watchdog &mdash; continuous monitoring for personality constraint injection or corruption</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Gateway trust enforcement &mdash; 5-tier trust engine with cryptographic pairing and audit logging</li>
                             </ul>
                         </div>
 
@@ -1008,10 +1069,14 @@
                                 <div><span class="text-gray-500 font-mono text-xs">Frontend</span><p class="text-gray-300">React 19 + Vite 6</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Voice + Vision</span><p class="text-gray-300">Gemini Live</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Reasoning</span><p class="text-gray-300">Claude Opus + o3</p></div>
+                                <div><span class="text-gray-500 font-mono text-xs">Multi-Model</span><p class="text-gray-300">OpenRouter (200+)</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Search</span><p class="text-gray-300">Perplexity Sonar Suite</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Image Gen</span><p class="text-gray-300">Nano Banana Pro</p></div>
-                                <div><span class="text-gray-500 font-mono text-xs">Safety Layer</span><p class="text-gray-300">Asimov's cLaws</p></div>
+                                <div><span class="text-gray-500 font-mono text-xs">Safety Layer</span><p class="text-gray-300">Asimov's cLaws + HMAC</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Agent Voices</span><p class="text-gray-300">ElevenLabs Turbo v2.5</p></div>
+                                <div><span class="text-gray-500 font-mono text-xs">Doc Intelligence</span><p class="text-gray-300">PageIndex (Vectify AI)</p></div>
+                                <div><span class="text-gray-500 font-mono text-xs">Desktop Automation</span><p class="text-gray-300">Self-Operating Computer</p></div>
+                                <div><span class="text-gray-500 font-mono text-xs">Code Intelligence</span><p class="text-gray-300">GitLoader</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Web Scraping</span><p class="text-gray-300">Firecrawl</p></div>
                                 <div><span class="text-gray-500 font-mono text-xs">Language</span><p class="text-gray-300">TypeScript 5.7 (strict)</p></div>
                             </div>
