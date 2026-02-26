@@ -1377,9 +1377,10 @@
             const connMat = new THREE.LineBasicMaterial({
                 vertexColors: true,
                 transparent: true,
-                opacity: 0.15,
+                opacity: 0.35,
                 blending: THREE.AdditiveBlending,
-                depthWrite: false
+                depthWrite: false,
+                linewidth: 1
             });
             const connLines = new THREE.LineSegments(connGeo, connMat);
             coreGroup.add(connLines);
@@ -1531,6 +1532,26 @@
                     const edgePhase = Math.sin(colorPhase + d.edgeLerp * Math.PI * 2 + d.noiseOffset) * 0.5 + 0.5;
                     tmpColor.copy(CYAN).lerp(PURPLE, edgePhase);
 
+                    let edgeRipple = 0;
+                    if (expandTime >= 0) {
+                        const pieceDist = Math.sqrt(
+                            (d.basePos.x - expandOrigin.x) ** 2 +
+                            (d.basePos.y - expandOrigin.y) ** 2 +
+                            (d.basePos.z - expandOrigin.z) ** 2
+                        );
+                        const waveFront = expandTime * 3.0;
+                        const rippleDist = Math.abs(pieceDist - waveFront);
+                        const rippleW = 1.4;
+                        if (rippleDist < rippleW) {
+                            const rippleAmt = 1 - rippleDist / rippleW;
+                            const fade = Math.max(0, 1 - expandTime / EXPAND_DURATION);
+                            edgeRipple = rippleAmt * rippleAmt * fade;
+                        }
+                    }
+
+                    if (edgeRipple > 0.01) {
+                        tmpColor.lerp(new THREE.Color(0xffffff), edgeRipple * 0.6);
+                    }
                     if (expandFactor > 0.01) {
                         const pinkBlend = expandFactor * 0.3;
                         tmpColor.lerp(PINK, pinkBlend * edgePhase);
@@ -1540,7 +1561,8 @@
 
                     const opacityBase = 0.18 + Math.sin(time * 0.5 + d.noiseOffset * 2) * 0.08;
                     const opacityExpand = expandFactor * 0.25;
-                    d.edgeMat.opacity = opacityBase + opacityExpand;
+                    const opacityRipple = edgeRipple * 0.5;
+                    d.edgeMat.opacity = opacityBase + opacityExpand + opacityRipple;
                 });
 
                 const rippleSpeed = 3.0;
@@ -1563,7 +1585,7 @@
                     const midY = (posA.y + posB.y) * 0.5;
                     const midZ = (posA.z + posB.z) * 0.5;
 
-                    const idleGlow = 0.08 + Math.sin(time * 0.6 + ci * 0.3) * 0.04;
+                    const idleGlow = 0.25 + Math.sin(time * 0.6 + ci * 0.3) * 0.1;
                     let brightness = idleGlow;
 
                     if (expandTime >= 0) {
@@ -1577,7 +1599,7 @@
                         if (rippleDist < rippleWidth) {
                             const ripple = 1 - rippleDist / rippleWidth;
                             const fade = Math.max(0, 1 - expandTime / EXPAND_DURATION);
-                            brightness += ripple * ripple * fade * 0.9;
+                            brightness += ripple * ripple * fade * 1.5;
                         }
                     }
 
@@ -1585,9 +1607,10 @@
                     cC.copy(CYAN).lerp(PURPLE, shimmer);
                     cC.multiplyScalar(brightness);
                     cC2.copy(cC);
-                    if (brightness > 0.15) {
-                        cC.lerp(new THREE.Color(0xffffff), (brightness - 0.15) * 0.3);
-                        cC2.lerp(new THREE.Color(0xffffff), (brightness - 0.15) * 0.3);
+                    if (brightness > 0.3) {
+                        const whiteBlend = Math.min((brightness - 0.3) * 0.5, 0.7);
+                        cC.lerp(new THREE.Color(0xffffff), whiteBlend);
+                        cC2.lerp(new THREE.Color(0xffffff), whiteBlend);
                     }
                     connColors[idx] = cC.r;
                     connColors[idx+1] = cC.g;
@@ -1598,7 +1621,7 @@
                 }
                 connGeo.attributes.position.needsUpdate = true;
                 connGeo.attributes.color.needsUpdate = true;
-                connMat.opacity = 0.15 + expandFactor * 0.4;
+                connMat.opacity = 0.35 + expandFactor * 0.5;
 
                 const lightPhase = Math.sin(time * 0.12) * 0.5 + 0.5;
                 tmpColor.copy(CYAN).lerp(PURPLE, lightPhase);
