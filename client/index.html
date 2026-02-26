@@ -1522,15 +1522,15 @@
                         const dist = awayFromClick.length() || 0.01;
                         awayFromClick.normalize();
 
-                        const proximity = 1.0 / (1.0 + dist * 0.6);
-                        const pushStrength = ef * proximity * 1.4;
+                        const proximity = 1.0 / (1.0 + dist * 0.8);
+                        const pushStrength = ef * proximity * 0.7;
 
                         const tangent = new THREE.Vector3(
                             -awayFromClick.y + awayFromClick.z * 0.3,
                             awayFromClick.x - awayFromClick.z * 0.5,
                             awayFromClick.y * 0.4
                         ).normalize();
-                        const swirl = Math.sin(dist * 2.5 + time * 1.5) * pushStrength * 0.35;
+                        const swirl = Math.sin(dist * 2.5 + time * 1.5) * pushStrength * 0.3;
 
                         tx += awayFromClick.x * pushStrength + tangent.x * swirl;
                         ty += awayFromClick.y * pushStrength + tangent.y * swirl;
@@ -1538,10 +1538,14 @@
                         totalExpandForce = Math.max(totalExpandForce, ef);
                     });
 
-                    const localBound = 2.5;
-                    tx = Math.max(-localBound, Math.min(localBound, tx));
-                    ty = Math.max(-localBound, Math.min(localBound, ty));
-                    tz = Math.max(-localBound, Math.min(localBound, tz));
+                    const maxLocalR = 2.0;
+                    const r = Math.sqrt(tx * tx + ty * ty + tz * tz);
+                    if (r > maxLocalR) {
+                        const scale = maxLocalR / r;
+                        tx *= scale;
+                        ty *= scale;
+                        tz *= scale;
+                    }
 
                     d.targetPos.set(tx, ty, tz);
                     d.currentPos.lerp(d.targetPos, 0.06);
