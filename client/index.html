@@ -1853,14 +1853,14 @@
             const PURPLE = new THREE.Color(0x8A2BE2);
             const PINK = new THREE.Color(0xFF00AA);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
             scene.add(ambientLight);
 
-            const pointLight1 = new THREE.PointLight(CYAN, 50, 60);
+            const pointLight1 = new THREE.PointLight(CYAN, 70, 60);
             pointLight1.position.set(8, 6, 12);
             scene.add(pointLight1);
 
-            const pointLight2 = new THREE.PointLight(PURPLE, 40, 60);
+            const pointLight2 = new THREE.PointLight(PURPLE, 55, 60);
             pointLight2.position.set(-8, -4, 10);
             scene.add(pointLight2);
 
@@ -1868,9 +1868,9 @@
 
             const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
             const coreMat = new THREE.MeshStandardMaterial({
-                color: 0x0e1225,
-                roughness: 0.92,
-                metalness: 0.12,
+                color: 0x1a2340,
+                roughness: 0.75,
+                metalness: 0.2,
                 flatShading: true
             });
 
@@ -1893,7 +1893,7 @@
                         const edgesMat = new THREE.LineBasicMaterial({
                             color: edgeColor,
                             transparent: true,
-                            opacity: 0.25
+                            opacity: 0.4
                         });
                         const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
                         piece.add(wireframe);
