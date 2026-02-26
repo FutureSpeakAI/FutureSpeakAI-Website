@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster</title>
     <meta name="description" content="FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.">
-    <meta name="keywords" content="enterprise AI consulting, AI strategy, agentic AI workflows, RAG architecture, AI transformation, Stephen C. Webster, FutureSpeak AI, Austin TX, Google Gemini training, pharmaceutical AI compliance, Fortune 500 AI consulting">
+    <meta name="keywords" content="enterprise AI consulting, AI strategy, agentic AI workflows, RAG architecture, AI transformation, Stephen C. Webster, FutureSpeak AI, Austin TX, Google Gemini training, pharmaceutical AI compliance, Fortune 500 AI consulting, Agent Friday, AI assistant, voice AI, personal AI agent">
     <meta name="author" content="Stephen C. Webster">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="icon" type="image/png" href="/favicon.png" sizes="any">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="canonical" href="https://futurespeak.ai">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
     <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
@@ -20,14 +28,18 @@
     <meta property="og:image" content="https://futurespeak.ai/og-image.png">
     <meta property="og:image:width" content="1280">
     <meta property="og:image:height" content="720">
+    <meta property="og:image:alt" content="FutureSpeak.AI - Enterprise AI Strategy and Consulting">
     <meta property="og:site_name" content="FutureSpeak.AI">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@futurespeakai">
+    <meta name="twitter:creator" content="@futurespeakai">
     <meta name="twitter:title" content="FutureSpeak.AI | Enterprise AI Strategy & Consulting">
     <meta name="twitter:description" content="Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster.">
     <meta name="twitter:image" content="https://futurespeak.ai/og-image.png">
+    <meta name="twitter:image:alt" content="FutureSpeak.AI - Enterprise AI Strategy and Consulting">
 
     <!-- Structured Data: Organization -->
     <script type="application/ld+json">
@@ -61,8 +73,50 @@
         "areaServed": "Worldwide",
         "serviceType": ["AI Strategy Consulting", "Agentic AI Workflow Design", "RAG Architecture Development", "Enterprise AI Transformation", "Pharmaceutical AI Compliance"],
         "sameAs": [
-            "https://www.linkedin.com/in/stephencwebster/"
+            "https://www.linkedin.com/in/stephencwebster/",
+            "https://x.com/futurespeakai",
+            "https://www.youtube.com/@FutureSpeak-AI",
+            "https://github.com/FutureSpeakAI"
         ]
+    }
+    </script>
+
+    <!-- Structured Data: SoftwareApplication (Agent Friday) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Agent Friday",
+        "description": "A desktop-native AI assistant that orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. Features real-time voice conversation, screen vision, persistent memory, on-the-fly code generation, and 175+ tool integrations. Built on Asimov's Three Laws of Robotics as architectural safety constraints.",
+        "url": "https://futurespeak.ai/friday",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "FutureSpeak.AI",
+            "url": "https://futurespeak.ai"
+        },
+        "downloadUrl": "https://github.com/FutureSpeakAI/Agent-Friday",
+        "softwareVersion": "1.0",
+        "featureList": [
+            "Real-time voice conversation via Gemini Live",
+            "Screen vision and context analysis",
+            "Parallel multi-vendor AI agent orchestration",
+            "On-the-fly custom application generation",
+            "175+ software tool integrations",
+            "Three-tier persistent memory system",
+            "Asimov's Laws safety architecture",
+            "Custom agent personality and voice design",
+            "World monitoring across 17 intelligence domains",
+            "Live meeting participation"
+        ],
+        "screenshot": "https://futurespeak.ai/og-friday.png",
+        "license": "https://github.com/FutureSpeakAI/Agent-Friday/blob/main/LICENSE"
     }
     </script>
 
@@ -968,25 +1022,33 @@
                 history.pushState({ page: pageId }, '', path);
             }
 
+            const canonical = document.querySelector('link[rel="canonical"]');
+
             if (pageId === 'friday') {
-                updateMeta('og:title', 'Agent Friday | Your AI Chief of Staff');
+                document.title = 'Agent Friday | AI That Codes, Speaks & Thinks For You | FutureSpeak.AI';
+                updateMeta('description', 'Agent Friday is a free, desktop-native AI assistant that orchestrates parallel agents from 6 providers, codes custom apps on the fly, speaks in real-time voice, and remembers everything. Built on Asimov\'s Laws. 175+ tools. Now live on GitHub.');
+                updateMeta('og:title', 'Agent Friday | AI That Codes, Speaks & Thinks For You');
                 updateMeta('og:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 175+ tools, persistent memory, live voice. 100% free on GitHub.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-friday.png');
                 updateMeta('og:url', 'https://futurespeak.ai/friday');
-                updateMeta('twitter:title', 'Agent Friday | Your AI Chief of Staff');
+                updateMeta('twitter:title', 'Agent Friday | AI That Codes, Speaks & Thinks For You');
                 updateMeta('twitter:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 100% free on GitHub.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-friday.png');
-                document.title = 'Agent Friday | FutureSpeak.AI';
+                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/friday');
             } else if (pageId === 'about') {
-                updateMeta('og:title', 'Stephen C. Webster | FutureSpeak.AI');
+                document.title = 'Stephen C. Webster | Enterprise AI Architect | FutureSpeak.AI';
+                updateMeta('description', 'Stephen C. Webster — Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Enterprise AI strategist and former investigative journalist.');
+                updateMeta('og:title', 'Stephen C. Webster | Enterprise AI Architect');
                 updateMeta('og:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
                 updateMeta('og:url', 'https://futurespeak.ai/about');
-                updateMeta('twitter:title', 'Stephen C. Webster | FutureSpeak.AI');
+                updateMeta('twitter:title', 'Stephen C. Webster | Enterprise AI Architect');
                 updateMeta('twitter:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
-                document.title = 'Stephen C. Webster | FutureSpeak.AI';
+                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/about');
             } else {
+                document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
+                updateMeta('description', 'FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.');
                 updateMeta('og:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
                 updateMeta('og:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
@@ -994,7 +1056,7 @@
                 updateMeta('twitter:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
                 updateMeta('twitter:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
-                document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
+                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai');
             }
         }
 
