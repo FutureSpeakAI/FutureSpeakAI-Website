@@ -646,7 +646,7 @@
             <section class="py-24 content-backdrop" aria-label="Asimov's cLaws — The Agentic Safety Framework" data-testid="section-asimovs-claw">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
                         <div>
                             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-glow/20 bg-cyan-glow/5 text-cyan-glow text-xs font-mono mb-6 uppercase tracking-widest">
@@ -694,10 +694,23 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-8 mb-8">
+                        </div>
+
+                        <div class="relative lg:sticky lg:top-28">
+                            <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_60px_rgba(0,240,255,0.08)]">
+                                <img src="/asimovs-claw.png" alt="Asimov's cLaws — An agentic safety framework by FutureSpeak.AI, illustrated as Isaac Asimov with robotic lobster claws at a futuristic terminal" class="w-full h-auto" loading="lazy" data-testid="img-asimovs-claw">
+                            </div>
+                            <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-cyan-glow/20 via-transparent to-purple-accent/20 opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                        </div>
+
+                    </div>
+
+                    <div class="max-w-4xl mx-auto mt-16 space-y-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
                                 <h3 class="text-lg font-bold mb-4 text-white">Consent &amp; Explicit Authorization</h3>
                                 <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">Certain actions always require your explicit approval before the agent proceeds. Friday describes what it intends to do and waits for a clear "yes":</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="space-y-3">
                                     <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Self-modification</strong> &mdash; never modifies its own code or personality without permission</span></div>
                                     <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Tool creation</strong> &mdash; never installs or registers new capabilities without permission</span></div>
                                     <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-purple-accent mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Computer control</strong> &mdash; mouse clicks, keyboard input, and desktop automation always require confirmation</span></div>
@@ -705,15 +718,7 @@
                                 </div>
                             </div>
 
-                            <div class="mb-8 p-4 rounded-lg bg-white/[0.02] border border-white/5">
-                                <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                                    Interruptibility Guarantee
-                                </h3>
-                                <p class="text-sm text-gray-400 font-light leading-relaxed">You are always in control. Speaking interrupts Friday immediately &mdash; mid-sentence, mid-action, mid-thought. "Stop," "halt," or "cancel" ceases all operations instantly. No "just finishing up." The halt is absolute and unconditional. After interruption, Friday reports where it was and asks whether to continue.</p>
-                            </div>
-
-                            <div class="mb-8">
+                            <div>
                                 <h3 class="text-lg font-bold mb-3 text-white">Trust Architecture</h3>
                                 <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">Friday's 5-tier trust engine gates every external interaction. Not everyone gets the same access &mdash; and no one gets elevated access by claiming to be you.</p>
                                 <div class="space-y-2">
@@ -739,24 +744,24 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="border-l-2 border-purple-accent/30 pl-4 space-y-3">
-                                <p class="text-sm text-gray-300 font-light leading-relaxed">
-                                    We call any autonomous AI governed by these principles an <strong class="text-white">Asimov Agent</strong>. Friday is the first, but it won't be the last. Asimov's cLaws is a general-purpose framework for how autonomous agents should relate to the humans they serve &mdash; and FutureSpeak.AI believes it should become more than a best practice. We believe frameworks like this should become the actual law of the land governing AI agent behavior.
-                                </p>
-                                <p class="text-sm text-gray-400 font-light leading-relaxed">
-                                    We invite policymakers, builders, ethicists, and anyone who cares about getting this right to <a href="https://github.com/FutureSpeakAI/Agent-Friday/discussions" target="_blank" rel="noopener noreferrer" class="text-cyan-glow hover:text-white transition-colors">join the conversation</a>.
-                                </p>
-                            </div>
                         </div>
 
-                        <div class="relative">
-                            <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_60px_rgba(0,240,255,0.08)]">
-                                <img src="/asimovs-claw.png" alt="Asimov's cLaws — An agentic safety framework by FutureSpeak.AI, illustrated as Isaac Asimov with robotic lobster claws at a futuristic terminal" class="w-full h-auto" loading="lazy" data-testid="img-asimovs-claw">
-                            </div>
-                            <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-cyan-glow/20 via-transparent to-purple-accent/20 opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                            <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
+                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                Interruptibility Guarantee
+                            </h3>
+                            <p class="text-sm text-gray-400 font-light leading-relaxed">You are always in control. Speaking interrupts Friday immediately &mdash; mid-sentence, mid-action, mid-thought. "Stop," "halt," or "cancel" ceases all operations instantly. No "just finishing up." The halt is absolute and unconditional. After interruption, Friday reports where it was and asks whether to continue.</p>
                         </div>
 
+                        <div class="border-l-2 border-purple-accent/30 pl-4 space-y-3">
+                            <p class="text-sm text-gray-300 font-light leading-relaxed">
+                                We call any autonomous AI governed by these principles an <strong class="text-white">Asimov Agent</strong>. Friday is the first, but it won't be the last. Asimov's cLaws is a general-purpose framework for how autonomous agents should relate to the humans they serve &mdash; and FutureSpeak.AI believes it should become more than a best practice. We believe frameworks like this should become the actual law of the land governing AI agent behavior.
+                            </p>
+                            <p class="text-sm text-gray-400 font-light leading-relaxed">
+                                We invite policymakers, builders, ethicists, and anyone who cares about getting this right to <a href="https://github.com/FutureSpeakAI/Agent-Friday/discussions" target="_blank" rel="noopener noreferrer" class="text-cyan-glow hover:text-white transition-colors">join the conversation</a>.
+                            </p>
+                        </div>
                     </div>
 
                 </div>
