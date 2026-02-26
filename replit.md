@@ -23,14 +23,14 @@ All nav links use `data-nav` attributes intercepted by a delegated click handler
 - Enhanced robots meta with `max-image-preview:large`, `max-snippet:-1`
 - `og:image:alt` and `twitter:image:alt` tags
 
-The **Agent Friday page** (`/software`) is the product showcase, structured as a narrative-first layout:
-1. **Hero** — Big promise in plain language ("An AI that knows you") — emphasizes 200+ model orchestration, coding, app-building, and parallel multi-vendor agent execution. Download CTA links to GitHub Releases; Source Code links to repo.
-2. **The Experience** — Her-inspired onboarding walkthrough (8 steps including 30-voice audition and 7 API key services: Google, Anthropic, OpenRouter, OpenAI, Perplexity, ElevenLabs, Firecrawl)
-3. **Three Pillars** — Asimov's Laws with HMAC-SHA256 integrity verification and Safe Mode, Memory Watchdog and 5-tier trust engine with audit logging, evolving UI
-4. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, and Personality Integrity System (HMAC-SHA256 signing, Memory Watchdog, Safe Mode lockdown)
-5. **Capabilities** — 6 cards: voice, vision + SOC bridge, parallel agents (up to 5 concurrent + Agent Office), memory, coding (18+ connector modules), meetings
-6. **Additional Capabilities** — 14 cards including PageIndex, GitLoader, SOC, Meeting Prep, Predictive Intelligence, Agent Office, Project Awareness
-7. **Under the Hood** — Model Orchestra (8 providers: Google/Anthropic/OpenAI/OpenRouter/Perplexity/ElevenLabs/Firecrawl + PageIndex), World Monitor, Privacy/Security (13 bullets including HMAC, Safe Mode, Memory Watchdog, gateway trust), Tech Stack (14 entries including OpenRouter, PageIndex, SOC, GitLoader)
+The **Agent Friday page** (`/software`) is the product showcase, positioned as "The World's First AGI OS — An Asimov Agent." Narrative-first layout:
+1. **Hero** — AGI OS positioning ("An operating system with a soul") — emphasizes voice-first AI chief of staff, Trust Graph intelligence, 200+ models. Download CTA links to GitHub Releases; Source Code links to repo.
+2. **The Experience** — Her-inspired onboarding walkthrough (8 steps, 12-step guided onboarding, 30-voice audition, 7 API key services)
+3. **Four Pillars** — "An OS With Principles" (Asimov's cLaws), "An OS That Understands Your World" (Trust Graph Engine), Security (OpenClaw reimagining), Evolving Interface
+4. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, Personality Integrity System
+5. **Capabilities** — 8 cards: voice, vision + SOC, parallel agents (5 concurrent + Agent Office), memory, coding (18+ connectors), Trust Intelligence (Trust Graph Engine), Communications Intelligence (trust-aware drafting), meetings (trust-annotated)
+6. **Additional Capabilities** — 15 cards including PageIndex, GitLoader, SOC, Trust-Annotated Meeting Prep, Predictive Intelligence, Agent Office, Superpowers Registry, Project Awareness
+7. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Trust Graph integrity + local-only), Tech Stack (15 entries including Trust Intelligence row)
 8. **CTA** — "Meet Your Friday" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
