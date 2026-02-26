@@ -405,7 +405,8 @@
 
                         <div class="lg:col-span-5">
                             <div class="relative w-full aspect-square max-w-[480px] mx-auto" data-testid="card-friday-cube">
-                                <div id="friday-cube-canvas" class="absolute inset-0 rounded-2xl overflow-hidden"></div>
+                                <div id="friday-cube-canvas" class="absolute inset-0 rounded-2xl overflow-hidden" style="cursor:pointer"></div>
+                                <div class="absolute inset-0 rounded-2xl pointer-events-none" style="box-shadow: inset 0 0 60px 30px rgba(6,11,25,0.95), inset 0 0 120px 60px rgba(6,11,25,0.6);"></div>
                             </div>
                         </div>
 
@@ -1261,8 +1262,8 @@
             const scene = new THREE.Scene();
             scene.background = null;
 
-            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-            camera.position.z = 18;
+            const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+            camera.position.z = 22;
 
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1280,16 +1281,17 @@
 
             const CYAN = new THREE.Color(0x00F0FF);
             const PURPLE = new THREE.Color(0x8A2BE2);
+            const WHITE = new THREE.Color(0xffffff);
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
             scene.add(ambientLight);
 
-            const pointLight1 = new THREE.PointLight(CYAN, 60, 50);
-            pointLight1.position.set(8, 6, 10);
+            const pointLight1 = new THREE.PointLight(CYAN, 60, 60);
+            pointLight1.position.set(8, 6, 12);
             scene.add(pointLight1);
 
-            const pointLight2 = new THREE.PointLight(PURPLE, 45, 50);
-            pointLight2.position.set(-8, -4, 8);
+            const pointLight2 = new THREE.PointLight(PURPLE, 45, 60);
+            pointLight2.position.set(-8, -4, 10);
             scene.add(pointLight2);
 
             const coreGroup = new THREE.Group();
@@ -1330,14 +1332,30 @@
                         const posY = (y * spacing) - gOffset;
                         const posZ = (z * spacing) - gOffset;
 
+                        const dir = new THREE.Vector3(posX, posY, posZ);
+                        const len = dir.length() || 1;
+                        dir.normalize();
+
                         piece.userData = {
                             basePos: new THREE.Vector3(posX, posY, posZ),
-                            randomDir: new THREE.Vector3(posX, posY, posZ).normalize(),
+                            randomDir: dir,
+                            distFromCenter: len,
                             noiseOffset: Math.random() * Math.PI * 2,
                             phaseOffset: Math.random() * Math.PI * 2,
                             edgeMat: edgesMat,
                             baseEdgeColor: edgeColor.clone(),
-                            edgeLerp: edgeLerp
+                            edgeLerp: edgeLerp,
+                            burstOffset: new THREE.Vector3(
+                                (Math.random() - 0.5) * 0.4,
+                                (Math.random() - 0.5) * 0.4,
+                                (Math.random() - 0.5) * 0.4
+                            ),
+                            spinAxis: new THREE.Vector3(
+                                Math.random() - 0.5,
+                                Math.random() - 0.5,
+                                Math.random() - 0.5
+                            ).normalize(),
+                            burstRotSpeed: (Math.random() - 0.5) * 6
                         };
 
                         piece.position.copy(piece.userData.basePos);
@@ -1347,7 +1365,7 @@
                 }
             }
 
-            coreGroup.scale.set(2.8, 2.8, 2.8);
+            coreGroup.scale.set(2.4, 2.4, 2.4);
             scene.add(coreGroup);
 
             const miniParticleGeo = new THREE.BoxGeometry(0.05, 0.05, 0.05);
@@ -1356,28 +1374,32 @@
                 const mat = new THREE.MeshBasicMaterial({
                     color: Math.random() > 0.5 ? CYAN : PURPLE,
                     transparent: true,
-                    opacity: 0.1 + Math.random() * 0.15
+                    opacity: 0.1 + Math.random() * 0.12
                 });
                 const m = new THREE.Mesh(miniParticleGeo, mat);
                 m.position.set(
-                    (Math.random() - 0.5) * 18,
-                    (Math.random() - 0.5) * 18,
-                    (Math.random() - 0.5) * 12
+                    (Math.random() - 0.5) * 16,
+                    (Math.random() - 0.5) * 16,
+                    (Math.random() - 0.5) * 10
                 );
                 m.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-                m.userData.floatSpeed = Math.random() * 0.015 + 0.003;
-                m.userData.driftX = (Math.random() - 0.5) * 0.005;
+                m.userData.baseOpacity = mat.opacity;
+                m.userData.floatSpeed = Math.random() * 0.012 + 0.003;
+                m.userData.driftX = (Math.random() - 0.5) * 0.004;
                 m.userData.rotSpeed = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.01,
-                    (Math.random() - 0.5) * 0.01,
+                    (Math.random() - 0.5) * 0.008,
+                    (Math.random() - 0.5) * 0.008,
                     0
                 );
+                m.userData.phaseOffset = Math.random() * Math.PI * 2;
                 scene.add(m);
                 floaters.push(m);
             }
 
             let rawMouseX = 0, rawMouseY = 0;
             let smoothMouseX = 0, smoothMouseY = 0;
+            let burstTime = -1;
+            const BURST_DURATION = 2.5;
 
             container.addEventListener('mousemove', (e) => {
                 const rect = container.getBoundingClientRect();
@@ -1390,24 +1412,49 @@
                 rawMouseY = 0;
             });
 
+            container.addEventListener('click', () => {
+                burstTime = 0;
+            });
+
             const clock = new THREE.Clock();
             let animId = null;
 
             function animate() {
                 animId = requestAnimationFrame(animate);
                 const time = clock.getElapsedTime();
+                const dt = Math.min(clock.getDelta(), 0.05);
 
-                smoothMouseX += (rawMouseX - smoothMouseX) * 0.015;
-                smoothMouseY += (rawMouseY - smoothMouseY) * 0.015;
+                smoothMouseX += (rawMouseX - smoothMouseX) * 0.04;
+                smoothMouseY += (rawMouseY - smoothMouseY) * 0.04;
+
+                if (burstTime >= 0) burstTime += dt;
+                if (burstTime > BURST_DURATION + 1.5) burstTime = -1;
+
+                const burstActive = burstTime >= 0 && burstTime <= BURST_DURATION;
+                let burstFactor = 0;
+                if (burstActive) {
+                    const t = burstTime / BURST_DURATION;
+                    burstFactor = t < 0.15
+                        ? t / 0.15
+                        : 1.0 - Math.pow((t - 0.15) / 0.85, 0.5);
+                    burstFactor = Math.max(0, burstFactor);
+                }
+
+                const burstFlash = burstTime >= 0 && burstTime < 0.4
+                    ? Math.max(0, 1.0 - burstTime / 0.4)
+                    : 0;
+
+                coreGroup.rotation.y = time * 0.06 + smoothMouseX * 0.5;
+                coreGroup.rotation.x = time * 0.035 + smoothMouseY * 0.35;
+
+                const baseScale = 2.4;
+                const scaleBreath = baseScale + Math.sin(time * 0.5) * 0.04;
+                const burstScale = burstActive ? burstFactor * 0.15 : 0;
+                const s = scaleBreath + burstScale;
+                coreGroup.scale.set(s, s, s);
 
                 const cyclePhase = (time * 0.08) % 1.0;
                 const breatheIntensity = 0.5 + 0.5 * Math.sin(cyclePhase * Math.PI * 2);
-
-                coreGroup.rotation.y = time * 0.06 + smoothMouseX * 0.25;
-                coreGroup.rotation.x = time * 0.035 + smoothMouseY * 0.15;
-
-                const scaleBreath = 2.8 + Math.sin(time * 0.5) * 0.06;
-                coreGroup.scale.set(scaleBreath, scaleBreath, scaleBreath);
 
                 corePieces.forEach((piece) => {
                     const d = piece.userData;
@@ -1415,30 +1462,56 @@
                     const breathe = Math.sin(time * 0.8 + d.noiseOffset) * 0.06 * breatheIntensity;
                     const wave = Math.sin(time * 0.6 + d.basePos.x * 1.5 + d.basePos.y * 0.8) * 0.04;
                     const drift = Math.sin(time * 0.3 + d.phaseOffset) * 0.025;
-                    const expand = breathe + wave + drift;
+                    let expand = breathe + wave + drift;
 
-                    piece.position.x = d.basePos.x + d.randomDir.x * expand;
-                    piece.position.y = d.basePos.y + d.randomDir.y * expand;
-                    piece.position.z = d.basePos.z + d.randomDir.z * expand;
+                    let burstExpand = 0;
+                    if (burstActive) {
+                        burstExpand = burstFactor * (1.5 + d.distFromCenter * 0.8);
+                    }
 
-                    piece.rotation.x += 0.0015;
-                    piece.rotation.y += 0.002;
+                    const totalExpand = expand + burstExpand;
+                    const bx = burstActive ? d.burstOffset.x * burstFactor * 2 : 0;
+                    const by = burstActive ? d.burstOffset.y * burstFactor * 2 : 0;
+                    const bz = burstActive ? d.burstOffset.z * burstFactor * 2 : 0;
+
+                    piece.position.x = d.basePos.x + d.randomDir.x * totalExpand + bx;
+                    piece.position.y = d.basePos.y + d.randomDir.y * totalExpand + by;
+                    piece.position.z = d.basePos.z + d.randomDir.z * totalExpand + bz;
+
+                    const baseRotSpeed = 0.0015;
+                    const burstSpin = burstActive ? d.burstRotSpeed * burstFactor : 0;
+                    piece.rotation.x += baseRotSpeed + burstSpin * 0.3;
+                    piece.rotation.y += baseRotSpeed * 1.3 + burstSpin * 0.2;
 
                     const edgePulse = 0.5 + 0.5 * Math.sin(time * 0.7 + d.noiseOffset * 2);
-                    d.edgeMat.opacity = 0.2 + edgePulse * 0.2;
+                    d.edgeMat.opacity = 0.2 + edgePulse * 0.2 + burstFlash * 0.6;
 
                     const hueShift = Math.sin(time * 0.15 + d.edgeLerp * Math.PI) * 0.5 + 0.5;
                     d.edgeMat.color.copy(CYAN).lerp(PURPLE, hueShift);
+                    if (burstFlash > 0) {
+                        d.edgeMat.color.lerp(WHITE, burstFlash * 0.8);
+                    }
+
+                    if (burstFlash > 0) {
+                        piece.material.emissive = piece.material.emissive || new THREE.Color();
+                        piece.material.emissive.copy(d.baseEdgeColor).multiplyScalar(burstFlash * 0.3);
+                        piece.material.emissiveIntensity = burstFlash;
+                    } else {
+                        if (piece.material.emissiveIntensity > 0.01) {
+                            piece.material.emissiveIntensity *= 0.92;
+                        }
+                    }
                 });
 
                 const lightDrift = Math.sin(time * 0.2) * 0.3 + 0.7;
+                const burstLightBoost = burstFlash * 80;
                 pointLight1.position.x = Math.sin(time * 0.25) * 10;
                 pointLight1.position.y = Math.cos(time * 0.2) * 6;
-                pointLight1.intensity = 50 + lightDrift * 20;
+                pointLight1.intensity = 50 + lightDrift * 20 + burstLightBoost;
 
                 pointLight2.position.x = Math.cos(time * 0.22) * 8;
                 pointLight2.position.y = Math.sin(time * 0.28) * 5;
-                pointLight2.intensity = 35 + (1 - lightDrift) * 20;
+                pointLight2.intensity = 35 + (1 - lightDrift) * 20 + burstLightBoost * 0.6;
 
                 floaters.forEach((f) => {
                     f.position.y += f.userData.floatSpeed;
@@ -1447,10 +1520,12 @@
                     f.rotation.y += f.userData.rotSpeed.y;
                     if (f.position.y > 10) f.position.y = -10;
                     if (Math.abs(f.position.x) > 10) f.userData.driftX *= -1;
+                    const opacityWave = Math.sin(time * 0.5 + f.userData.phaseOffset) * 0.04;
+                    f.material.opacity = f.userData.baseOpacity + opacityWave;
                 });
 
-                camera.position.x += (smoothMouseX * 1.0 - camera.position.x) * 0.01;
-                camera.position.y += (-smoothMouseY * 1.0 - camera.position.y) * 0.01;
+                camera.position.x += (smoothMouseX * 2.0 - camera.position.x) * 0.025;
+                camera.position.y += (-smoothMouseY * 2.0 - camera.position.y) * 0.025;
                 camera.lookAt(0, 0, 0);
 
                 renderer.render(scene, camera);
