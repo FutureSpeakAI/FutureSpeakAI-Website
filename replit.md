@@ -6,12 +6,18 @@ This is a **FutureSpeak.AI** marketing/consulting website — a minimalist, cont
 
 The application is a full-stack TypeScript project with a React frontend and Express backend. It has three pages (Home, Agent Friday, and About) and a minimal backend that serves a single site configuration record from a PostgreSQL database. The architecture is intentionally simple — it's a landing site, not a complex application.
 
-The **Agent Friday page** is the product showcase, structured as a narrative-first layout:
-1. **Hero** — Big promise in plain language ("An AI that knows you")
+**URL Routing**: The site uses SPA-style navigation with `history.pushState` for real URLs:
+- `/` — Home (Capabilities)
+- `/friday` — Agent Friday (standalone product page)
+- `/about` — Leadership
+All nav links use `data-nav` attributes intercepted by a delegated click handler. Browser back/forward is supported via `popstate`. The server (vite.ts) serves `index.html` for all routes (catch-all), and the JS detects the URL path on load to show the correct page section.
+
+The **Agent Friday page** (`/friday`) is the product showcase, structured as a narrative-first layout:
+1. **Hero** — Big promise in plain language ("An AI that knows you") — emphasizes coding, app-building, and parallel multi-vendor agent orchestration
 2. **The Experience** — Her-inspired onboarding walkthrough (8 steps describing the first-launch experience)
 3. **Three Pillars** — Asimov's Laws as architecture, hardened OpenClaw security, evolving UI
-4. **Capabilities** — 6 cards with human-first headlines and technical details beneath
-5. **Under the Hood** — Dual-LLM architecture, World Monitor, Privacy/Security, Tech Stack
+4. **Capabilities** — 6 cards with human-first headlines and technical details beneath. Key capabilities: voice, vision, parallel multi-vendor agents, memory, on-the-fly coding/app-building, meeting participation
+5. **Under the Hood** — Model Orchestra (6 providers: Google/Anthropic/OpenAI/Perplexity/ElevenLabs/Firecrawl), World Monitor, Privacy/Security, Tech Stack
 6. **CTA** — "Meet Your Friday" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.

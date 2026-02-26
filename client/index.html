@@ -239,7 +239,7 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Brand / Logo -->
-                <a href="/" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onclick="event.preventDefault(); navigate('home')" aria-label="FutureSpeak.AI - Home">
+                <a href="/" data-nav="home" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group" aria-label="FutureSpeak.AI - Home">
                     <svg class="w-10 h-10 text-cyan-glow group-hover:rotate-90 transition-transform duration-700" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
                         <path d="M50 5L90 27.5V72.5L50 95L10 72.5V27.5L50 5Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill="rgba(0,240,255,0.02)"/>
                         <circle cx="50" cy="50" r="8" fill="currentColor"/>
@@ -253,9 +253,9 @@
                 
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
-                    <button onclick="navigate('home')" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Capabilities</button>
-                    <button onclick="navigate('friday')" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Agent Friday</button>
-                    <button onclick="navigate('about')" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase">Leadership</button>
+                    <a href="/" data-nav="home" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Capabilities</a>
+                    <a href="/friday" data-nav="friday" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Agent Friday</a>
+                    <a href="/about" data-nav="about" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Leadership</a>
                 </nav>
 
                 <div class="md:hidden flex items-center">
@@ -269,9 +269,9 @@
         </div>
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-white/5">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <button onclick="navigate('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide">Capabilities</button>
-                <button onclick="navigate('friday'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Agent Friday</button>
-                <button onclick="navigate('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide">Leadership</button>
+                <a href="/" data-nav="home" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide no-underline">Capabilities</a>
+                <a href="/friday" data-nav="friday" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Agent Friday</a>
+                <a href="/about" data-nav="about" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Leadership</a>
             </div>
         </div>
     </header>
@@ -385,7 +385,7 @@
                                 An AI that knows you.
                             </p>
                             <p class="text-lg text-gray-300 font-light leading-relaxed mb-6 max-w-2xl">
-                                Friday is an AI that lives on your computer, talks to you in a real voice, sees your screen, remembers your conversations, and can actually do things &mdash; control your software, research anything, generate images, join your meetings. It orchestrates models from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl &mdash; each chosen for what it does best. It's not a chatbot. It's not a search engine. It's something new: a personal AI with a voice, a memory, principles it won't break, and a personality that becomes as unique as yours.
+                                Friday is an AI that lives on your computer, talks to you in a real voice, sees your screen, remembers your conversations, and can actually do things &mdash; control your software, research anything, generate images, write code, build custom applications on the fly. It orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl &mdash; running simultaneously across multiple AI providers to make you exceptionally faster at everything you do. It's not a chatbot. It's not a search engine. It's something new: a personal AI with a voice, a memory, principles it won't break, and a personality that becomes as unique as yours.
                             </p>
                             <p class="text-base text-gray-400 font-light leading-relaxed mb-8 max-w-2xl border-l-2 border-cyan-glow/20 pl-4">
                                 An AI with principles. One that can't go rogue. One that becomes yours.
@@ -557,9 +557,9 @@
                             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center mb-4">
                                 <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </div>
-                            <h3 class="text-lg font-bold mb-2">A Team That Works While You Sleep</h3>
-                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday manages specialist sub-agents &mdash; a researcher, a creative, and a technician &mdash; each with their own voice, working in the background and reporting back.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Atlas (research), Nova (creative), Cipher (technical). Distinct ElevenLabs voices. Background task execution with status reporting.</p>
+                            <h3 class="text-lg font-bold mb-2">Parallel Agents, Multiple Minds</h3>
+                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday runs parallel agents from multiple AI vendors simultaneously. A researcher, a creative, and a technician &mdash; each with their own voice &mdash; working on different tasks at the same time in the background. It doesn't just look impressive; it makes you exceptionally faster.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Atlas (research), Nova (creative), Cipher (technical). Multi-vendor parallel execution via Google, Anthropic, OpenAI. Distinct ElevenLabs voices. Background task orchestration with live status.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-memory">
@@ -575,9 +575,9 @@
                             <div class="w-10 h-10 rounded-lg bg-purple-accent/10 flex items-center justify-center mb-4">
                                 <svg class="w-5 h-5 text-purple-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                             </div>
-                            <h3 class="text-lg font-bold mb-2">It Controls Your Software</h3>
-                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday detects the applications installed on your computer and learns to use them. Ask it to edit a photo, write code, manage files, or automate a workflow &mdash; it handles the tools.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">14 connector modules auto-detect installed software and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, and more.</p>
+                            <h3 class="text-lg font-bold mb-2">It Codes Things for You</h3>
+                            <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday doesn't just control your software &mdash; it builds new software on the fly. Need a custom dashboard? A data visualization? A small app to solve a specific problem? Friday writes the code, creates the interface, and delivers it to you. Sophisticated applications built in the background while you keep working.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Full-stack code generation with live preview. 14 connector modules auto-detect installed apps and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, and more.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-calls">
@@ -924,13 +924,18 @@
         // Update Year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // SPA Navigation Logic
+        // SPA Navigation Logic with URL routing
+        const PAGE_ROUTES = { '/': 'home', '/friday': 'friday', '/about': 'about' };
+        const ROUTE_PATHS = { 'home': '/', 'friday': '/friday', 'about': '/about' };
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
 
-        function navigate(pageId) {
+        function navigate(pageId, pushState) {
+            if (pushState === undefined) pushState = true;
+
             document.querySelectorAll('.page-section').forEach(page => {
                 page.classList.remove('active');
                 setTimeout(() => {
@@ -945,7 +950,6 @@
             
             const activeNav = document.getElementById('nav-' + pageId);
             if(activeNav) {
-                // Ensure Agent Friday link retains its special cyan styling when active
                 if(pageId === 'friday') {
                     activeNav.classList.add('active', 'text-cyan-glow', 'font-bold');
                 } else {
@@ -959,15 +963,29 @@
             setTimeout(() => { targetPage.classList.add('active'); }, 50);
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
+            if (pushState) {
+                const path = ROUTE_PATHS[pageId] || '/';
+                history.pushState({ page: pageId }, '', path);
+            }
+
             if (pageId === 'friday') {
                 updateMeta('og:title', 'Agent Friday | Your AI Chief of Staff');
-                updateMeta('og:description', 'A desktop-native voice assistant built on Gemini Live, Claude Opus, and ElevenLabs. 175+ tools, multi-agent team, persistent memory, live call participation. 100% free — now live on GitHub.');
+                updateMeta('og:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 175+ tools, persistent memory, live voice. 100% free on GitHub.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-friday.png');
-                updateMeta('og:url', 'https://futurespeak.ai/#friday');
+                updateMeta('og:url', 'https://futurespeak.ai/friday');
                 updateMeta('twitter:title', 'Agent Friday | Your AI Chief of Staff');
-                updateMeta('twitter:description', 'A desktop-native voice assistant built on Gemini Live, Claude Opus, and ElevenLabs. 175+ tools, multi-agent team, persistent memory. 100% free on GitHub.');
+                updateMeta('twitter:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 100% free on GitHub.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-friday.png');
                 document.title = 'Agent Friday | FutureSpeak.AI';
+            } else if (pageId === 'about') {
+                updateMeta('og:title', 'Stephen C. Webster | FutureSpeak.AI');
+                updateMeta('og:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
+                updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
+                updateMeta('og:url', 'https://futurespeak.ai/about');
+                updateMeta('twitter:title', 'Stephen C. Webster | FutureSpeak.AI');
+                updateMeta('twitter:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
+                updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
+                document.title = 'Stephen C. Webster | FutureSpeak.AI';
             } else {
                 updateMeta('og:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
                 updateMeta('og:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
@@ -978,6 +996,15 @@
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
                 document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
             }
+        }
+
+        window.addEventListener('popstate', function(e) {
+            const pageId = (e.state && e.state.page) ? e.state.page : pageFromPath(location.pathname);
+            navigate(pageId, false);
+        });
+
+        function pageFromPath(path) {
+            return PAGE_ROUTES[path] || PAGE_ROUTES[path.replace(/\/$/, '')] || 'home';
         }
 
         function updateMeta(nameOrProp, content) {
@@ -1006,8 +1033,19 @@
             setTimeout(() => { document.getElementById('contactForm').reset(); }, 1000);
         }
 
-        // Initialize state
-        navigate('home');
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[data-nav]');
+            if (link) {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-nav');
+                navigate(pageId);
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) toggleMobileMenu();
+            }
+        });
+
+        // Initialize from URL
+        navigate(pageFromPath(location.pathname), false);
     </script>
 
     <script type="module">
