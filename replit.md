@@ -33,7 +33,8 @@ The **Agent Friday page** (`/software`) is the product showcase, positioned as "
 7. **Additional Capabilities** — 15 cards including PageIndex, GitLoader, SOC, Context-Rich Meeting Prep, Predictive Intelligence, Agent Office, Superpowers Registry, Project Awareness
 8. **Ideas That Don't Exist Anywhere Else** — 10 innovation cards: Hermeneutic Re-evaluation, Personality → Visual Expression, The Silence Is the Signal (mother question), 8-Layer Dynamic Personality, Morality as Cryptography, Memory Consolidation (6-hour sleep cycle), Trust → Action Pipeline, Vectorless RAG (PageIndex), Embodied Agency (Agent Office), Beyond OpenClaw
 9. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Relationship Graph integrity + local-only), Tech Stack (15 entries including Relationship Intelligence row)
-10. **CTA** — "🌠 Meet Your Friday 🔭" linking to GitHub
+10. **Open Source Ecosystem** — 8 standalone libraries (trust-graph-engine, cognitive-memory, agent-integrity, personality-evolution, predictive-agent, self-improving-agent, meeting-intelligence, GitNexus) + 7 customized forks (World Monitor, PageIndex, Pixel Agents, OpenClaw, SOC, Browser Use, Frontend Slides). Links to github.com/FutureSpeakAI org.
+11. **CTA** — "🌠 Meet Your Friday 🔭" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
 
