@@ -1357,6 +1357,33 @@
             coreGroup.scale.set(2.3, 2.3, 2.3);
             scene.add(coreGroup);
 
+            const CONNECTION_DIST = 2.2;
+            const connections = [];
+            for (let i = 0; i < corePieces.length; i++) {
+                for (let j = i + 1; j < corePieces.length; j++) {
+                    const d = corePieces[i].userData.basePos.distanceTo(corePieces[j].userData.basePos);
+                    if (d < CONNECTION_DIST) {
+                        connections.push({ a: i, b: j, baseDist: d });
+                    }
+                }
+            }
+
+            const maxConns = connections.length;
+            const connPositions = new Float32Array(maxConns * 6);
+            const connColors = new Float32Array(maxConns * 6);
+            const connGeo = new THREE.BufferGeometry();
+            connGeo.setAttribute('position', new THREE.BufferAttribute(connPositions, 3));
+            connGeo.setAttribute('color', new THREE.BufferAttribute(connColors, 3));
+            const connMat = new THREE.LineBasicMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.15,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const connLines = new THREE.LineSegments(connGeo, connMat);
+            coreGroup.add(connLines);
+
             const miniParticleGeo = new THREE.BoxGeometry(0.04, 0.04, 0.04);
             const floaters = [];
             for (let p = 0; p < 25; p++) {
@@ -1515,6 +1542,63 @@
                     const opacityExpand = expandFactor * 0.25;
                     d.edgeMat.opacity = opacityBase + opacityExpand;
                 });
+
+                const rippleSpeed = 3.0;
+                const rippleWidth = 1.2;
+                const cC = new THREE.Color();
+                const cC2 = new THREE.Color();
+                for (let ci = 0; ci < connections.length; ci++) {
+                    const conn = connections[ci];
+                    const posA = corePieces[conn.a].userData.currentPos;
+                    const posB = corePieces[conn.b].userData.currentPos;
+                    const idx = ci * 6;
+                    connPositions[idx] = posA.x;
+                    connPositions[idx+1] = posA.y;
+                    connPositions[idx+2] = posA.z;
+                    connPositions[idx+3] = posB.x;
+                    connPositions[idx+4] = posB.y;
+                    connPositions[idx+5] = posB.z;
+
+                    const midX = (posA.x + posB.x) * 0.5;
+                    const midY = (posA.y + posB.y) * 0.5;
+                    const midZ = (posA.z + posB.z) * 0.5;
+
+                    const idleGlow = 0.08 + Math.sin(time * 0.6 + ci * 0.3) * 0.04;
+                    let brightness = idleGlow;
+
+                    if (expandTime >= 0) {
+                        const distFromClick = Math.sqrt(
+                            (midX - expandOrigin.x) ** 2 +
+                            (midY - expandOrigin.y) ** 2 +
+                            (midZ - expandOrigin.z) ** 2
+                        );
+                        const waveFront = expandTime * rippleSpeed;
+                        const rippleDist = Math.abs(distFromClick - waveFront);
+                        if (rippleDist < rippleWidth) {
+                            const ripple = 1 - rippleDist / rippleWidth;
+                            const fade = Math.max(0, 1 - expandTime / EXPAND_DURATION);
+                            brightness += ripple * ripple * fade * 0.9;
+                        }
+                    }
+
+                    const shimmer = Math.sin(time * 1.2 + ci * 0.5) * 0.5 + 0.5;
+                    cC.copy(CYAN).lerp(PURPLE, shimmer);
+                    cC.multiplyScalar(brightness);
+                    cC2.copy(cC);
+                    if (brightness > 0.15) {
+                        cC.lerp(new THREE.Color(0xffffff), (brightness - 0.15) * 0.3);
+                        cC2.lerp(new THREE.Color(0xffffff), (brightness - 0.15) * 0.3);
+                    }
+                    connColors[idx] = cC.r;
+                    connColors[idx+1] = cC.g;
+                    connColors[idx+2] = cC.b;
+                    connColors[idx+3] = cC2.r;
+                    connColors[idx+4] = cC2.g;
+                    connColors[idx+5] = cC2.b;
+                }
+                connGeo.attributes.position.needsUpdate = true;
+                connGeo.attributes.color.needsUpdate = true;
+                connMat.opacity = 0.15 + expandFactor * 0.4;
 
                 const lightPhase = Math.sin(time * 0.12) * 0.5 + 0.5;
                 tmpColor.copy(CYAN).lerp(PURPLE, lightPhase);
