@@ -1538,6 +1538,11 @@
                         totalExpandForce = Math.max(totalExpandForce, ef);
                     });
 
+                    const localBound = 2.5;
+                    tx = Math.max(-localBound, Math.min(localBound, tx));
+                    ty = Math.max(-localBound, Math.min(localBound, ty));
+                    tz = Math.max(-localBound, Math.min(localBound, tz));
+
                     d.targetPos.set(tx, ty, tz);
                     d.currentPos.lerp(d.targetPos, 0.06);
                     piece.position.copy(d.currentPos);
