@@ -1477,15 +1477,15 @@
                         const dist = awayFromClick.length() || 0.01;
                         awayFromClick.normalize();
 
-                        const proximity = 1.0 / (1.0 + dist * 0.5);
-                        const pushStrength = expandFactor * proximity * 3.0;
+                        const proximity = 1.0 / (1.0 + dist * 0.6);
+                        const pushStrength = expandFactor * proximity * 1.4;
 
                         const tangent = new THREE.Vector3(
                             -awayFromClick.y + awayFromClick.z * 0.3,
                             awayFromClick.x - awayFromClick.z * 0.5,
                             awayFromClick.y * 0.4
                         ).normalize();
-                        const swirl = Math.sin(dist * 2.5 + time * 1.5) * pushStrength * 0.4;
+                        const swirl = Math.sin(dist * 2.5 + time * 1.5) * pushStrength * 0.35;
 
                         tx += awayFromClick.x * pushStrength + tangent.x * swirl;
                         ty += awayFromClick.y * pushStrength + tangent.y * swirl;
