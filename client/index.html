@@ -88,7 +88,7 @@
         "@type": "SoftwareApplication",
         "name": "Agent Friday",
         "description": "A desktop-native AI assistant that orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. Features real-time voice conversation, screen vision, persistent memory, on-the-fly code generation, and 175+ tool integrations. Built on Asimov's Three Laws of Robotics as architectural safety constraints.",
-        "url": "https://futurespeak.ai/friday",
+        "url": "https://futurespeak.ai/software",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "offers": {
@@ -117,6 +117,54 @@
         ],
         "screenshot": "https://futurespeak.ai/og-friday.png",
         "license": "https://github.com/FutureSpeakAI/Agent-Friday/blob/main/LICENSE"
+    }
+    </script>
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "FutureSpeak.AI",
+        "url": "https://futurespeak.ai",
+        "description": "Enterprise AI strategy and consulting firm. Home of Agent Friday, a free desktop-native AI assistant.",
+        "publisher": {
+            "@type": "Organization",
+            "name": "FutureSpeak.AI",
+            "url": "https://futurespeak.ai",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://futurespeak.ai/favicon.png"
+            }
+        }
+    }
+    </script>
+
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://futurespeak.ai/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Software",
+                "item": "https://futurespeak.ai/software"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Leadership",
+                "item": "https://futurespeak.ai/leadership"
+            }
+        ]
     }
     </script>
 
@@ -285,6 +333,19 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-glow selection:text-navy-900" itemscope itemtype="https://schema.org/WebPage">
 
+    <noscript>
+        <div style="background:#060B19;color:#F8FAFC;padding:40px;font-family:system-ui,sans-serif;">
+            <h1>FutureSpeak.AI — Enterprise AI Strategy & Consulting</h1>
+            <p>Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. We design agentic workflows, RAG architectures, and AI transformation strategies for Fortune 500 companies.</p>
+            <h2>Agent Friday — AI Software</h2>
+            <p>A free, desktop-native AI assistant that orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. Features real-time voice, screen vision, persistent memory, on-the-fly code generation, and 175+ tool integrations.</p>
+            <p><a href="https://github.com/FutureSpeakAI/Agent-Friday" style="color:#00F0FF;">View Agent Friday on GitHub</a></p>
+            <h2>Leadership</h2>
+            <p>Stephen C. Webster — Principal Architect. 20+ years decoding complex systems. Enterprise AI strategist and former award-winning investigative journalist.</p>
+            <p><a href="https://www.linkedin.com/in/stephencwebster/" style="color:#00F0FF;">Connect on LinkedIn</a></p>
+        </div>
+    </noscript>
+
     <!-- 3D WebGL Background -->
     <div id="canvas-container"></div>
 
@@ -308,8 +369,8 @@
                 <!-- Desktop Menu -->
                 <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
                     <a href="/" data-nav="home" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Capabilities</a>
-                    <a href="/friday" data-nav="friday" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Agent Friday</a>
-                    <a href="/about" data-nav="about" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Leadership</a>
+                    <a href="/software" data-nav="friday" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Software</a>
+                    <a href="/leadership" data-nav="about" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Leadership</a>
                 </nav>
 
                 <div class="md:hidden flex items-center">
@@ -324,8 +385,8 @@
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-white/5">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="/" data-nav="home" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide no-underline">Capabilities</a>
-                <a href="/friday" data-nav="friday" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Agent Friday</a>
-                <a href="/about" data-nav="about" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Leadership</a>
+                <a href="/software" data-nav="friday" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Software</a>
+                <a href="/leadership" data-nav="about" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Leadership</a>
             </div>
         </div>
     </header>
@@ -979,8 +1040,8 @@
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // SPA Navigation Logic with URL routing
-        const PAGE_ROUTES = { '/': 'home', '/friday': 'friday', '/about': 'about' };
-        const ROUTE_PATHS = { 'home': '/', 'friday': '/friday', 'about': '/about' };
+        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about' };
+        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership' };
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
@@ -1030,22 +1091,22 @@
                 updateMeta('og:title', 'Agent Friday | AI That Codes, Speaks & Thinks For You');
                 updateMeta('og:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 175+ tools, persistent memory, live voice. 100% free on GitHub.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-friday.png');
-                updateMeta('og:url', 'https://futurespeak.ai/friday');
+                updateMeta('og:url', 'https://futurespeak.ai/software');
                 updateMeta('twitter:title', 'Agent Friday | AI That Codes, Speaks & Thinks For You');
                 updateMeta('twitter:description', 'A desktop-native AI that codes custom apps, orchestrates parallel agents from 6 providers, and makes you exceptionally faster at everything. 100% free on GitHub.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-friday.png');
-                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/friday');
+                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/software');
             } else if (pageId === 'about') {
                 document.title = 'Stephen C. Webster | Enterprise AI Architect | FutureSpeak.AI';
                 updateMeta('description', 'Stephen C. Webster — Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Enterprise AI strategist and former investigative journalist.');
                 updateMeta('og:title', 'Stephen C. Webster | Enterprise AI Architect');
                 updateMeta('og:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
                 updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
-                updateMeta('og:url', 'https://futurespeak.ai/about');
+                updateMeta('og:url', 'https://futurespeak.ai/leadership');
                 updateMeta('twitter:title', 'Stephen C. Webster | Enterprise AI Architect');
                 updateMeta('twitter:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
                 updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
-                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/about');
+                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/leadership');
             } else {
                 document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
                 updateMeta('description', 'FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.');
@@ -1066,8 +1127,17 @@
         });
 
         function pageFromPath(path) {
-            return PAGE_ROUTES[path] || PAGE_ROUTES[path.replace(/\/$/, '')] || 'home';
+            const clean = path.replace(/\/$/, '') || '/';
+            return PAGE_ROUTES[clean] || 'home';
         }
+
+        const CANONICAL_ALIASES = { '/friday': '/software', '/about': '/leadership' };
+        (function enforceCanonicalPath() {
+            const alias = CANONICAL_ALIASES[location.pathname] || CANONICAL_ALIASES[location.pathname.replace(/\/$/, '')];
+            if (alias) {
+                history.replaceState(null, '', alias + location.search + location.hash);
+            }
+        })();
 
         function updateMeta(nameOrProp, content) {
             let el = document.querySelector(`meta[property="${nameOrProp}"]`) || document.querySelector(`meta[name="${nameOrProp}"]`);

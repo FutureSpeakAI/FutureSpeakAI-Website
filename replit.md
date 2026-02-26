@@ -8,11 +8,22 @@ The application is a full-stack TypeScript project with a React frontend and Exp
 
 **URL Routing**: The site uses SPA-style navigation with `history.pushState` for real URLs:
 - `/` — Home (Capabilities)
-- `/friday` — Agent Friday (standalone product page)
-- `/about` — Leadership
+- `/software` — Agent Friday product page (nav label: "Software")
+- `/leadership` — Stephen C. Webster bio (nav label: "Leadership")
+- `/friday` and `/about` are kept as aliases that redirect to the new canonical paths
 All nav links use `data-nav` attributes intercepted by a delegated click handler. Browser back/forward is supported via `popstate`. The server (vite.ts) serves `index.html` for all routes (catch-all), and the JS detects the URL path on load to show the correct page section.
 
-The **Agent Friday page** (`/friday`) is the product showcase, structured as a narrative-first layout:
+**SEO**: Full optimization including:
+- Dynamic per-page title, meta description, canonical URL, OG tags, and Twitter cards
+- Twitter `@futurespeakai` site/creator handles
+- Structured data: ProfessionalService, SoftwareApplication (Agent Friday), WebSite, BreadcrumbList, Person (Stephen C. Webster)
+- `robots.txt` and `sitemap.xml` in `client/public/`
+- Resource hints (`preconnect`, `dns-prefetch`) for Google Fonts, Tailwind CDN, jsDelivr
+- `<noscript>` fallback with key content for crawlers without JS
+- Enhanced robots meta with `max-image-preview:large`, `max-snippet:-1`
+- `og:image:alt` and `twitter:image:alt` tags
+
+The **Agent Friday page** (`/software`) is the product showcase, structured as a narrative-first layout:
 1. **Hero** — Big promise in plain language ("An AI that knows you") — emphasizes coding, app-building, and parallel multi-vendor agent orchestration
 2. **The Experience** — Her-inspired onboarding walkthrough (8 steps describing the first-launch experience)
 3. **Three Pillars** — Asimov's Laws as architecture, hardened OpenClaw security, evolving UI
