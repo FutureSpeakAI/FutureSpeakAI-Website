@@ -405,7 +405,7 @@
 
                         <div class="lg:col-span-5">
                             <div class="relative w-full aspect-square max-w-[480px] mx-auto" data-testid="card-friday-cube">
-                                <div id="friday-cube-canvas" class="absolute inset-0"></div>
+                                <div id="friday-cube-canvas" class="absolute inset-0" style="z-index:1;cursor:pointer"></div>
                             </div>
                         </div>
 
@@ -1422,14 +1422,18 @@
                 expandTime = 0;
             });
 
-            const clock = new THREE.Clock();
             let animId = null;
+            let lastTime = performance.now() / 1000;
+            let elapsed = 0;
             const tmpColor = new THREE.Color();
 
             function animate() {
                 animId = requestAnimationFrame(animate);
-                const time = clock.getElapsedTime();
-                const dt = Math.min(clock.getDelta(), 0.05);
+                const now = performance.now() / 1000;
+                const dt = Math.min(now - lastTime, 0.05);
+                lastTime = now;
+                elapsed += dt;
+                const time = elapsed;
 
                 smoothMouseX += (rawMouseX - smoothMouseX) * 0.04;
                 smoothMouseY += (rawMouseY - smoothMouseY) * 0.04;
@@ -1545,7 +1549,7 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && !animId) {
-                        clock.start();
+                        lastTime = performance.now() / 1000;
                         animate();
                     } else if (!entry.isIntersecting && animId) {
                         cancelAnimationFrame(animId);
