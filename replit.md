@@ -30,8 +30,9 @@ The **Agent Friday page** (`/software`) is the product showcase, positioned as "
 4. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, Personality Integrity System
 5. **Capabilities** — 8 cards: voice, vision + SOC, parallel agents (5 concurrent + Agent Office), memory, coding (18+ connectors), Trust Intelligence (Trust Graph Engine), Communications Intelligence (trust-aware drafting), meetings (trust-annotated)
 6. **Additional Capabilities** — 15 cards including PageIndex, GitLoader, SOC, Trust-Annotated Meeting Prep, Predictive Intelligence, Agent Office, Superpowers Registry, Project Awareness
-7. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Trust Graph integrity + local-only), Tech Stack (15 entries including Trust Intelligence row)
-8. **CTA** — "Meet Your Friday" linking to GitHub
+7. **Ideas That Don't Exist Anywhere Else** — 10 innovation cards: Hermeneutic Re-evaluation, Personality → Visual Expression, The Silence Is the Signal (mother question), 8-Layer Dynamic Personality, Morality as Cryptography, Memory Consolidation (6-hour sleep cycle), Trust → Action Pipeline, Vectorless RAG (PageIndex), Embodied Agency (Agent Office), Beyond OpenClaw
+8. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Trust Graph integrity + local-only), Tech Stack (15 entries including Trust Intelligence row)
+9. **CTA** — "Meet Your Friday" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
 
