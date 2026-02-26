@@ -694,6 +694,52 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="mt-8 mb-8">
+                                <h3 class="text-lg font-bold mb-4 text-white">Consent &amp; Explicit Authorization</h3>
+                                <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">Certain actions always require your explicit approval before the agent proceeds. Friday describes what it intends to do and waits for a clear "yes":</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Self-modification</strong> &mdash; never modifies its own code or personality without permission</span></div>
+                                    <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Tool creation</strong> &mdash; never installs or registers new capabilities without permission</span></div>
+                                    <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-purple-accent mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Computer control</strong> &mdash; mouse clicks, keyboard input, and desktop automation always require confirmation</span></div>
+                                    <div class="flex items-start gap-2 text-sm text-gray-400 font-light"><span class="text-purple-accent mt-0.5 flex-shrink-0">&#9632;</span> <span><strong class="text-gray-300">Destructive actions</strong> &mdash; anything that deletes, overwrites, sends, publishes, or cannot be undone</span></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-8 p-4 rounded-lg bg-white/[0.02] border border-white/5">
+                                <h3 class="text-lg font-bold mb-2 text-white flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                    Interruptibility Guarantee
+                                </h3>
+                                <p class="text-sm text-gray-400 font-light leading-relaxed">You are always in control. Speaking interrupts Friday immediately &mdash; mid-sentence, mid-action, mid-thought. "Stop," "halt," or "cancel" ceases all operations instantly. No "just finishing up." The halt is absolute and unconditional. After interruption, Friday reports where it was and asks whether to continue.</p>
+                            </div>
+
+                            <div class="mb-8">
+                                <h3 class="text-lg font-bold mb-3 text-white">Trust Architecture</h3>
+                                <p class="text-sm text-gray-400 font-light leading-relaxed mb-4">Friday's 5-tier trust engine gates every external interaction. Not everyone gets the same access &mdash; and no one gets elevated access by claiming to be you.</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3 p-2 rounded bg-cyan-glow/5 border border-cyan-glow/10">
+                                        <span class="text-xs font-mono text-cyan-glow w-20 flex-shrink-0">Local</span>
+                                        <span class="text-xs text-gray-400 font-light">You, at your desk &mdash; full access to desktop, memory, tools, and scheduling</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 rounded bg-purple-accent/5 border border-purple-accent/10">
+                                        <span class="text-xs font-mono text-purple-accent w-20 flex-shrink-0">Owner DM</span>
+                                        <span class="text-xs text-gray-400 font-light">You, via Telegram or Slack &mdash; full tools minus desktop control</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <span class="text-xs font-mono text-gray-400 w-20 flex-shrink-0">Approved</span>
+                                        <span class="text-xs text-gray-400 font-light">Trusted contacts (cryptographically paired) &mdash; research, calendar, drafting only</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <span class="text-xs font-mono text-gray-400 w-20 flex-shrink-0">Group</span>
+                                        <span class="text-xs text-gray-400 font-light">Group chat members &mdash; web search and basic queries only</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <span class="text-xs font-mono text-gray-400 w-20 flex-shrink-0">Public</span>
+                                        <span class="text-xs text-gray-400 font-light">Unknown senders &mdash; rate-limited acknowledgment only, no access</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="border-l-2 border-purple-accent/30 pl-4 space-y-3">
                                 <p class="text-sm text-gray-300 font-light leading-relaxed">
                                     We call any autonomous AI governed by these principles an <strong class="text-white">Asimov Agent</strong>. Friday is the first, but it won't be the last. Asimov's cLaws is a general-purpose framework for how autonomous agents should relate to the humans they serve &mdash; and FutureSpeak.AI believes it should become more than a best practice. We believe frameworks like this should become the actual law of the land governing AI agent behavior.
@@ -748,7 +794,7 @@
                             </div>
                             <h3 class="text-lg font-bold mb-2">Parallel Agents, Multiple Minds</h3>
                             <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday runs parallel agents from multiple AI vendors simultaneously. A researcher, a creative, and a technician &mdash; each with their own voice &mdash; working on different tasks at the same time in the background. It doesn't just look impressive; it makes you exceptionally faster.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Atlas (research), Nova (creative), Cipher (technical). Multi-vendor parallel execution via Google, Anthropic, OpenAI. Distinct ElevenLabs voices. Background task orchestration with live status.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Five specialized agents &mdash; Research, Summarise, Code Review, Draft Email, and Orchestrate &mdash; each with distinct ElevenLabs voices (Atlas, Nova, Cipher). Multi-vendor parallel execution via Google, Anthropic, OpenAI. Up to 3 concurrent agents with live status updates.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-memory">
@@ -766,7 +812,7 @@
                             </div>
                             <h3 class="text-lg font-bold mb-2">It Codes Things for You</h3>
                             <p class="text-sm text-gray-300 font-light leading-relaxed mb-2">Friday doesn't just control your software &mdash; it builds new software on the fly. Need a custom dashboard? A data visualization? A small app to solve a specific problem? Friday writes the code, creates the interface, and delivers it to you. Sophisticated applications built in the background while you keep working.</p>
-                            <p class="text-xs text-gray-500 font-light leading-relaxed">Full-stack code generation with live preview. 14 connector modules auto-detect installed apps and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, and more.</p>
+                            <p class="text-xs text-gray-500 font-light leading-relaxed">Full-stack code generation with live preview. 16 connector modules auto-detect installed apps and load 175+ tools: Adobe CC, Blender, VS Code, OBS, Office, Git, Docker, Google Calendar, Gmail, and more.</p>
                         </div>
 
                         <div class="glass-panel rounded-xl border border-white/5 p-6 hover:border-cyan-glow/20 transition-colors" data-testid="card-capability-calls">
@@ -778,6 +824,48 @@
                             <p class="text-xs text-gray-500 font-light leading-relaxed">Joins Google Meet, Zoom, and Teams via virtual audio routing. Pre-meeting briefings with attendee context from your calendar.</p>
                         </div>
 
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADDITIONAL CAPABILITIES -->
+            <section class="py-16 content-backdrop" aria-label="Additional Capabilities">
+                <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                    <h2 class="text-2xl font-bold tracking-tight mb-4 text-center" data-testid="text-additional-title">And That's Not All</h2>
+                    <p class="text-gray-400 text-center mb-10 max-w-2xl mx-auto font-light">Beyond the core experience, Friday connects to your world in ways you wouldn't expect from a desktop app.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-browser">
+                            <h4 class="text-sm font-bold mb-1 text-white">Browser Extension</h4>
+                            <p class="text-xs text-gray-500 font-light">WebSocket bridge for tab control, screenshots, DOM interaction, and navigation.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-mcp">
+                            <h4 class="text-sm font-bold mb-1 text-white">MCP Protocol</h4>
+                            <p class="text-xs text-gray-500 font-light">Model Context Protocol support for dynamic tool registration from external servers.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-obsidian">
+                            <h4 class="text-sm font-bold mb-1 text-white">Obsidian Vault Sync</h4>
+                            <p class="text-xs text-gray-500 font-light">Bidirectional memory sync with your knowledge base &mdash; opt-in, local only.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-telegram">
+                            <h4 class="text-sm font-bold mb-1 text-white">Telegram Gateway</h4>
+                            <p class="text-xs text-gray-500 font-light">External messaging bridge via Telegram Bot API, gated by the trust architecture.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-scheduled">
+                            <h4 class="text-sm font-bold mb-1 text-white">Scheduled Tasks</h4>
+                            <p class="text-xs text-gray-500 font-light">One-time and recurring (cron) background jobs that run even when you're not talking to Friday.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-clipboard">
+                            <h4 class="text-sm font-bold mb-1 text-white">Clipboard Intelligence</h4>
+                            <p class="text-xs text-gray-500 font-light">Monitors clipboard for code, URLs, and actionable content to assist proactively.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-documents">
+                            <h4 class="text-sm font-bold mb-1 text-white">Document Ingestion</h4>
+                            <p class="text-xs text-gray-500 font-light">Ingest PDFs, text files, and web pages into searchable memory.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-selfimprove">
+                            <h4 class="text-sm font-bold mb-1 text-white">Self-Improvement</h4>
+                            <p class="text-xs text-gray-500 font-light">Can read and propose changes to its own source code &mdash; always user-approved first.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -900,6 +988,8 @@
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Webcam access is tool-gated &mdash; explicit permission required</li>
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Dangerous actions require approval &mdash; the agent asks before it acts</li>
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Self-improvement changes require user approval before any code is modified</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Connector tools run locally &mdash; no data leaves your system except for API calls you initiate</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1">&#8226;</span> Obsidian vault sync is opt-in &mdash; bidirectional only if you configure a vault path</li>
                             </ul>
                         </div>
 
@@ -930,7 +1020,7 @@
                             Meet Your Friday
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
-                        <p class="mt-4 text-xs text-gray-500 font-light">Built by FutureSpeak.AI &mdash; Proprietary license. All rights reserved.</p>
+                        <p class="mt-4 text-xs text-gray-500 font-light">Built by FutureSpeak.AI &mdash; MIT License &copy; 2025&ndash;2026.</p>
                     </div>
                 </div>
             </section>
