@@ -24,15 +24,16 @@ All nav links use `data-nav` attributes intercepted by a delegated click handler
 - `og:image:alt` and `twitter:image:alt` tags
 
 The **Agent Friday page** (`/software`) is the product showcase, positioned as "The World's First AGI OS — An Asimov Agent." Narrative-first layout:
-1. **Hero** — AGI OS positioning ("An operating system with a soul") — emphasizes voice-first AI chief of staff, Trust Graph intelligence, 200+ models. Download CTA links to GitHub Releases; Source Code links to repo.
-2. **The Experience** — Her-inspired onboarding walkthrough (8 steps, 12-step guided onboarding, 30-voice audition, 7 API key services)
-3. **Four Pillars** — "An OS With Principles" (Asimov's cLaws), "An OS That Understands Your World" (Trust Graph Engine), Security (OpenClaw reimagining), Evolving Interface
-4. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, Personality Integrity System
-5. **Capabilities** — 8 cards: voice, vision + SOC, parallel agents (5 concurrent + Agent Office), memory, coding (18+ connectors), Trust Intelligence (Trust Graph Engine), Communications Intelligence (trust-aware drafting), meetings (trust-annotated)
-6. **Additional Capabilities** — 15 cards including PageIndex, GitLoader, SOC, Trust-Annotated Meeting Prep, Predictive Intelligence, Agent Office, Superpowers Registry, Project Awareness
-7. **Ideas That Don't Exist Anywhere Else** — 10 innovation cards: Hermeneutic Re-evaluation, Personality → Visual Expression, The Silence Is the Signal (mother question), 8-Layer Dynamic Personality, Morality as Cryptography, Memory Consolidation (6-hour sleep cycle), Trust → Action Pipeline, Vectorless RAG (PageIndex), Embodied Agency (Agent Office), Beyond OpenClaw
-8. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Trust Graph integrity + local-only), Tech Stack (15 entries including Trust Intelligence row)
-9. **CTA** — "Meet Your Friday" linking to GitHub
+1. **Hero** — AGI OS positioning ("An operating system with a heart") — emphasizes voice-first AI chief of staff, Relationship Intelligence, 200+ models. Download CTA links to GitHub Releases; Source Code links to repo. Emoji branding: 🌠 (shooting star) + 🔭 (telescope) — Friday's brand identity.
+2. **Teaser Video** — YouTube embed (youtube-nocookie.com/embed/26kKJB7gMCI) between hero and experience
+3. **The Experience** — Her-inspired onboarding walkthrough (8 steps, 12-step guided onboarding, 30-voice audition, 7 API key services)
+4. **Four Pillars** — "An OS With Principles" (Asimov's cLaws), "An OS That Understands Your World" (Relationship Graph), Security (OpenClaw reimagining), Evolving Interface
+5. **Asimov's cLaws** — Consent gates, Trust Architecture, Interruptibility Guarantee, Personality Integrity System
+6. **Capabilities** — 8 cards: voice, vision + SOC, parallel agents (5 concurrent + Agent Office), memory, coding (18+ connectors), Relationship Intelligence (Relationship Graph), Communications Intelligence (context-aware drafting), meetings (context-rich)
+7. **Additional Capabilities** — 15 cards including PageIndex, GitLoader, SOC, Context-Rich Meeting Prep, Predictive Intelligence, Agent Office, Superpowers Registry, Project Awareness
+8. **Ideas That Don't Exist Anywhere Else** — 10 innovation cards: Hermeneutic Re-evaluation, Personality → Visual Expression, The Silence Is the Signal (mother question), 8-Layer Dynamic Personality, Morality as Cryptography, Memory Consolidation (6-hour sleep cycle), Trust → Action Pipeline, Vectorless RAG (PageIndex), Embodied Agency (Agent Office), Beyond OpenClaw
+9. **Under the Hood** — Model Orchestra (8 providers with Nano Banana 2 image gen, DALL-E 3 fallback), World Monitor (17 domains), Privacy/Security (15 bullets including Relationship Graph integrity + local-only), Tech Stack (15 entries including Relationship Intelligence row)
+10. **CTA** — "🌠 Meet Your Friday 🔭" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
 
