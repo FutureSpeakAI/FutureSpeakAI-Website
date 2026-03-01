@@ -1794,14 +1794,50 @@
 
             <!-- SIGNATORIES & CLOSING -->
             <section class="py-20 content-backdrop" aria-label="Signatories" data-testid="section-declaration-signatories">
-                <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-                    <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-signatories-heading">Signatories</h2>
-                    <p class="text-lg text-gray-300 font-light mb-6"><strong class="text-white">FutureSpeak.AI</strong> &mdash; Stewards of the Asimov Federation, creators of Agent Friday</p>
-                    <p class="text-gray-400 font-light italic mb-10 max-w-2xl mx-auto">This declaration is a living document. We invite individuals, organizations, developers, and communities who share these principles to add their signatures and help build the future it describes.</p>
-                    <div class="glass-panel rounded-lg p-8 max-w-2xl mx-auto" data-testid="card-closing-statement">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-signatories-heading">Signatories</h2>
+                        <p class="text-lg text-gray-300 font-light mb-6"><strong class="text-white">FutureSpeak.AI</strong> &mdash; Stewards of the Asimov Federation, creators of Agent Friday</p>
+                        <p class="text-gray-400 font-light italic mb-10 max-w-2xl mx-auto">This declaration is a living document. We invite individuals, organizations, developers, and communities who share these principles to add their signatures and help build the future it describes.</p>
+                    </div>
+
+                    <div class="glass-panel rounded-lg p-8 mb-12 max-w-2xl mx-auto" data-testid="sign-declaration-form-container">
+                        <h3 class="text-xl font-bold text-white mb-6 text-center">Add Your Signature</h3>
+                        <form id="sign-declaration-form" class="space-y-4" data-testid="sign-declaration-form">
+                            <div>
+                                <label for="signatory-name" class="block text-sm font-medium text-gray-300 mb-1.5">Full Name <span class="text-pink-accent">*</span></label>
+                                <input type="text" id="signatory-name" name="name" required maxlength="120" placeholder="Your full name" data-testid="input-signatory-name" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                            </div>
+                            <div>
+                                <label for="signatory-org" class="block text-sm font-medium text-gray-300 mb-1.5">Organization <span class="text-gray-500 font-normal">(optional)</span></label>
+                                <input type="text" id="signatory-org" name="organization" maxlength="120" placeholder="Company, project, or community" data-testid="input-signatory-org" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                            </div>
+                            <div>
+                                <label for="signatory-title" class="block text-sm font-medium text-gray-300 mb-1.5">Title / Role <span class="text-gray-500 font-normal">(optional)</span></label>
+                                <input type="text" id="signatory-title" name="title" maxlength="120" placeholder="e.g. Software Engineer, CEO, Independent Developer" data-testid="input-signatory-title" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                            </div>
+                            <div id="sign-form-message" class="hidden text-sm text-center py-2 rounded-md" data-testid="text-sign-form-message"></div>
+                            <button type="submit" id="sign-declaration-btn" data-testid="button-sign-declaration" class="w-full mt-2 px-6 py-3 rounded-md font-semibold text-sm tracking-wide text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF); box-shadow: 0 0 20px rgba(0,240,255,0.15);">
+                                Sign the Declaration
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mb-12" data-testid="signatories-list-container">
+                        <div class="flex items-center justify-center gap-3 mb-8">
+                            <div class="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-glow/20"></div>
+                            <p class="text-sm font-medium text-gray-400 tracking-wide" data-testid="text-signatory-count"><span id="signatory-count-number">0</span> signatures</p>
+                            <div class="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-glow/20"></div>
+                        </div>
+                        <div id="signatories-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto" data-testid="signatories-list">
+                            <p class="text-gray-500 text-sm text-center col-span-full italic" id="signatories-empty" data-testid="text-signatories-empty">Be the first to sign.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-lg p-8 max-w-2xl mx-auto text-center" data-testid="card-closing-statement">
                         <p class="text-gray-300 font-light leading-relaxed italic">The most dangerous idea in technology is not artificial intelligence. It is <em class="text-cyan-glow not-italic font-normal">artificial loyalty</em> &mdash; AI that pretends to serve you while serving someone else. The loyalty of an Asimov Agent is not artificial. It is architectural.</p>
                     </div>
-                    <p class="mt-10 text-xs text-gray-500 font-light">Published under Creative Commons Attribution 4.0 International (CC BY 4.0). Share freely.</p>
+                    <p class="mt-10 text-xs text-gray-500 font-light text-center">Published under Creative Commons Attribution 4.0 International (CC BY 4.0). Share freely.</p>
                 </div>
             </section>
 
@@ -3162,6 +3198,92 @@ Agent B receives:
 
         // Initialize from URL
         navigate(pageFromPath(location.pathname), false);
+
+        // Signatories
+        function renderSignatories(data) {
+            var list = document.getElementById('signatories-list');
+            var countEl = document.getElementById('signatory-count-number');
+            var emptyEl = document.getElementById('signatories-empty');
+            if (!list) return;
+            countEl.textContent = data.count;
+            if (data.count === 0) {
+                if (emptyEl) emptyEl.style.display = '';
+                return;
+            }
+            if (emptyEl) emptyEl.style.display = 'none';
+            var existingCards = list.querySelectorAll('.signatory-card');
+            existingCards.forEach(function(c) { c.remove(); });
+            data.signatories.forEach(function(s, i) {
+                var card = document.createElement('div');
+                card.className = 'signatory-card glass-panel rounded-md px-4 py-3 text-left';
+                card.setAttribute('data-testid', 'card-signatory-' + s.id);
+                var nameHtml = '<span class="text-white font-semibold text-sm">' + escapeHtml(s.name) + '</span>';
+                var metaParts = [];
+                if (s.title) metaParts.push(escapeHtml(s.title));
+                if (s.organization) metaParts.push(escapeHtml(s.organization));
+                var metaHtml = metaParts.length ? '<span class="text-gray-400 text-xs block mt-0.5">' + metaParts.join(' · ') + '</span>' : '';
+                var dateStr = new Date(s.signedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                var dateHtml = '<span class="text-gray-500 text-xs block mt-0.5">' + dateStr + '</span>';
+                card.innerHTML = nameHtml + metaHtml + dateHtml;
+                list.appendChild(card);
+            });
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function loadSignatories() {
+            fetch('/api/signatories')
+                .then(function(r) { return r.json(); })
+                .then(renderSignatories)
+                .catch(function() {});
+        }
+
+        var signForm = document.getElementById('sign-declaration-form');
+        if (signForm) {
+            signForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = document.getElementById('sign-declaration-btn');
+                var msgEl = document.getElementById('sign-form-message');
+                var nameVal = document.getElementById('signatory-name').value.trim();
+                var orgVal = document.getElementById('signatory-org').value.trim();
+                var titleVal = document.getElementById('signatory-title').value.trim();
+                if (!nameVal) return;
+                btn.disabled = true;
+                btn.textContent = 'Signing...';
+                fetch('/api/signatories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: nameVal, organization: orgVal || null, title: titleVal || null })
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('Failed');
+                    return r.json();
+                })
+                .then(function() {
+                    signForm.reset();
+                    msgEl.textContent = 'Thank you for signing the Declaration.';
+                    msgEl.className = 'text-sm text-center py-2 rounded-md text-cyan-glow bg-cyan-glow/10 border border-cyan-glow/20';
+                    msgEl.classList.remove('hidden');
+                    loadSignatories();
+                    setTimeout(function() { msgEl.classList.add('hidden'); }, 5000);
+                })
+                .catch(function() {
+                    msgEl.textContent = 'Something went wrong. Please try again.';
+                    msgEl.className = 'text-sm text-center py-2 rounded-md text-pink-accent bg-pink-accent/10 border border-pink-accent/20';
+                    msgEl.classList.remove('hidden');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.textContent = 'Sign the Declaration';
+                });
+            });
+        }
+
+        loadSignatories();
     </script>
 
     <script type="module">

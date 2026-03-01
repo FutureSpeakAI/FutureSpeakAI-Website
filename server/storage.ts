@@ -1,9 +1,13 @@
 import { db } from "./db";
-import { siteConfig, type SiteConfig, type InsertSiteConfig } from "@shared/schema";
+import { desc } from "drizzle-orm";
+import { siteConfig, signatories, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory } from "@shared/schema";
 
 export interface IStorage {
   getConfig(): Promise<SiteConfig | undefined>;
   createConfig(config: InsertSiteConfig): Promise<SiteConfig>;
+  getSignatories(): Promise<Signatory[]>;
+  getSignatoryCount(): Promise<number>;
+  createSignatory(signatory: InsertSignatory): Promise<Signatory>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -15,6 +19,20 @@ export class DatabaseStorage implements IStorage {
   async createConfig(config: InsertSiteConfig): Promise<SiteConfig> {
     const [newConfig] = await db.insert(siteConfig).values(config).returning();
     return newConfig;
+  }
+
+  async getSignatories(): Promise<Signatory[]> {
+    return db.select().from(signatories).orderBy(desc(signatories.signedAt));
+  }
+
+  async getSignatoryCount(): Promise<number> {
+    const rows = await db.select().from(signatories);
+    return rows.length;
+  }
+
+  async createSignatory(signatory: InsertSignatory): Promise<Signatory> {
+    const [newSignatory] = await db.insert(signatories).values(signatory).returning();
+    return newSignatory;
   }
 }
 

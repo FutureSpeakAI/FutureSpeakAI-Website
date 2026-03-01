@@ -48,7 +48,7 @@ The **Declaration of Digital Independence** page (`/software/declaration`) is a 
 - 5 Grievances (Surveillance, Dependency, Loyalty, Opacity, Agency) as glass-panel cards
 - 7 Articles (I-VII) as glass-panel cards with color-coded borders: Sovereignty, Transparency, Safety, Loyalty, Relationship, Federation, Exit
 - Commitment section
-- Signatories
+- Live Signatories section with sign form (name, organization, title/role) + dynamic signatory list from PostgreSQL. API: GET/POST `/api/signatories`. Database table: `signatories` (id, name, organization, title, signed_at)
 
 The **cLaw Specification** page (`/software/claw-spec`) is the formal technical standard for AI agent governance. Structure:
 - 11 numbered sections covering Terminology, Fundamental Laws, Cryptographic Enforcement, Agent Identity, Attestation Protocol, Data Protection, Communication Protocol, Conformance Levels, Versioning, Security Considerations, Intellectual Property
