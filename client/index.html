@@ -412,6 +412,7 @@
             background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(6, 11, 25, 0.9) 100%);
         }
     </style>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="antialiased min-h-screen flex flex-col font-sans selection:bg-cyan-glow selection:text-navy-900" itemscope itemtype="https://schema.org/WebPage">
 
@@ -2902,6 +2903,230 @@ Agent B receives:
             </section>
         </div>
 
+        <!-- ==================== ADMIN INVOICES PAGE ==================== -->
+        <div id="admin-invoices" class="page-section hidden">
+            <section class="pt-32 pb-24 content-backdrop">
+                <div class="max-w-5xl mx-auto px-6 lg:px-8">
+
+                    <div id="admin-password-gate" data-testid="admin-password-gate">
+                        <div class="max-w-md mx-auto text-center mt-20">
+                            <h1 class="text-3xl font-bold text-white mb-4">Admin Access</h1>
+                            <p class="text-gray-400 text-sm mb-6">Enter your admin password to continue.</p>
+                            <form id="admin-login-form" class="space-y-4" data-testid="admin-login-form">
+                                <input type="password" id="admin-password-input" placeholder="Password" required data-testid="input-admin-password" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                                <div id="admin-login-error" class="hidden text-pink-accent text-sm" data-testid="text-admin-login-error"></div>
+                                <button type="submit" data-testid="button-admin-login" class="w-full px-6 py-3 rounded-md font-semibold text-sm tracking-wide text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF);">Log In</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="admin-dashboard" class="hidden" data-testid="admin-dashboard">
+                        <div class="flex items-center justify-between mb-10">
+                            <h1 class="text-3xl font-bold text-white" data-testid="text-admin-title">Invoices</h1>
+                            <button id="btn-new-invoice" data-testid="button-new-invoice" class="px-5 py-2.5 rounded-md font-semibold text-sm text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF);">+ New Invoice</button>
+                        </div>
+
+                        <!-- Create Invoice Form -->
+                        <div id="invoice-form-section" class="hidden glass-panel rounded-md p-8 mb-10" data-testid="invoice-form-section">
+                            <h2 class="text-xl font-bold text-white mb-6">Create Invoice</h2>
+                            <form id="create-invoice-form" class="space-y-5" data-testid="create-invoice-form">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Client Name <span class="text-pink-accent">*</span></label>
+                                        <input type="text" id="inv-client-name" required data-testid="input-inv-client-name" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" placeholder="Client full name" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Client Email <span class="text-pink-accent">*</span></label>
+                                        <input type="email" id="inv-client-email" required data-testid="input-inv-client-email" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" placeholder="client@example.com" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Organization <span class="text-gray-500 font-normal">(optional)</span></label>
+                                        <input type="text" id="inv-client-org" data-testid="input-inv-client-org" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" placeholder="Company name" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Due Date <span class="text-pink-accent">*</span></label>
+                                        <input type="date" id="inv-due-date" required data-testid="input-inv-due-date" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-3">Line Items <span class="text-pink-accent">*</span></label>
+                                    <div id="line-items-container" class="space-y-3" data-testid="line-items-container">
+                                        <div class="line-item grid grid-cols-12 gap-2 items-end">
+                                            <div class="col-span-6">
+                                                <input type="text" placeholder="Description" required class="line-desc w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm" />
+                                            </div>
+                                            <div class="col-span-2">
+                                                <input type="number" placeholder="Qty" required min="1" value="1" class="line-qty w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm text-center" />
+                                            </div>
+                                            <div class="col-span-3">
+                                                <input type="number" placeholder="Price ($)" required min="0" step="0.01" class="line-price w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm text-right" />
+                                            </div>
+                                            <div class="col-span-1 flex justify-center">
+                                                <button type="button" class="remove-line-btn text-gray-500 hover:text-pink-accent transition-colors text-lg leading-none" title="Remove">&times;</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="add-line-item" data-testid="button-add-line-item" class="mt-3 text-cyan-glow/70 hover:text-cyan-glow text-sm font-medium transition-colors">+ Add Line Item</button>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1.5">Tax Rate (%) <span class="text-gray-500 font-normal">(optional)</span></label>
+                                        <input type="number" id="inv-tax-rate" value="0" min="0" step="0.01" data-testid="input-inv-tax-rate" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                                    </div>
+                                    <div class="flex items-end">
+                                        <div class="glass-panel rounded-md px-4 py-2.5 w-full text-right">
+                                            <span class="text-gray-400 text-sm">Total: </span>
+                                            <span id="inv-total-display" class="text-white font-bold text-lg" data-testid="text-inv-total">$0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1.5">Notes / Terms <span class="text-gray-500 font-normal">(optional)</span></label>
+                                    <textarea id="inv-notes" rows="2" data-testid="input-inv-notes" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm resize-none" placeholder="Payment terms, additional notes..."></textarea>
+                                </div>
+
+                                <div id="invoice-form-message" class="hidden text-sm text-center py-2 rounded-md" data-testid="text-invoice-form-message"></div>
+
+                                <div class="flex gap-3">
+                                    <button type="submit" id="btn-create-draft" data-testid="button-create-draft" class="flex-1 px-6 py-3 rounded-md font-semibold text-sm text-white border border-white/10 hover:border-white/20 transition-all bg-white/5 hover:bg-white/10">Save Draft</button>
+                                    <button type="button" id="btn-create-send" data-testid="button-create-send" class="flex-1 px-6 py-3 rounded-md font-semibold text-sm text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF);">Create & Send</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Invoice List -->
+                        <div class="glass-panel rounded-md overflow-hidden" data-testid="invoice-list-container">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-white/10">
+                                            <th class="text-left px-4 py-3 text-gray-400 font-medium">Invoice #</th>
+                                            <th class="text-left px-4 py-3 text-gray-400 font-medium">Client</th>
+                                            <th class="text-right px-4 py-3 text-gray-400 font-medium">Amount</th>
+                                            <th class="text-center px-4 py-3 text-gray-400 font-medium">Status</th>
+                                            <th class="text-left px-4 py-3 text-gray-400 font-medium">Due</th>
+                                            <th class="text-right px-4 py-3 text-gray-400 font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoice-list-body" data-testid="invoice-list-body">
+                                        <tr><td colspan="6" class="px-4 py-8 text-center text-gray-500 italic">No invoices yet</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== CLIENT PAYMENT PAGE ==================== -->
+        <div id="pay-invoice" class="page-section hidden">
+            <section class="pt-32 pb-24 content-backdrop">
+                <div class="max-w-2xl mx-auto px-6 lg:px-8">
+
+                    <div class="text-center mb-10">
+                        <a href="/" data-nav="home" class="text-2xl font-bold tracking-tight text-white no-underline">FutureSpeak<span class="text-cyan-glow">.AI</span></a>
+                        <p class="text-gray-500 text-xs mt-1 tracking-widest uppercase">Enterprise AI Strategy & Consulting</p>
+                    </div>
+
+                    <div id="pay-loading" class="text-center py-20" data-testid="pay-loading">
+                        <div class="inline-block w-8 h-8 border-2 border-cyan-glow/30 border-t-cyan-glow rounded-full animate-spin"></div>
+                        <p class="text-gray-400 mt-4 text-sm">Loading invoice...</p>
+                    </div>
+
+                    <div id="pay-error" class="hidden text-center py-20" data-testid="pay-error">
+                        <p class="text-pink-accent text-lg font-semibold mb-2">Invoice Not Found</p>
+                        <p class="text-gray-400 text-sm">This invoice doesn't exist or the link may be incorrect.</p>
+                    </div>
+
+                    <div id="pay-already-paid" class="hidden text-center py-20" data-testid="pay-already-paid">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <p class="text-green-400 text-lg font-semibold mb-2">Already Paid</p>
+                        <p class="text-gray-400 text-sm">This invoice has already been paid. Thank you!</p>
+                    </div>
+
+                    <div id="pay-details" class="hidden" data-testid="pay-details">
+                        <div class="glass-panel rounded-md p-8 mb-6">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <h2 class="text-xl font-bold text-white" data-testid="text-pay-invoice-number"></h2>
+                                    <p class="text-gray-400 text-sm mt-1" data-testid="text-pay-date"></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-2xl font-bold text-white" data-testid="text-pay-total"></p>
+                                    <p class="text-gray-400 text-sm" data-testid="text-pay-due"></p>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-white/10 pt-4 mb-4">
+                                <p class="text-gray-400 text-xs uppercase tracking-wide mb-2">Bill To</p>
+                                <p class="text-white text-sm" data-testid="text-pay-client"></p>
+                            </div>
+
+                            <div class="border-t border-white/10 pt-4">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-gray-400">
+                                            <th class="text-left py-2 font-medium">Description</th>
+                                            <th class="text-right py-2 font-medium">Qty</th>
+                                            <th class="text-right py-2 font-medium">Price</th>
+                                            <th class="text-right py-2 font-medium">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pay-line-items" data-testid="pay-line-items"></tbody>
+                                    <tfoot>
+                                        <tr class="border-t border-white/10">
+                                            <td colspan="3" class="text-right py-2 text-gray-400">Subtotal</td>
+                                            <td class="text-right py-2 text-white" data-testid="text-pay-subtotal"></td>
+                                        </tr>
+                                        <tr id="pay-tax-row" class="hidden">
+                                            <td colspan="3" class="text-right py-1 text-gray-400" data-testid="text-pay-tax-label">Tax</td>
+                                            <td class="text-right py-1 text-white" data-testid="text-pay-tax-amount"></td>
+                                        </tr>
+                                        <tr class="border-t border-white/10">
+                                            <td colspan="3" class="text-right py-2 text-white font-bold">Total</td>
+                                            <td class="text-right py-2 text-white font-bold" data-testid="text-pay-total-bottom"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div id="pay-notes" class="hidden border-t border-white/10 pt-4 mt-4" data-testid="pay-notes">
+                                <p class="text-gray-400 text-xs uppercase tracking-wide mb-1">Notes</p>
+                                <p class="text-gray-300 text-sm" data-testid="text-pay-notes"></p>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel rounded-md p-8" data-testid="pay-stripe-container">
+                            <h3 class="text-lg font-bold text-white mb-4">Payment</h3>
+                            <div id="stripe-card-element" class="bg-white/5 border border-white/10 rounded-md p-4 mb-4" data-testid="stripe-card-element"></div>
+                            <div id="stripe-card-errors" class="text-pink-accent text-sm mb-4 hidden" data-testid="text-stripe-errors"></div>
+                            <button id="pay-submit-btn" data-testid="button-pay-submit" class="w-full px-6 py-3 rounded-md font-semibold text-sm tracking-wide text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF); box-shadow: 0 0 20px rgba(0,240,255,0.15);">
+                                Pay
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="pay-success" class="hidden text-center py-20" data-testid="pay-success">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <p class="text-green-400 text-xl font-semibold mb-2">Payment Received</p>
+                        <p class="text-gray-400 text-sm">Thank you! Your payment has been processed successfully.</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
         <!-- ==================== ABOUT PAGE (THE ARCHITECT) ==================== -->
         <div id="about" class="page-section hidden">
             <section class="pt-32 pb-24 content-backdrop">
@@ -3079,8 +3304,8 @@ Agent B receives:
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // SPA Navigation Logic with URL routing
-        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification' };
-        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification' };
+        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification', '/admin/invoices': 'admin-invoices' };
+        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification', 'admin-invoices': '/admin/invoices' };
         const SOFTWARE_PAGES = ['friday', 'declaration', 'claw-spec', 'certification'];
 
         function toggleMobileMenu() {
@@ -3129,9 +3354,17 @@ Agent B receives:
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (pushState) {
-                const path = ROUTE_PATHS[pageId] || '/';
+                var path;
+                if (pageId === 'pay-invoice' && currentPayInvoiceId) {
+                    path = '/pay/' + currentPayInvoiceId;
+                } else {
+                    path = ROUTE_PATHS[pageId] || '/';
+                }
                 history.pushState({ page: pageId }, '', path);
             }
+
+            if (pageId === 'admin-invoices') initAdminInvoices();
+            if (pageId === 'pay-invoice' && currentPayInvoiceId) initPaymentPage(currentPayInvoiceId);
 
             const canonical = document.querySelector('link[rel="canonical"]');
             var seo = PAGE_SEO[pageId] || PAGE_SEO['home'];
@@ -3195,6 +3428,22 @@ Agent B receives:
                 ogDescription: 'Establishing trust in sovereign AI. Three certification levels verify AI agents implement cryptographic safety laws correctly. Free for open source projects.',
                 ogImage: 'https://futurespeak.ai/og-friday.png',
                 ogUrl: 'https://futurespeak.ai/software/certification'
+            },
+            'admin-invoices': {
+                title: 'Admin — Invoices | FutureSpeak.AI',
+                description: 'Invoice management dashboard.',
+                ogTitle: 'FutureSpeak.AI',
+                ogDescription: 'Enterprise AI Strategy & Consulting',
+                ogImage: 'https://futurespeak.ai/og-image.png',
+                ogUrl: 'https://futurespeak.ai/admin/invoices'
+            },
+            'pay-invoice': {
+                title: 'Pay Invoice | FutureSpeak.AI',
+                description: 'Complete your payment securely.',
+                ogTitle: 'Pay Invoice | FutureSpeak.AI',
+                ogDescription: 'Complete your payment securely with FutureSpeak.AI.',
+                ogImage: 'https://futurespeak.ai/og-image.png',
+                ogUrl: 'https://futurespeak.ai/pay'
             }
         };
 
@@ -3203,8 +3452,14 @@ Agent B receives:
             navigate(pageId, false);
         });
 
+        var currentPayInvoiceId = null;
         function pageFromPath(path) {
             const clean = path.replace(/\/$/, '') || '/';
+            var payMatch = clean.match(/^\/pay\/(\d+)$/);
+            if (payMatch) {
+                currentPayInvoiceId = payMatch[1];
+                return 'pay-invoice';
+            }
             return PAGE_ROUTES[clean] || 'home';
         }
 
@@ -4266,6 +4521,465 @@ Agent B receives:
             animate();
             }
         })();
+    </script>
+
+    <script>
+    (function() {
+        var adminPassword = sessionStorage.getItem('fsAdminPassword') || '';
+        var adminInitialized = false;
+
+        function adminHeaders() {
+            return { 'Content-Type': 'application/json', 'x-admin-password': adminPassword };
+        }
+
+        function formatCents(cents) {
+            return '$' + (cents / 100).toFixed(2);
+        }
+
+        function statusBadge(status) {
+            var colors = { draft: 'bg-gray-500/20 text-gray-300 border-gray-500/30', sent: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30', paid: 'bg-green-500/20 text-green-300 border-green-500/30', overdue: 'bg-pink-500/20 text-pink-300 border-pink-500/30' };
+            var c = colors[status] || colors.draft;
+            return '<span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium border ' + c + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span>';
+        }
+
+        function showFormMessage(msg, isError) {
+            var el = document.getElementById('invoice-form-message');
+            el.textContent = msg;
+            el.className = 'text-sm text-center py-2 rounded-md ' + (isError ? 'text-pink-accent bg-pink-500/10' : 'text-green-400 bg-green-500/10');
+            el.classList.remove('hidden');
+            setTimeout(function() { el.classList.add('hidden'); }, 4000);
+        }
+
+        function calcInvoiceTotal() {
+            var items = document.querySelectorAll('#line-items-container .line-item');
+            var subtotal = 0;
+            items.forEach(function(row) {
+                var qty = parseFloat(row.querySelector('.line-qty').value) || 0;
+                var price = parseFloat(row.querySelector('.line-price').value) || 0;
+                subtotal += qty * price;
+            });
+            var taxRate = parseFloat(document.getElementById('inv-tax-rate').value) || 0;
+            var tax = subtotal * (taxRate / 100);
+            var total = subtotal + tax;
+            document.getElementById('inv-total-display').textContent = '$' + total.toFixed(2);
+        }
+
+        function addLineItemRow() {
+            var container = document.getElementById('line-items-container');
+            var div = document.createElement('div');
+            div.className = 'line-item grid grid-cols-12 gap-2 items-end';
+            div.innerHTML = '<div class="col-span-6"><input type="text" placeholder="Description" required class="line-desc w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm" /></div><div class="col-span-2"><input type="number" placeholder="Qty" required min="1" value="1" class="line-qty w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm text-center" /></div><div class="col-span-3"><input type="number" placeholder="Price ($)" required min="0" step="0.01" class="line-price w-full bg-white/5 border border-white/10 rounded-md px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 text-sm text-right" /></div><div class="col-span-1 flex justify-center"><button type="button" class="remove-line-btn text-gray-500 hover:text-pink-accent transition-colors text-lg leading-none" title="Remove">&times;</button></div>';
+            container.appendChild(div);
+            div.querySelectorAll('.line-qty, .line-price').forEach(function(input) {
+                input.addEventListener('input', calcInvoiceTotal);
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-line-btn')) {
+                var container = document.getElementById('line-items-container');
+                if (container.querySelectorAll('.line-item').length > 1) {
+                    e.target.closest('.line-item').remove();
+                    calcInvoiceTotal();
+                }
+            }
+        });
+
+        function gatherLineItems() {
+            var items = [];
+            document.querySelectorAll('#line-items-container .line-item').forEach(function(row) {
+                var desc = row.querySelector('.line-desc').value.trim();
+                var qty = parseFloat(row.querySelector('.line-qty').value) || 0;
+                var price = parseFloat(row.querySelector('.line-price').value) || 0;
+                if (desc && qty > 0 && price > 0) {
+                    items.push({ description: desc, quantity: qty, unitPrice: Math.round(price * 100) });
+                }
+            });
+            return items;
+        }
+
+        function resetInvoiceForm() {
+            document.getElementById('create-invoice-form').reset();
+            var container = document.getElementById('line-items-container');
+            var rows = container.querySelectorAll('.line-item');
+            for (var i = rows.length - 1; i > 0; i--) rows[i].remove();
+            var firstRow = rows[0];
+            if (firstRow) {
+                firstRow.querySelector('.line-desc').value = '';
+                firstRow.querySelector('.line-qty').value = '1';
+                firstRow.querySelector('.line-price').value = '';
+            }
+            document.getElementById('inv-total-display').textContent = '$0.00';
+        }
+
+        async function loadInvoices() {
+            try {
+                var res = await fetch('/api/admin/invoices', { headers: adminHeaders() });
+                if (!res.ok) throw new Error('Failed to load');
+                var invoices = await res.json();
+                var tbody = document.getElementById('invoice-list-body');
+                if (!invoices.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500 italic">No invoices yet</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = invoices.map(function(inv) {
+                    var due = inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : '—';
+                    var actions = '';
+                    if (inv.status === 'draft') {
+                        actions = '<button class="send-invoice-btn text-cyan-glow/70 hover:text-cyan-glow text-xs font-medium transition-colors" data-id="' + inv.id + '" data-testid="button-send-invoice-' + inv.id + '">Send</button>';
+                    }
+                    actions += ' <a href="/pay/' + inv.id + '" target="_blank" class="text-gray-400 hover:text-white text-xs font-medium transition-colors ml-2" data-testid="link-view-invoice-' + inv.id + '">View</a>';
+                    return '<tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors" data-testid="row-invoice-' + inv.id + '">' +
+                        '<td class="px-4 py-3 text-white font-mono text-xs">' + inv.invoiceNumber + '</td>' +
+                        '<td class="px-4 py-3 text-gray-300 text-sm">' + inv.clientName + '</td>' +
+                        '<td class="px-4 py-3 text-white text-sm text-right">' + formatCents(inv.total) + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + statusBadge(inv.status) + '</td>' +
+                        '<td class="px-4 py-3 text-gray-400 text-xs">' + due + '</td>' +
+                        '<td class="px-4 py-3 text-right">' + actions + '</td>' +
+                        '</tr>';
+                }).join('');
+            } catch (err) {
+                console.error('Failed to load invoices:', err);
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            var sendBtn = e.target.closest('.send-invoice-btn');
+            if (sendBtn) {
+                var id = sendBtn.getAttribute('data-id');
+                sendBtn.textContent = 'Sending...';
+                sendBtn.disabled = true;
+                fetch('/api/admin/invoices/' + id + '/send', { method: 'POST', headers: adminHeaders() })
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('Send failed');
+                        loadInvoices();
+                    })
+                    .catch(function(err) {
+                        sendBtn.textContent = 'Send';
+                        sendBtn.disabled = false;
+                        alert('Failed to send invoice: ' + err.message);
+                    });
+            }
+        });
+
+        async function createInvoice(andSend) {
+            var lineItems = gatherLineItems();
+            if (!lineItems.length) {
+                showFormMessage('Add at least one line item with a description, quantity, and price.', true);
+                return;
+            }
+            var clientName = document.getElementById('inv-client-name').value.trim();
+            var clientEmail = document.getElementById('inv-client-email').value.trim();
+            var clientOrganization = document.getElementById('inv-client-org').value.trim() || undefined;
+            var dueDate = document.getElementById('inv-due-date').value;
+            var taxRate = parseFloat(document.getElementById('inv-tax-rate').value) || 0;
+            var notes = document.getElementById('inv-notes').value.trim() || undefined;
+
+            if (!clientName || !clientEmail || !dueDate) {
+                showFormMessage('Please fill in all required fields.', true);
+                return;
+            }
+
+            var taxBasisPoints = Math.round(taxRate * 100);
+            var subtotalCents = lineItems.reduce(function(sum, item) {
+                return sum + (item.quantity * item.unitPrice);
+            }, 0);
+            var taxAmountCents = Math.round(subtotalCents * taxRate / 100);
+            var totalCents = subtotalCents + taxAmountCents;
+
+            var body = {
+                clientName: clientName,
+                clientEmail: clientEmail,
+                clientOrganization: clientOrganization,
+                lineItems: lineItems,
+                subtotal: subtotalCents,
+                taxRate: taxBasisPoints,
+                taxAmount: taxAmountCents,
+                total: totalCents,
+                status: 'draft',
+                dueDate: new Date(dueDate).toISOString(),
+                notes: notes
+            };
+
+            var createBtn = document.getElementById(andSend ? 'btn-create-send' : 'btn-create-draft');
+            var origText = createBtn.textContent;
+            createBtn.textContent = andSend ? 'Creating & Sending...' : 'Creating...';
+            createBtn.disabled = true;
+
+            try {
+                var res = await fetch('/api/admin/invoices', { method: 'POST', headers: adminHeaders(), body: JSON.stringify(body) });
+                if (!res.ok) {
+                    var errData = await res.json().catch(function() { return {}; });
+                    throw new Error(errData.error || 'Failed to create invoice');
+                }
+                var invoice = await res.json();
+
+                if (andSend) {
+                    var sendRes = await fetch('/api/admin/invoices/' + invoice.id + '/send', { method: 'POST', headers: adminHeaders() });
+                    if (!sendRes.ok) throw new Error('Created but failed to send');
+                }
+
+                resetInvoiceForm();
+                document.getElementById('invoice-form-section').classList.add('hidden');
+                showFormMessage(andSend ? 'Invoice created and sent!' : 'Invoice draft saved.', false);
+                loadInvoices();
+            } catch (err) {
+                showFormMessage(err.message, true);
+            } finally {
+                createBtn.textContent = origText;
+                createBtn.disabled = false;
+            }
+        }
+
+        window.initAdminInvoices = function() {
+            if (adminPassword) {
+                document.getElementById('admin-password-gate').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                if (!adminInitialized) {
+                    adminInitialized = true;
+                    loadInvoices();
+                }
+                return;
+            }
+            document.getElementById('admin-password-gate').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+        };
+
+        var adminLoginForm = document.getElementById('admin-login-form');
+        if (adminLoginForm) {
+            adminLoginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var pw = document.getElementById('admin-password-input').value;
+                var errorEl = document.getElementById('admin-login-error');
+                try {
+                    var res = await fetch('/api/admin/invoices', { headers: { 'x-admin-password': pw } });
+                    if (res.ok) {
+                        adminPassword = pw;
+                        sessionStorage.setItem('fsAdminPassword', pw);
+                        document.getElementById('admin-password-gate').classList.add('hidden');
+                        document.getElementById('admin-dashboard').classList.remove('hidden');
+                        adminInitialized = true;
+                        loadInvoices();
+                    } else {
+                        errorEl.textContent = 'Incorrect password.';
+                        errorEl.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    errorEl.textContent = 'Connection error. Try again.';
+                    errorEl.classList.remove('hidden');
+                }
+            });
+        }
+
+        var newInvoiceBtn = document.getElementById('btn-new-invoice');
+        if (newInvoiceBtn) {
+            newInvoiceBtn.addEventListener('click', function() {
+                var section = document.getElementById('invoice-form-section');
+                section.classList.toggle('hidden');
+                if (!section.classList.contains('hidden')) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
+
+        var addLineBtn = document.getElementById('add-line-item');
+        if (addLineBtn) addLineBtn.addEventListener('click', addLineItemRow);
+
+        document.querySelectorAll('#line-items-container .line-qty, #line-items-container .line-price').forEach(function(input) {
+            input.addEventListener('input', calcInvoiceTotal);
+        });
+        var taxRateInput = document.getElementById('inv-tax-rate');
+        if (taxRateInput) taxRateInput.addEventListener('input', calcInvoiceTotal);
+
+        var createInvoiceForm = document.getElementById('create-invoice-form');
+        if (createInvoiceForm) {
+            createInvoiceForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                createInvoice(false);
+            });
+        }
+
+        var createSendBtn = document.getElementById('btn-create-send');
+        if (createSendBtn) {
+            createSendBtn.addEventListener('click', function() {
+                var form = document.getElementById('create-invoice-form');
+                if (form.checkValidity()) {
+                    createInvoice(true);
+                } else {
+                    form.reportValidity();
+                }
+            });
+        }
+
+        var stripeInstance = null;
+        var stripeElements = null;
+        var stripeCardElement = null;
+
+        window.initPaymentPage = async function(invoiceId) {
+            var loadingEl = document.getElementById('pay-loading');
+            var errorEl = document.getElementById('pay-error');
+            var paidEl = document.getElementById('pay-already-paid');
+            var detailsEl = document.getElementById('pay-details');
+            var successEl = document.getElementById('pay-success');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            paidEl.classList.add('hidden');
+            detailsEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var redirectPiId = urlParams.get('payment_intent');
+            var redirectStatus = urlParams.get('redirect_status');
+
+            if (redirectPiId && redirectStatus === 'succeeded') {
+                try {
+                    await fetch('/api/invoices/' + invoiceId + '/confirm-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentIntentId: redirectPiId })
+                    });
+                } catch (e) {}
+                loadingEl.classList.add('hidden');
+                successEl.classList.remove('hidden');
+                history.replaceState(null, '', '/pay/' + invoiceId);
+                return;
+            }
+
+            try {
+                var res = await fetch('/api/invoices/' + invoiceId + '/pay');
+                if (!res.ok) throw new Error('not found');
+                var invoice = await res.json();
+
+                loadingEl.classList.add('hidden');
+
+                if (invoice.status === 'paid') {
+                    paidEl.classList.remove('hidden');
+                    return;
+                }
+
+                document.querySelector('[data-testid="text-pay-invoice-number"]').textContent = invoice.invoiceNumber;
+                document.querySelector('[data-testid="text-pay-date"]').textContent = 'Issued ' + new Date(invoice.createdAt).toLocaleDateString();
+                document.querySelector('[data-testid="text-pay-total"]').textContent = formatCents(invoice.total);
+                document.querySelector('[data-testid="text-pay-due"]').textContent = 'Due ' + new Date(invoice.dueDate).toLocaleDateString();
+                document.querySelector('[data-testid="text-pay-client"]').textContent = invoice.clientName + (invoice.clientOrganization ? ' — ' + invoice.clientOrganization : '');
+
+                var lineItemsHtml = '';
+                if (invoice.lineItems && invoice.lineItems.length) {
+                    invoice.lineItems.forEach(function(item) {
+                        var amt = item.quantity * item.unitPrice;
+                        lineItemsHtml += '<tr class="border-b border-white/5"><td class="py-2 text-gray-300">' + item.description + '</td><td class="py-2 text-right text-gray-400">' + item.quantity + '</td><td class="py-2 text-right text-gray-400">' + formatCents(item.unitPrice) + '</td><td class="py-2 text-right text-white">' + formatCents(amt) + '</td></tr>';
+                    });
+                }
+                document.getElementById('pay-line-items').innerHTML = lineItemsHtml;
+
+                document.querySelector('[data-testid="text-pay-subtotal"]').textContent = formatCents(invoice.subtotal);
+
+                if (invoice.taxAmount > 0) {
+                    document.getElementById('pay-tax-row').classList.remove('hidden');
+                    var taxPct = (invoice.taxRate / 100).toFixed(2);
+                    document.querySelector('[data-testid="text-pay-tax-label"]').textContent = 'Tax (' + taxPct + '%)';
+                    document.querySelector('[data-testid="text-pay-tax-amount"]').textContent = formatCents(invoice.taxAmount);
+                }
+
+                document.querySelector('[data-testid="text-pay-total-bottom"]').textContent = formatCents(invoice.total);
+
+                if (invoice.notes) {
+                    document.getElementById('pay-notes').classList.remove('hidden');
+                    document.querySelector('[data-testid="text-pay-notes"]').textContent = invoice.notes;
+                }
+
+                document.getElementById('pay-submit-btn').textContent = 'Pay ' + formatCents(invoice.total);
+                detailsEl.classList.remove('hidden');
+
+                var keyRes = await fetch('/api/stripe/publishable-key');
+                if (!keyRes.ok) throw new Error('Stripe not configured');
+                var keyData = await keyRes.json();
+
+                stripeInstance = Stripe(keyData.publishableKey);
+
+                var piRes = await fetch('/api/invoices/' + invoiceId + '/create-payment-intent', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                if (!piRes.ok) throw new Error('Could not create payment');
+                var piData = await piRes.json();
+
+                stripeElements = stripeInstance.elements({
+                    clientSecret: piData.clientSecret,
+                    appearance: {
+                        theme: 'night',
+                        variables: {
+                            colorPrimary: '#00F0FF',
+                            colorBackground: 'rgba(255,255,255,0.05)',
+                            colorText: '#F8FAFC',
+                            colorDanger: '#FF00AA',
+                            fontFamily: 'system-ui, sans-serif',
+                            borderRadius: '6px',
+                            spacingUnit: '4px'
+                        },
+                        rules: {
+                            '.Input': {
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                backgroundColor: 'rgba(255,255,255,0.05)'
+                            },
+                            '.Input:focus': {
+                                border: '1px solid rgba(0,240,255,0.5)',
+                                boxShadow: '0 0 0 1px rgba(0,240,255,0.3)'
+                            }
+                        }
+                    }
+                });
+
+                var paymentElement = stripeElements.create('payment');
+                paymentElement.mount('#stripe-card-element');
+
+                var payBtn = document.getElementById('pay-submit-btn');
+                payBtn.onclick = async function() {
+                    payBtn.disabled = true;
+                    payBtn.textContent = 'Processing...';
+                    var errorsEl = document.getElementById('stripe-card-errors');
+                    errorsEl.classList.add('hidden');
+
+                    var result = await stripeInstance.confirmPayment({
+                        elements: stripeElements,
+                        confirmParams: {
+                            return_url: window.location.origin + '/pay/' + invoiceId
+                        },
+                        redirect: 'if_required'
+                    });
+
+                    if (result.error) {
+                        errorsEl.textContent = result.error.message;
+                        errorsEl.classList.remove('hidden');
+                        payBtn.disabled = false;
+                        payBtn.textContent = 'Pay ' + formatCents(invoice.total);
+                    } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                        await fetch('/api/invoices/' + invoiceId + '/confirm-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ paymentIntentId: result.paymentIntent.id })
+                        });
+                        detailsEl.classList.add('hidden');
+                        successEl.classList.remove('hidden');
+                    } else {
+                        payBtn.disabled = false;
+                        payBtn.textContent = 'Pay ' + formatCents(invoice.total);
+                    }
+                };
+
+            } catch (err) {
+                console.error('Payment page error:', err);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        if (location.pathname.match(/^\/pay\/\d+$/)) {
+            var m = location.pathname.match(/^\/pay\/(\d+)$/);
+            if (m) {
+                currentPayInvoiceId = m[1];
+            }
+        }
+
+    })();
     </script>
 </body>
 </html>
