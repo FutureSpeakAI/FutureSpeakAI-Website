@@ -2245,9 +2245,50 @@
                         </div>
                     </div>
 
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-inquiry-form-container">
+                        <h2 class="text-2xl font-bold text-white mb-3 text-center">Apply for Certification</h2>
+                        <p class="text-gray-400 text-sm text-center mb-8 max-w-xl mx-auto">Interested in certifying your AI agent? Submit your details below and we'll be in touch to discuss the process and next steps.</p>
+                        <form id="certification-inquiry-form" class="space-y-4 max-w-xl mx-auto" data-testid="certification-inquiry-form">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="cert-name" class="block text-sm font-medium text-gray-300 mb-1.5">Full Name <span class="text-pink-accent">*</span></label>
+                                    <input type="text" id="cert-name" name="name" required maxlength="120" placeholder="Your full name" data-testid="input-cert-name" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                                </div>
+                                <div>
+                                    <label for="cert-email" class="block text-sm font-medium text-gray-300 mb-1.5">Email <span class="text-pink-accent">*</span></label>
+                                    <input type="email" id="cert-email" name="email" required maxlength="200" placeholder="you@example.com" data-testid="input-cert-email" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="cert-org" class="block text-sm font-medium text-gray-300 mb-1.5">Organization <span class="text-gray-500 font-normal">(optional)</span></label>
+                                <input type="text" id="cert-org" name="organization" maxlength="120" placeholder="Company or project name" data-testid="input-cert-org" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                            </div>
+                            <div>
+                                <label for="cert-repo" class="block text-sm font-medium text-gray-300 mb-1.5">GitHub Repository <span class="text-pink-accent">*</span></label>
+                                <input type="url" id="cert-repo" name="githubRepo" required maxlength="300" placeholder="https://github.com/your-org/your-agent" data-testid="input-cert-repo" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm" />
+                            </div>
+                            <div>
+                                <label for="cert-level" class="block text-sm font-medium text-gray-300 mb-1.5">Certification Level <span class="text-pink-accent">*</span></label>
+                                <select id="cert-level" name="certificationLevel" required data-testid="select-cert-level" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm appearance-none" style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%239ca3af\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'><path fill-rule=\'evenodd\' d=\'M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z\' clip-rule=\'evenodd\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:16px;">
+                                    <option value="" disabled selected class="bg-gray-900">Select a level</option>
+                                    <option value="Core" class="bg-gray-900">Core — Fundamental cLaw compliance</option>
+                                    <option value="Connected" class="bg-gray-900">Connected — Federation interoperability</option>
+                                    <option value="Sovereign" class="bg-gray-900">Sovereign — Full autonomous governance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cert-message" class="block text-sm font-medium text-gray-300 mb-1.5">Additional Details <span class="text-gray-500 font-normal">(optional)</span></label>
+                                <textarea id="cert-message" name="message" rows="3" maxlength="2000" placeholder="Tell us about your agent and what certification means for your project..." data-testid="input-cert-message" class="w-full bg-white/5 border border-white/10 rounded-md px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-glow/50 focus:ring-1 focus:ring-cyan-glow/30 transition-colors text-sm resize-none"></textarea>
+                            </div>
+                            <div id="cert-form-message" class="hidden text-sm text-center py-2 rounded-md" data-testid="text-cert-form-message"></div>
+                            <button type="submit" id="cert-submit-btn" data-testid="button-submit-certification" class="w-full mt-2 px-6 py-3 rounded-md font-semibold text-sm tracking-wide text-white transition-all duration-300" style="background: linear-gradient(135deg, #8A2BE2, #00F0FF); box-shadow: 0 0 20px rgba(0,240,255,0.15);">
+                                Submit Certification Inquiry
+                            </button>
+                        </form>
+                    </div>
+
                     <div class="text-center text-gray-500 text-sm space-y-2 mb-8">
                         <p>The Asimov Agent Certification Program is administered by FutureSpeak.AI.</p>
-                        <p>For submissions, questions, and the automated test suite, visit: <a href="/software/certification" class="text-cyan-glow hover:underline">futurespeak.ai/certification</a></p>
                         <p class="italic">The goal is not to control the ecosystem. The goal is to make it trustworthy.</p>
                         <p class="mt-4 text-xs text-gray-600">Published under Creative Commons Attribution 4.0 International (CC BY 4.0).</p>
                     </div>
@@ -3284,6 +3325,56 @@ Agent B receives:
         }
 
         loadSignatories();
+
+        // Certification Inquiry Form
+        var certForm = document.getElementById('certification-inquiry-form');
+        if (certForm) {
+            certForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = document.getElementById('cert-submit-btn');
+                var msgEl = document.getElementById('cert-form-message');
+                var nameVal = document.getElementById('cert-name').value.trim();
+                var emailVal = document.getElementById('cert-email').value.trim();
+                var orgVal = document.getElementById('cert-org').value.trim();
+                var repoVal = document.getElementById('cert-repo').value.trim();
+                var levelVal = document.getElementById('cert-level').value;
+                var messageVal = document.getElementById('cert-message').value.trim();
+                if (!nameVal || !emailVal || !repoVal || !levelVal) return;
+                btn.disabled = true;
+                btn.textContent = 'Submitting...';
+                fetch('/api/certification-inquiry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: nameVal,
+                        email: emailVal,
+                        organization: orgVal || null,
+                        githubRepo: repoVal,
+                        certificationLevel: levelVal,
+                        message: messageVal || null
+                    })
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('Failed');
+                    return r.json();
+                })
+                .then(function() {
+                    certForm.reset();
+                    msgEl.textContent = 'Thank you for your inquiry. We\'ll review your submission and be in touch soon.';
+                    msgEl.className = 'text-sm text-center py-2 rounded-md text-cyan-glow bg-cyan-glow/10 border border-cyan-glow/20';
+                    msgEl.classList.remove('hidden');
+                })
+                .catch(function() {
+                    msgEl.textContent = 'Something went wrong. Please try again.';
+                    msgEl.className = 'text-sm text-center py-2 rounded-md text-pink-accent bg-pink-accent/10 border border-pink-accent/20';
+                    msgEl.classList.remove('hidden');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Certification Inquiry';
+                });
+            });
+        }
     </script>
 
     <script type="module">

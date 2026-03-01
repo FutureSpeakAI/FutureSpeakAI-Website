@@ -22,3 +22,18 @@ export const signatories = pgTable("signatories", {
 export const insertSignatorySchema = createInsertSchema(signatories).omit({ id: true, signedAt: true });
 export type Signatory = typeof signatories.$inferSelect;
 export type InsertSignatory = z.infer<typeof insertSignatorySchema>;
+
+export const certificationInquiries = pgTable("certification_inquiries", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  organization: text("organization"),
+  githubRepo: text("github_repo").notNull(),
+  certificationLevel: text("certification_level").notNull(),
+  message: text("message"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+});
+
+export const insertCertificationInquirySchema = createInsertSchema(certificationInquiries).omit({ id: true, submittedAt: true });
+export type CertificationInquiry = typeof certificationInquiries.$inferSelect;
+export type InsertCertificationInquiry = z.infer<typeof insertCertificationInquirySchema>;

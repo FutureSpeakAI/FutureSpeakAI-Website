@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { desc } from "drizzle-orm";
-import { siteConfig, signatories, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory } from "@shared/schema";
+import { siteConfig, signatories, certificationInquiries, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory, type CertificationInquiry, type InsertCertificationInquiry } from "@shared/schema";
 
 export interface IStorage {
   getConfig(): Promise<SiteConfig | undefined>;
@@ -8,6 +8,7 @@ export interface IStorage {
   getSignatories(): Promise<Signatory[]>;
   getSignatoryCount(): Promise<number>;
   createSignatory(signatory: InsertSignatory): Promise<Signatory>;
+  createCertificationInquiry(inquiry: InsertCertificationInquiry): Promise<CertificationInquiry>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -33,6 +34,11 @@ export class DatabaseStorage implements IStorage {
   async createSignatory(signatory: InsertSignatory): Promise<Signatory> {
     const [newSignatory] = await db.insert(signatories).values(signatory).returning();
     return newSignatory;
+  }
+
+  async createCertificationInquiry(inquiry: InsertCertificationInquiry): Promise<CertificationInquiry> {
+    const [newInquiry] = await db.insert(certificationInquiries).values(inquiry).returning();
+    return newInquiry;
   }
 }
 

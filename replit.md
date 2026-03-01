@@ -62,6 +62,7 @@ The **Certification Program** page (`/software/certification`) describes the Asi
 - Governance section (Specification Committee, Conflict of Interest, Dispute Resolution)
 - 3-phase roadmap
 - FAQ section
+- Certification inquiry form (name, email, organization, GitHub repo, certification level, message). Submissions stored in `certification_inquiries` DB table and emailed via Resend integration to site owner. API: POST `/api/certification-inquiry`. Email helper: `server/resend.ts`
 
 **Key purpose:** Serve a polished, animated marketing site with server-side configuration support and a clean design system.
 
