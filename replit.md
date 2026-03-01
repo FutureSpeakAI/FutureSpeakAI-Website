@@ -4,14 +4,17 @@
 
 This is a **FutureSpeak.AI** marketing/consulting website — a minimalist, content-focused web presence for an enterprise AI strategy and consulting firm founded by Stephen C. Webster. The site showcases services around agentic workflow design, RAG-based architectures, and AI transformation for Fortune 500 companies.
 
-The application is a full-stack TypeScript project with a React frontend and Express backend. It has three pages (Home, Agent Friday, and About) and a minimal backend that serves a single site configuration record from a PostgreSQL database. The architecture is intentionally simple — it's a landing site, not a complex application.
+The application is a full-stack TypeScript project with a React frontend and Express backend. It has six pages (Home, Agent Friday, Declaration of Digital Independence, cLaw Specification, Certification Program, and Leadership) and a minimal backend that serves a single site configuration record from a PostgreSQL database. The architecture is intentionally simple — it's a landing site, not a complex application.
 
 **URL Routing**: The site uses SPA-style navigation with `history.pushState` for real URLs:
 - `/` — Home (Capabilities)
-- `/software` — Agent Friday product page (nav label: "Software")
+- `/software` — Agent Friday product page (nav label: "Software" dropdown > "Agent Friday")
+- `/software/declaration` — Declaration of Digital Independence
+- `/software/claw-spec` — The cLaw Specification v1.0.0
+- `/software/certification` — Asimov Agent Certification Program
 - `/leadership` — Stephen C. Webster bio (nav label: "Leadership")
 - `/friday` and `/about` are kept as aliases that redirect to the new canonical paths
-All nav links use `data-nav` attributes intercepted by a delegated click handler. Browser back/forward is supported via `popstate`. The server (vite.ts) serves `index.html` for all routes (catch-all), and the JS detects the URL path on load to show the correct page section.
+The "Software" nav item is a hover dropdown with 4 sub-pages. All nav links use `data-nav` attributes intercepted by a delegated click handler. Browser back/forward is supported via `popstate`. The server (vite.ts) serves `index.html` for all routes (catch-all), and the JS detects the URL path on load to show the correct page section. SEO metadata per page is managed via a `PAGE_SEO` object.
 
 **SEO**: Full optimization including:
 - Dynamic per-page title, meta description, canonical URL, OG tags, and Twitter cards
@@ -38,6 +41,27 @@ The **Agent Friday page** (`/software`) is the product showcase, positioned as "
 11. **CTA** — "🌠 Meet Your Friday 🔭" linking to GitHub
 
 The page includes an interactive 3D fractured cube (Three.js) with click-to-ripple effects, connection lines between pieces, and mouse-reactive individual pieces.
+
+The **Declaration of Digital Independence** page (`/software/declaration`) is a manifesto for sovereign computing. Structure:
+- Hero with gradient title and CC BY 4.0 attribution
+- Preamble section
+- 5 Grievances (Surveillance, Dependency, Loyalty, Opacity, Agency) as glass-panel cards
+- 7 Articles (I-VII) as glass-panel cards with color-coded borders: Sovereignty, Transparency, Safety, Loyalty, Relationship, Federation, Exit
+- Commitment section
+- Signatories
+
+The **cLaw Specification** page (`/software/claw-spec`) is the formal technical standard for AI agent governance. Structure:
+- 11 numbered sections covering Terminology, Fundamental Laws, Cryptographic Enforcement, Agent Identity, Attestation Protocol, Data Protection, Communication Protocol, Conformance Levels, Versioning, Security Considerations, Intellectual Property
+- 2 Appendices with code blocks
+- Terminal-styled code blocks, themed tables, glass-panel cards
+
+The **Certification Program** page (`/software/certification`) describes the Asimov Agent Certification. Structure:
+- 3 certification levels (Core, Connected, Sovereign) as color-coded cards
+- 5-step certification process
+- Pricing table (free for open source)
+- Governance section (Specification Committee, Conflict of Interest, Dispute Resolution)
+- 3-phase roadmap
+- FAQ section
 
 **Key purpose:** Serve a polished, animated marketing site with server-side configuration support and a clean design system.
 

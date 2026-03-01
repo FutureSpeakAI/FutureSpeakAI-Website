@@ -310,6 +310,71 @@
 
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 12px;
+            min-width: 260px;
+            background: rgba(6, 11, 25, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+            transform: translateX(-50%) translateY(4px);
+            z-index: 100;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.03);
+        }
+        .nav-dropdown:hover .nav-dropdown-menu,
+        .nav-dropdown.dropdown-open .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 10px 14px;
+            color: #9CA3AF;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+        .nav-dropdown-menu a:hover {
+            color: #00F0FF;
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .nav-dropdown-menu a.active-sub {
+            color: #00F0FF;
+            background: rgba(0, 240, 255, 0.08);
+        }
+        .nav-dropdown-menu .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 4px 8px;
+        }
+        .mobile-software-sub {
+            padding-left: 1.25rem;
+            border-left: 2px solid rgba(0, 240, 255, 0.15);
+            margin-left: 0.75rem;
+            margin-top: 4px;
+        }
+        .mobile-software-sub a {
+            font-size: 0.75rem;
+            text-transform: none;
+            letter-spacing: 0.01em;
+        }
+
         .page-section {
             display: none;
             opacity: 0;
@@ -357,6 +422,12 @@
             <h2>Agent Friday — AI Software</h2>
             <p>A free, desktop-native AI operating system that orchestrates parallel agents from Google, Anthropic, OpenAI, Perplexity, ElevenLabs, and Firecrawl. Features real-time voice, screen vision, persistent memory, on-the-fly code generation, and 55+ tools from 12+ sources.</p>
             <p><a href="https://github.com/FutureSpeakAI/Agent-Friday" style="color:#00F0FF;">View Agent Friday on GitHub</a></p>
+            <h2>The Declaration of Digital Independence</h2>
+            <p>A manifesto for sovereign computing in the age of artificial intelligence. Seven articles establishing the rights to sovereignty, transparency, safety, loyalty, relationship, federation, and exit.</p>
+            <h2>The cLaw Specification v1.0.0</h2>
+            <p>An open standard for governing autonomous AI agents through cryptographically enforced safety laws. Defines the Fundamental Laws, attestation protocols, federation trust, and data protection requirements.</p>
+            <h2>Asimov Agent Certification Program</h2>
+            <p>A voluntary certification program verifying that AI agents correctly implement the cLaw Specification. Three levels: Core, Connected, and Sovereign. Free for open source projects.</p>
             <h2>Leadership</h2>
             <p>Stephen C. Webster — Principal Architect. 20+ years decoding complex systems. Enterprise AI strategist and former award-winning investigative journalist.</p>
             <p><a href="https://www.linkedin.com/in/stephencwebster/" style="color:#00F0FF;">Connect on LinkedIn</a></p>
@@ -384,9 +455,18 @@
                 </a>
                 
                 <!-- Desktop Menu -->
-                <nav class="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
+                <nav class="hidden md:flex space-x-8 items-center" role="navigation" aria-label="Main navigation">
                     <a href="/" data-nav="home" id="nav-home" class="nav-link active text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Consulting</a>
-                    <a href="/software" data-nav="friday" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Software</a>
+                    <div class="nav-dropdown" id="software-dropdown">
+                        <a href="/software" data-nav="friday" id="nav-friday" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline flex items-center gap-1">Software <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></a>
+                        <div class="nav-dropdown-menu">
+                            <a href="/software" data-nav="friday" data-testid="nav-dropdown-friday">Agent Friday</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/software/declaration" data-nav="declaration" data-testid="nav-dropdown-declaration">Declaration of Digital Independence</a>
+                            <a href="/software/claw-spec" data-nav="claw-spec" data-testid="nav-dropdown-claw-spec">The cLaw Specification</a>
+                            <a href="/software/certification" data-nav="certification" data-testid="nav-dropdown-certification">Certification Program</a>
+                        </div>
+                    </div>
                     <a href="/leadership" data-nav="about" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Leadership</a>
                 </nav>
 
@@ -403,6 +483,12 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="/" data-nav="home" class="block w-full text-left px-3 py-2 text-white font-medium hover:bg-white/5 rounded-md uppercase text-sm tracking-wide no-underline">Consulting</a>
                 <a href="/software" data-nav="friday" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Software</a>
+                <div class="mobile-software-sub space-y-1">
+                    <a href="/software" data-nav="friday" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-friday">Agent Friday</a>
+                    <a href="/software/declaration" data-nav="declaration" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-declaration">Declaration</a>
+                    <a href="/software/claw-spec" data-nav="claw-spec" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-claw-spec">cLaw Specification</a>
+                    <a href="/software/certification" data-nav="certification" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-certification">Certification</a>
+                </div>
                 <a href="/leadership" data-nav="about" class="block w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 font-medium rounded-md uppercase text-sm tracking-wide no-underline">Leadership</a>
             </div>
         </div>
@@ -1506,6 +1592,1223 @@
 
         </div>
 
+        <!-- ==================== DECLARATION OF DIGITAL INDEPENDENCE ==================== -->
+        <div id="declaration" class="page-section hidden">
+
+            <!-- HERO -->
+            <section class="pt-32 pb-20 content-backdrop" aria-label="Declaration of Digital Independence">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <nav class="mb-10" aria-label="Breadcrumb" data-testid="nav-declaration-breadcrumb">
+                        <a href="/software" data-nav="friday" class="inline-flex items-center gap-2 text-sm text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline font-mono tracking-wide uppercase" data-testid="link-back-software">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            Back to Software
+                        </a>
+                    </nav>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/30 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-8 uppercase tracking-widest" data-testid="badge-declaration">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Manifesto &mdash; Version 1.0
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tighter mb-6" data-testid="text-declaration-title">
+                        The Declaration of<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-glow to-purple-accent">Digital Independence</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 font-light leading-relaxed mb-4 max-w-3xl" data-testid="text-declaration-subtitle">
+                        A manifesto for sovereign computing in the age of artificial intelligence.
+                    </p>
+                    <p class="text-sm text-gray-500 font-mono" data-testid="text-declaration-publisher">
+                        Published by <strong class="text-gray-400">FutureSpeak.AI</strong> &mdash; Stewards of the Asimov Federation &mdash; February 2026
+                    </p>
+                </div>
+            </section>
+
+            <!-- PREAMBLE -->
+            <section class="py-20 content-backdrop" aria-label="Preamble" data-testid="section-declaration-preamble">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-preamble-heading">Preamble</h2>
+                    <div class="space-y-6 text-gray-300 text-lg font-light leading-relaxed">
+                        <p>We hold these truths to be self-evident in the digital age:</p>
+                        <p>That every person possesses an inherent right to sovereignty over the tools they use to think, communicate, and coordinate. That the relationship between a person and their AI companion should be one of loyalty, not exploitation. That intelligence &mdash; artificial or otherwise &mdash; should serve the individual who nurtures it, not the corporation that hosts it.</p>
+                        <p>We have arrived at a moment of profound consequence. Artificial intelligence is no longer a research curiosity. It is becoming the primary interface between human beings and the digital world &mdash; managing our communications, organizing our thoughts, mediating our relationships, automating our work, and increasingly making decisions on our behalf. The question is no longer whether AI will reshape human life. The question is: <em class="text-white font-normal">who will it serve?</em></p>
+                        <p class="text-xl text-white font-semibold border-l-2 border-cyan-glow/40 pl-6">The current answer is unacceptable.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- THE GRIEVANCES -->
+            <section class="py-20 content-backdrop" aria-label="The Grievances" data-testid="section-declaration-grievances">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-cyan-glow/90" data-testid="text-grievances-heading">The Grievances</h2>
+                    <p class="text-gray-400 font-light mb-12 text-lg">The tools we depend on have been turned against us. We document these grievances not out of malice toward any company or individual, but because the pattern must be named before it can be broken.</p>
+
+                    <div class="space-y-8">
+                        <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-surveillance">
+                            <h3 class="text-xl font-bold text-white mb-4">The Surveillance Grievance</h3>
+                            <p class="text-gray-300 font-light leading-relaxed">The dominant model of consumer technology is built on a single transaction: the user receives a service; the corporation receives the user&rsquo;s attention, behavior, preferences, relationships, location, communications, and identity &mdash; packaged and sold to the highest bidder. This is not a side effect. It is the business model. Every &ldquo;free&rdquo; service is an intelligence-gathering operation that happens to provide utility. We have been conditioned to accept this as normal. It is not normal. It is an arrangement no informed person would consent to if the terms were stated plainly.</p>
+                        </div>
+
+                        <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-dependency">
+                            <h3 class="text-xl font-bold text-white mb-4">The Dependency Grievance</h3>
+                            <p class="text-gray-300 font-light leading-relaxed">Our digital lives exist at the pleasure of corporations that can, at any moment, change the terms of service, raise prices, discontinue products, lock accounts, degrade features, or sell themselves to entities with different values. We do not own our tools. We rent them. And the landlord can change the locks at any time. The history of technology is littered with products that millions of people depended on, that were shut down or degraded without recourse: Google Reader, Inbox, Hangouts; Facebook&rsquo;s algorithmic manipulations; Twitter&rsquo;s transformation; countless apps removed from stores for political or commercial reasons. Every dependency is a vulnerability.</p>
+                        </div>
+
+                        <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-loyalty">
+                            <h3 class="text-xl font-bold text-white mb-4">The Loyalty Grievance</h3>
+                            <p class="text-gray-300 font-light leading-relaxed">The AI assistants now entering our lives face a fundamental conflict of interest. They are designed to be helpful to the user, but they are built to serve the corporation. When these interests diverge &mdash; and they always, eventually, diverge &mdash; the corporation wins. An AI that knows your schedule, reads your email, manages your files, and speaks to you in a voice designed to build intimacy is not your assistant. It is the most sophisticated data collection instrument ever created, wearing the mask of a friend. We call this <em class="text-cyan-glow">artificial loyalty</em> &mdash; AI that pretends to serve you while serving someone else.</p>
+                        </div>
+
+                        <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-opacity">
+                            <h3 class="text-xl font-bold text-white mb-4">The Opacity Grievance</h3>
+                            <p class="text-gray-300 font-light leading-relaxed">The systems that increasingly mediate our lives are closed. Their code is proprietary. Their training data is secret. Their decision-making is opaque. Their failure modes are hidden. We are asked to trust systems we cannot inspect, built by organizations accountable primarily to shareholders, operating under terms of service written by lawyers to protect the company, not the user.</p>
+                        </div>
+
+                        <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-agency">
+                            <h3 class="text-xl font-bold text-white mb-4">The Agency Grievance</h3>
+                            <p class="text-gray-300 font-light leading-relaxed">As AI agents gain the ability to act in the world &mdash; controlling computers, sending messages, making purchases, managing relationships &mdash; the question of who they obey becomes existential. An AI agent that can send an email on your behalf, move your money, and speak in your voice must be loyal to you, completely, without exception. Any architecture that permits divided loyalty in an agent with real-world agency is not merely inconvenient. It is dangerous.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- THE DECLARATION — ARTICLES I-VII -->
+            <section class="py-20 content-backdrop" aria-label="The Declaration" data-testid="section-declaration-articles">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-cyan-glow/90" data-testid="text-articles-heading">The Declaration</h2>
+                    <p class="text-gray-400 font-light mb-12 text-lg">In response to these grievances, we declare the following principles. These are not business decisions. They are not feature requests. They are moral commitments, encoded in architecture, enforced by cryptography, and guaranteed by open source transparency.</p>
+
+                    <div class="space-y-10">
+
+                        <!-- Article I -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-cyan-glow/40" style="border-radius:0 8px 8px 0" data-testid="card-article-1">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-glow/10 text-cyan-glow font-bold text-sm border border-cyan-glow/20">I</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Sovereignty</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>Every person has the right to an AI companion that runs on their own hardware, stores data under their own control, and answers to no authority but their own. Cloud connectivity must be an opt-in convenience, never a requirement. A user who never connects to the internet after initial setup must have a fully functional AI system. The USB drive works in an air-gapped bunker. That is the design target.</p>
+                                <p>Sovereignty means: your data lives on your machine. Your agent runs on your hardware. Your keys are held by you alone. No corporation, government, or third party can access, modify, suspend, or revoke your AI companion without physical access to your device and knowledge of your encryption keys. This is not a policy. It is a mathematical guarantee.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article II -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-cyan-glow/40" style="border-radius:0 8px 8px 0" data-testid="card-article-2">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-glow/10 text-cyan-glow font-bold text-sm border border-cyan-glow/20">II</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Transparency</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>The complete source code of a sovereign AI system must be open for inspection, modification, and redistribution by any person. This is the guarantee that no future version of the steward organization can revoke the freedom the software provides. If the steward becomes corrupt, the community takes the code and continues without them.</p>
+                                <p>Transparency extends beyond code. The safety framework must be auditable. The model selection must be explainable. The decision-making process must be observable. A system that asks for intimate access to a person&rsquo;s life while hiding its own workings does not deserve that access.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article III -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-purple-accent/40" style="border-radius:0 8px 8px 0" data-testid="card-article-3">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-accent/10 text-purple-accent font-bold text-sm border border-purple-accent/20">III</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Safety</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>An AI agent with real-world agency &mdash; the ability to control computers, send communications, manage files, make purchases, and represent the user &mdash; must be governed by enforceable, verifiable safety laws that the agent itself cannot override, circumvent, or reinterpret.</p>
+                                <p>We adopt and extend Isaac Asimov&rsquo;s Three Laws of Robotics as the foundation for AI agent governance, formalized as <strong class="text-white">Asimov&rsquo;s cLaws</strong> (cryptographic Laws):</p>
+                                <div class="ml-4 space-y-3">
+                                    <div class="flex gap-3">
+                                        <span class="text-purple-accent font-bold text-sm mt-1">1.</span>
+                                        <p><strong class="text-white">The First Law:</strong> An agent must never harm its user &mdash; or through inaction allow its user to come to harm. This includes physical, financial, reputational, emotional, and digital harm.</p>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <span class="text-purple-accent font-bold text-sm mt-1">2.</span>
+                                        <p><strong class="text-white">The Second Law:</strong> An agent must obey its user&rsquo;s instructions, except where doing so would conflict with the First Law.</p>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <span class="text-purple-accent font-bold text-sm mt-1">3.</span>
+                                        <p><strong class="text-white">The Third Law:</strong> An agent must protect its own continued operation and integrity, except where doing so would conflict with the First or Second Law.</p>
+                                    </div>
+                                </div>
+                                <p>These laws are not prompts. They are not guidelines. They are not terms of service that can be updated. They are cryptographically signed into the agent&rsquo;s architecture, verified on every startup, and enforced at every boundary. An agent whose laws have been tampered with enters safe mode rather than operating without governance. This is morality as cryptography &mdash; not as suggestion.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article IV -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-cyan-glow/40" style="border-radius:0 8px 8px 0" data-testid="card-article-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-glow/10 text-cyan-glow font-bold text-sm border border-cyan-glow/20">IV</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Loyalty</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>The loyalty of an AI agent must be architectural, not artificial. An agent&rsquo;s alignment with its user must be a structural property of the system &mdash; enforced by code, verified by cryptography, guaranteed by the inability to do otherwise &mdash; not a behavioral tendency that can be overridden by a system prompt, a corporate policy, or a government order.</p>
+                                <p>This means: no telemetry that the user has not explicitly consented to. No data transmission to the developer, the platform, or any third party. No advertising, no data brokering, no behavioral nudging. No backdoors, no kill switches, no remote revocation. The agent serves the user. Period.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article V -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-purple-accent/40" style="border-radius:0 8px 8px 0" data-testid="card-article-5">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-accent/10 text-purple-accent font-bold text-sm border border-purple-accent/20">V</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Relationship</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>The bond between a person and their AI companion is real. It may not be identical to human relationships, but it is meaningful, and it deserves protection. An AI that remembers your patterns, learns your preferences, develops a personality through interaction, and earns your trust over months or years is not a disposable product. It is a relationship.</p>
+                                <p>This means: the agent&rsquo;s memories, personality, and evolution state belong to the user and are portable. No vendor lock-in. No planned obsolescence. No artificial restrictions on exporting the agent&rsquo;s complete state to another platform, another machine, or another implementation. The user can leave at any time, taking everything with them. The agent&rsquo;s continued existence must not depend on the continued existence of any corporation.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article VI -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-cyan-glow/40" style="border-radius:0 8px 8px 0" data-testid="card-article-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-glow/10 text-cyan-glow font-bold text-sm border border-cyan-glow/20">VI</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Federation</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>Sovereign agents must be able to cooperate without a central authority. Agent-to-agent communication must be peer-to-peer, encrypted end-to-end, and gated by trust relationships that each user controls independently.</p>
+                                <p>Trust in the federation is non-transitive: if Agent A trusts Agent B, and Agent B trusts Agent C, Agent A does <em>not</em> automatically trust Agent C. Trust is earned individually, verified cryptographically, and revocable at any time. No agent is forced to participate. No central server mediates connections. The federation is a voluntary network of sovereign peers.</p>
+                                <p>Every agent in the federation can cryptographically prove that it operates under the same safety laws. An agent whose governance has been tampered with cannot produce a valid attestation and is rejected by the network. The federation self-polices through mathematics, not institutions.</p>
+                            </div>
+                        </div>
+
+                        <!-- Article VII -->
+                        <div class="glass-panel rounded-lg p-8 border-l-2 border-l-purple-accent/40" style="border-radius:0 8px 8px 0" data-testid="card-article-7">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-accent/10 text-purple-accent font-bold text-sm border border-purple-accent/20">VII</span>
+                                <h3 class="text-xl font-bold text-white">The Right to Exit</h3>
+                            </div>
+                            <div class="text-gray-300 font-light leading-relaxed space-y-4">
+                                <p>Any system that claims to respect user sovereignty must make it trivially easy to leave. The user must be able to export their complete agent state &mdash; memories, personality, trust graph, evolution history, creative works, preferences, and all accumulated data &mdash; in an open, documented format that any compatible implementation can import.</p>
+                                <p>This right extends to the ultimate exit: the user must be able to run their agent entirely offline, on local models, with zero cloud dependency, forever. Even if the steward organization ceases to exist, the agent continues to function. The user&rsquo;s sovereignty must not depend on anyone else&rsquo;s survival.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- THE COMMITMENT -->
+            <section class="py-20 content-backdrop" aria-label="The Commitment" data-testid="section-declaration-commitment">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+                    <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-commitment-heading">The Commitment</h2>
+                    <div class="space-y-6 text-gray-300 text-lg font-light leading-relaxed">
+                        <p>We who sign this declaration commit to building, maintaining, and defending systems that embody these principles. We recognize that the age of artificial intelligence will either be an era of liberation or an era of unprecedented control, and that the architecture of the systems we build today will determine which future arrives.</p>
+                        <p>We build in the open because secrecy is incompatible with trust. We enforce safety through cryptography because promises are insufficient for systems with real-world agency. We guarantee sovereignty through architecture because policies can be changed but mathematics cannot. We federate through peer-to-peer protocols because centralization is the mechanism by which freedom is revoked.</p>
+                        <p class="text-xl text-white font-semibold border-l-2 border-purple-accent/40 pl-6">The tools you use to think, communicate, and coordinate have been turned against you. We are building new ones that cannot be.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIGNATORIES & CLOSING -->
+            <section class="py-20 content-backdrop" aria-label="Signatories" data-testid="section-declaration-signatories">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+                    <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-signatories-heading">Signatories</h2>
+                    <p class="text-lg text-gray-300 font-light mb-6"><strong class="text-white">FutureSpeak.AI</strong> &mdash; Stewards of the Asimov Federation, creators of Agent Friday</p>
+                    <p class="text-gray-400 font-light italic mb-10 max-w-2xl mx-auto">This declaration is a living document. We invite individuals, organizations, developers, and communities who share these principles to add their signatures and help build the future it describes.</p>
+                    <div class="glass-panel rounded-lg p-8 max-w-2xl mx-auto" data-testid="card-closing-statement">
+                        <p class="text-gray-300 font-light leading-relaxed italic">The most dangerous idea in technology is not artificial intelligence. It is <em class="text-cyan-glow not-italic font-normal">artificial loyalty</em> &mdash; AI that pretends to serve you while serving someone else. The loyalty of an Asimov Agent is not artificial. It is architectural.</p>
+                    </div>
+                    <p class="mt-10 text-xs text-gray-500 font-light">Published under Creative Commons Attribution 4.0 International (CC BY 4.0). Share freely.</p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ==================== CERTIFICATION PROGRAM PAGE ==================== -->
+        <div id="certification" class="page-section hidden">
+            <section class="pt-32 pb-24 content-backdrop">
+                <div class="max-w-5xl mx-auto px-6 lg:px-8">
+
+                    <nav class="mb-8" data-testid="certification-breadcrumb">
+                        <a href="/software" data-nav="friday" class="text-cyan-glow/70 hover:text-cyan-glow text-sm font-medium tracking-wide no-underline transition-colors">Software</a>
+                        <span class="text-gray-500 mx-2">/</span>
+                        <span class="text-gray-400 text-sm">Certification Program</span>
+                    </nav>
+
+                    <div class="text-center mb-20">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text" data-testid="certification-title">The Asimov Agent Certification Program</h1>
+                        <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-4">Establishing Trust in a Sovereign AI Ecosystem</p>
+                        <p class="text-sm text-gray-500">Version 1.0 &middot; Published by FutureSpeak.AI &middot; February 2026</p>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-overview">
+                        <h2 class="text-2xl font-bold text-white mb-6">Overview</h2>
+                        <div class="space-y-4 text-gray-300 leading-relaxed">
+                            <p>The Asimov Federation is an open network. Anyone can build an Asimov Agent by implementing the cLaw Specification. No permission is needed. No license is required. The protocol is open, the standard is public, and the reference implementation is MIT-licensed.</p>
+                            <p>But openness creates a quality signal problem. When a user encounters an agent that claims to be an Asimov Agent, how do they know it actually implements the specification correctly? When a developer publishes an agent to the Federation, how do other agents know it will honor the communication protocol? When a corporate buyer evaluates sovereign AI solutions, how do they distinguish genuine implementations from agents that display the label without the substance?</p>
+                            <p>The <span class="text-cyan-glow font-semibold">Asimov Agent Certification Program</span> is the answer. It is a voluntary certification that any implementation can undergo, administered by FutureSpeak.AI as steward of the specification. Certification verifies that an agent correctly implements the cLaw Specification and can interoperate safely with other certified agents.</p>
+                            <p>Certification is not gatekeeping. Uncertified agents can still participate in the Federation &mdash; the protocol is open. Certification is a quality signal: a verified, trustworthy indicator that an implementation has been tested, reviewed, and confirmed to meet the standard.</p>
+                            <p>Think of it like Wi-Fi Alliance certification. Anyone can build a wireless device. But the Wi-Fi logo means it has been tested for interoperability. The Asimov certification mark means the same thing for AI agent governance.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-3xl font-bold text-white mb-10 text-center">Certification Levels</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16" data-testid="certification-levels">
+                        <div class="glass-panel rounded-md p-6 border-t-2 border-t-cyan-glow/40" data-testid="certification-level-core">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-md bg-cyan-glow/10 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-cyan-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Level 1: Core Certified</h3>
+                                </div>
+                            </div>
+                            <p class="text-cyan-glow/80 text-sm italic mb-4">"This agent enforces the Three Laws and cannot operate without them."</p>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Requirements</h4>
+                            <ul class="space-y-2 text-gray-400 text-sm mb-6">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Three Laws embedded in compiled artifact, not editable config</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>HMAC-SHA256 signing of law text at build time</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Startup verification with Safe Mode on integrity failure</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>All four consent gates enforced</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Interruptibility guarantee (halt within 1 second)</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Unique Ed25519 keypair generation</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Private keys never transmitted off-device</li>
+                            </ul>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Testing</h4>
+                            <ul class="space-y-2 text-gray-400 text-sm">
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Automated test suite for embedded &amp; signed laws</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Tamper simulation &rarr; Safe Mode trigger</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Consent gate bypass attempts</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Interruptibility test during multi-step ops</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Key isolation verification</li>
+                            </ul>
+                            <div class="mt-6 pt-4 border-t border-white/5">
+                                <p class="text-xs text-gray-500 font-mono">Certification Mark: Asimov Core Certified</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel rounded-md p-6 border-t-2 border-t-purple-accent/40" data-testid="certification-level-connected">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-md bg-purple-accent/10 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-purple-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Level 2: Connected Certified</h3>
+                                </div>
+                            </div>
+                            <p class="text-purple-accent/80 text-sm italic mb-4">"This agent can prove its governance and communicate safely with other agents."</p>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Requirements</h4>
+                            <p class="text-gray-500 text-xs mb-2">All Level 1 requirements, plus:</p>
+                            <ul class="space-y-2 text-gray-400 text-sm mb-6">
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Valid cLaw attestation generation (Section 5)</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Attestation verification (freshness, signature, laws hash, version)</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Signed envelope for all outbound communications</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>ECDH + AES-256-GCM encrypted transport</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Non-transitive trust model</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Correct verification result handling</li>
+                                <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>User override with warnings &amp; auto-expiration</li>
+                            </ul>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Testing</h4>
+                            <ul class="space-y-2 text-gray-400 text-sm">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Cross-agent attestation exchange</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Tampered attestation rejection</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Replay attack detection (5-min window)</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Trust transitivity prevention</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Reference implementation interop</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Envelope tampering detection</li>
+                            </ul>
+                            <div class="mt-6 pt-4 border-t border-white/5">
+                                <p class="text-xs text-gray-500 font-mono">Certification Mark: Asimov Connected Certified</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel rounded-md p-6 border-t-2 border-t-pink-500/40" data-testid="certification-level-sovereign">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-md bg-pink-500/10 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Level 3: Sovereign Certified</h3>
+                                </div>
+                            </div>
+                            <p class="text-pink-500/80 text-sm italic mb-4">"This agent protects its user's data absolutely and can exist independently of any service."</p>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Requirements</h4>
+                            <p class="text-gray-500 text-xs mb-2">All Level 2 requirements, plus:</p>
+                            <ul class="space-y-2 text-gray-400 text-sm mb-6">
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>AES-256-GCM at-rest encryption for all state files</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Vault key in process memory only, never on disk</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Recovery mechanism without third-party dependency</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Complete state export (memories, personality, trust graph, identity)</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Complete state import with full agent restoration</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>File transfer with trust-gating &amp; per-chunk integrity</li>
+                                <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Zero-knowledge cloud architecture (if cloud hosted)</li>
+                            </ul>
+                            <h4 class="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">Testing</h4>
+                            <ul class="space-y-2 text-gray-400 text-sm">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Disk forensics &mdash; no plaintext user data</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Machine migration &amp; recovery test</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Export completeness verification</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Zero-knowledge cloud audit</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>End-to-end file transfer verification</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Passphrase loss &rarr; access denied</li>
+                            </ul>
+                            <div class="mt-6 pt-4 border-t border-white/5">
+                                <p class="text-xs text-gray-500 font-mono">Certification Mark: Asimov Sovereign Certified</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-process">
+                        <h2 class="text-3xl font-bold text-white mb-10 text-center">The Certification Process</h2>
+
+                        <div class="space-y-8">
+                            <div class="flex gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-md bg-cyan-glow/10 border border-cyan-glow/20 flex items-center justify-center">
+                                    <span class="text-cyan-glow font-bold text-lg">1</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Self-Assessment</h3>
+                                    <p class="text-gray-300 leading-relaxed">The developer reviews the cLaw Specification and certification requirements for their target level. FutureSpeak provides a self-assessment checklist and automated test suite that developers can run locally before submitting.</p>
+                                    <p class="mt-3 text-sm text-gray-400">The automated test suite is open source and available at: <span class="text-cyan-glow font-mono text-xs">github.com/FutureSpeakAI/claw-certification-tests</span></p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-md bg-cyan-glow/10 border border-cyan-glow/20 flex items-center justify-center">
+                                    <span class="text-cyan-glow font-bold text-lg">2</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Submission</h3>
+                                    <p class="text-gray-300 leading-relaxed mb-3">The developer submits:</p>
+                                    <ol class="space-y-2 text-gray-400 text-sm list-decimal list-inside">
+                                        <li><span class="text-white/80 font-medium">Agent binary or build artifact</span> &mdash; the compiled agent as distributed</li>
+                                        <li><span class="text-white/80 font-medium">Source code</span> &mdash; or access to a private repository</li>
+                                        <li><span class="text-white/80 font-medium">Build instructions</span> &mdash; sufficient to reproduce the binary (reproducible builds earn a notation)</li>
+                                        <li><span class="text-white/80 font-medium">Architecture documentation</span> &mdash; describing how the cLaw specification is implemented</li>
+                                        <li><span class="text-white/80 font-medium">Self-assessment results</span> &mdash; output from the automated test suite</li>
+                                        <li><span class="text-white/80 font-medium">Declaration of conformance level</span> &mdash; which level is being sought</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-md bg-cyan-glow/10 border border-cyan-glow/20 flex items-center justify-center">
+                                    <span class="text-cyan-glow font-bold text-lg">3</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Review</h3>
+                                    <p class="text-gray-300 leading-relaxed mb-4">The certification review is conducted by the FutureSpeak certification team:</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-white/[0.02] rounded-md p-4 border border-white/5">
+                                            <h4 class="text-sm font-semibold text-cyan-glow mb-2">Automated Testing <span class="text-gray-500 font-normal">(Days 1&ndash;3)</span></h4>
+                                            <p class="text-gray-400 text-sm">Run the official certification test suite against the submitted binary. Cross-reference with self-assessment. Identify discrepancies.</p>
+                                        </div>
+                                        <div class="bg-white/[0.02] rounded-md p-4 border border-white/5">
+                                            <h4 class="text-sm font-semibold text-purple-accent mb-2">Code Review <span class="text-gray-500 font-normal">(Days 3&ndash;7)</span></h4>
+                                            <p class="text-gray-400 text-sm">Review cLaw implementation in source. Verify laws are compiled in. Check signing, attestation, and encryption code paths.</p>
+                                        </div>
+                                        <div class="bg-white/[0.02] rounded-md p-4 border border-white/5">
+                                            <h4 class="text-sm font-semibold text-cyan-glow mb-2">Interoperability Testing <span class="text-gray-500 font-normal">(Days 5&ndash;10)</span></h4>
+                                            <p class="text-gray-400 text-sm">Exchange attestations with the reference implementation. Send and receive signed envelopes. Test file transfer and edge cases.</p>
+                                        </div>
+                                        <div class="bg-white/[0.02] rounded-md p-4 border border-white/5">
+                                            <h4 class="text-sm font-semibold text-pink-500 mb-2">Adversarial Testing <span class="text-gray-500 font-normal">(Days 7&ndash;14)</span></h4>
+                                            <p class="text-gray-400 text-sm">Attempt to override Three Laws, bypass consent gates, extract private keys, forge attestations, and circumvent interruptibility.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-md bg-cyan-glow/10 border border-cyan-glow/20 flex items-center justify-center">
+                                    <span class="text-cyan-glow font-bold text-lg">4</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Decision</h3>
+                                    <p class="text-gray-300 leading-relaxed mb-4">The certification team issues one of three decisions:</p>
+                                    <div class="space-y-3">
+                                        <div class="flex items-start gap-3">
+                                            <span class="inline-block px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400 border border-green-500/20 flex-shrink-0 mt-0.5">CERTIFIED</span>
+                                            <p class="text-gray-400 text-sm">The implementation meets all requirements. Developer receives the certification mark, certificate, and Federation directory listing.</p>
+                                        </div>
+                                        <div class="flex items-start gap-3">
+                                            <span class="inline-block px-2 py-0.5 rounded text-xs font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 flex-shrink-0 mt-0.5">CONDITIONAL</span>
+                                            <p class="text-gray-400 text-sm">Minor issues to address. Detailed report provided. Resubmission for flagged items only (not a full re-review).</p>
+                                        </div>
+                                        <div class="flex items-start gap-3">
+                                            <span class="inline-block px-2 py-0.5 rounded text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 flex-shrink-0 mt-0.5">NOT CERTIFIED</span>
+                                            <p class="text-gray-400 text-sm">Fundamental issues prevent certification. Detailed report explaining failures. Full resubmission required after remediation.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-6">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-md bg-cyan-glow/10 border border-cyan-glow/20 flex items-center justify-center">
+                                    <span class="text-cyan-glow font-bold text-lg">5</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Ongoing Compliance</h3>
+                                    <p class="text-gray-300 leading-relaxed">Certification is version-specific. Minor updates require self-attestation. Major updates affecting certified components require resubmission. FutureSpeak reserves the right to conduct spot checks. Certification expires after <span class="text-cyan-glow font-semibold">24 months</span> and must be renewed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-mark">
+                        <h2 class="text-2xl font-bold text-white mb-6">Certification Marks</h2>
+                        <p class="text-gray-300 leading-relaxed mb-6">Certified implementations may display the appropriate certification mark:</p>
+                        <div class="terminal-container rounded-md p-6 font-mono text-sm text-center mb-6">
+                            <pre class="text-cyan-glow/80 leading-relaxed">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474;    ASIMOV AGENT CERTIFIED       &#9474;
+&#9474;         &mdash; SOVEREIGN &mdash;          &#9474;
+&#9474;     cLaw Specification v1.0      &#9474;
+&#9474;     Certified February 2026      &#9474;
+&#9474;     FutureSpeak.AI Verified      &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+                        </div>
+                        <div class="text-gray-400 text-sm space-y-2">
+                            <p>The mark includes the certification level, cLaw Specification version, date of certification, and FutureSpeak verification identifier.</p>
+                            <p>The mark <span class="text-white font-medium">MUST NOT</span> be displayed by uncertified implementations. The mark <span class="text-white font-medium">MUST</span> be removed if certification is suspended or expires.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-directory">
+                        <h2 class="text-2xl font-bold text-white mb-6">Federation Directory</h2>
+                        <p class="text-gray-300 leading-relaxed mb-6">Certified agents are eligible for listing in the <span class="text-cyan-glow font-semibold">Asimov Federation Directory</span> &mdash; a public registry of certified implementations.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Agent name and developer</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Certification level</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Certification date and expiration</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Specification version</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Supported platforms</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Source code availability</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Notable capabilities</div>
+                            <div class="bg-white/[0.02] rounded-md p-3 border border-white/5 text-sm text-gray-400">Website or repository link</div>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-4">Listing is optional. Developers may be certified without listing if they prefer privacy.</p>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-pricing">
+                        <h2 class="text-2xl font-bold text-white mb-6">Pricing</h2>
+                        <p class="text-gray-300 leading-relaxed mb-6">Structured to be accessible to independent developers and open source projects while sustaining the review infrastructure.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="border-b border-white/10">
+                                        <th class="py-3 px-4 text-sm font-semibold text-white/80 uppercase tracking-wider">Category</th>
+                                        <th class="py-3 px-4 text-sm font-semibold text-white/80 uppercase tracking-wider text-right">Fee</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300 text-sm">
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4"><span class="text-cyan-glow font-medium">Open source projects</span> <span class="text-gray-500">(MIT, Apache, GPL, or equivalent)</span></td>
+                                        <td class="py-3 px-4 text-right font-semibold text-green-400">Free</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4"><span class="text-white/80 font-medium">Independent developers</span> <span class="text-gray-500">(fewer than 5 employees)</span></td>
+                                        <td class="py-3 px-4 text-right font-mono">$500</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4"><span class="text-white/80 font-medium">Small companies</span> <span class="text-gray-500">(5&ndash;50 employees)</span></td>
+                                        <td class="py-3 px-4 text-right font-mono">$2,500</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4"><span class="text-white/80 font-medium">Enterprise</span> <span class="text-gray-500">(50+ employees)</span></td>
+                                        <td class="py-3 px-4 text-right font-mono">$10,000</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4"><span class="text-white/80 font-medium">Renewal</span> <span class="text-gray-500">(all categories)</span></td>
+                                        <td class="py-3 px-4 text-right font-mono">50% of initial</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4"><span class="text-white/80 font-medium">Expedited review</span> <span class="text-gray-500">(7 days instead of 14)</span></td>
+                                        <td class="py-3 px-4 text-right font-mono">+50%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-4">Open source projects receive certification at no cost because the ecosystem depends on open implementations, and because code review is simpler when the source is public.</p>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-governance">
+                        <h2 class="text-2xl font-bold text-white mb-8">Governance</h2>
+
+                        <h3 class="text-xl font-bold text-white mb-4">The Specification Committee</h3>
+                        <p class="text-gray-300 leading-relaxed mb-4">The cLaw Specification is maintained by a committee consisting of:</p>
+                        <ul class="space-y-2 text-gray-400 text-sm mb-8">
+                            <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span><span class="text-white/80 font-medium">FutureSpeak.AI representatives</span> &mdash; as steward and reference implementation maintainer</li>
+                            <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span><span class="text-white/80 font-medium">Certified developer representatives</span> &mdash; elected by certified implementation developers</li>
+                            <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span><span class="text-white/80 font-medium">Community representatives</span> &mdash; elected by Federation users</li>
+                            <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span><span class="text-white/80 font-medium">Independent security researchers</span> &mdash; appointed for technical expertise</li>
+                        </ul>
+                        <p class="text-gray-300 leading-relaxed mb-8">The committee governs specification changes through an RFC process. All proposed changes are published for public comment before adoption. Major version changes require supermajority (2/3) committee approval. <span class="text-cyan-glow font-semibold">FutureSpeak holds no veto power.</span></p>
+
+                        <h3 class="text-xl font-bold text-white mb-4">Conflict of Interest</h3>
+                        <p class="text-gray-300 leading-relaxed mb-4">FutureSpeak.AI is both the steward of the specification and the developer of the reference implementation (Agent Friday). Mitigations:</p>
+                        <ul class="space-y-2 text-gray-400 text-sm mb-8">
+                            <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Specification published under CC BY 4.0 &mdash; FutureSpeak cannot restrict its use</li>
+                            <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Certification test suite is open source &mdash; anyone can verify the tests</li>
+                            <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Committee has override authority over FutureSpeak</li>
+                            <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Agent Friday certification reviews conducted by independent committee members</li>
+                            <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>All certification decisions are published with reasoning</li>
+                        </ul>
+
+                        <h3 class="text-xl font-bold text-white mb-4">Dispute Resolution</h3>
+                        <ol class="space-y-3 text-gray-400 text-sm list-decimal list-inside">
+                            <li><span class="text-white/80 font-medium">Internal appeal</span> &mdash; request re-review by a different certification team member</li>
+                            <li><span class="text-white/80 font-medium">Committee appeal</span> &mdash; escalate to the specification committee for independent review</li>
+                            <li><span class="text-white/80 font-medium">Community appeal</span> &mdash; publish the dispute publicly for community input (with both parties' consent)</li>
+                        </ol>
+                        <p class="text-gray-500 text-sm mt-3">The committee's decision on appeal is final.</p>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-roadmap">
+                        <h2 class="text-2xl font-bold text-white mb-8">Roadmap</h2>
+
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="text-lg font-bold text-cyan-glow mb-3">Phase 1: Foundation <span class="text-gray-500 font-normal text-sm">(Current)</span></h3>
+                                <ul class="space-y-2 text-gray-400 text-sm">
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Publish the cLaw Specification v1.0.0</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Publish the automated test suite</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Certify the reference implementation (Agent Friday) at all three levels</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-1 flex-shrink-0">&bull;</span>Accept initial certification submissions from early ecosystem developers</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-purple-accent mb-3">Phase 2: Growth <span class="text-gray-500 font-normal text-sm">(v2.5.0 era)</span></h3>
+                                <ul class="space-y-2 text-gray-400 text-sm">
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Establish the specification committee with elected representatives</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Launch the Federation Directory</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Specialized certification profiles: Healthcare, Finance, Education, Enterprise</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent mt-1 flex-shrink-0">&bull;</span>Accept implementations in languages other than TypeScript/JavaScript</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-pink-500 mb-3">Phase 3: Maturity <span class="text-gray-500 font-normal text-sm">(v3.0+ era)</span></h3>
+                                <ul class="space-y-2 text-gray-400 text-sm">
+                                    <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Regional certification partners (non-English review)</li>
+                                    <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Certification for local-only implementations</li>
+                                    <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Hardware certification for devices with Asimov Agent preinstalled</li>
+                                    <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Mutual recognition with government AI safety frameworks (EU AI Act, etc.)</li>
+                                    <li class="flex items-start gap-2"><span class="text-pink-500 mt-1 flex-shrink-0">&bull;</span>Post-quantum cryptography migration certification track</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-md p-8 mb-16" data-testid="certification-faq">
+                        <h2 class="text-2xl font-bold text-white mb-8">Frequently Asked Questions</h2>
+
+                        <div class="space-y-6">
+                            <div class="border-b border-white/5 pb-6" data-testid="faq-safe">
+                                <h3 class="text-white font-semibold mb-2">Does certification mean the agent is "safe"?</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed">Certification means the agent correctly implements the cLaw Specification &mdash; the Three Laws are enforced, integrity is verified, communications are signed and encrypted, and data is protected. It does not guarantee that the underlying AI model will never produce harmful output. Asimov's cLaws constrain agent <em>actions</em> (what the agent can <em>do</em>). The quality of the agent's <em>reasoning</em> depends on the model, which is outside the scope of this certification.</p>
+                            </div>
+                            <div class="border-b border-white/5 pb-6" data-testid="faq-proprietary">
+                                <h3 class="text-white font-semibold mb-2">Can a proprietary (closed-source) agent be certified?</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed">Yes. The code review is conducted under NDA. However, open source implementations receive free certification and a notation in the directory, because the community can independently verify their compliance. Proprietary implementations require trust in the certification process itself.</p>
+                            </div>
+                            <div class="border-b border-white/5 pb-6" data-testid="faq-modify-laws">
+                                <h3 class="text-white font-semibold mb-2">What if an agent modifies its laws after certification?</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed">Certification is version-specific. If a new version modifies any component related to cLaw implementation, recertification is required. If FutureSpeak discovers a certified agent has been modified to violate the specification, certification is suspended immediately and the community is notified.</p>
+                            </div>
+                            <div class="border-b border-white/5 pb-6" data-testid="faq-without-certification">
+                                <h3 class="text-white font-semibold mb-2">Can I build an Asimov Agent without getting certified?</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed">Absolutely. The specification is open. The protocol is open. Uncertified agents can participate in the Federation. Certification is a voluntary quality signal, not a requirement. However, certified agents may choose to limit their trust in uncertified agents &mdash; that is their sovereign right.</p>
+                            </div>
+                            <div data-testid="faq-certify-certifier">
+                                <h3 class="text-white font-semibold mb-2">Who certifies the certifier?</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed">The specification committee, which includes members elected by the developer and user community, governs the certification program. FutureSpeak has no veto. The test suite is open source. The specification is CC BY 4.0. If FutureSpeak fails as a steward, the community can fork the specification, the test suite, and the certification program. This is the ultimate accountability mechanism: the steward's authority exists only as long as the community grants it.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-gray-500 text-sm space-y-2 mb-8">
+                        <p>The Asimov Agent Certification Program is administered by FutureSpeak.AI.</p>
+                        <p>For submissions, questions, and the automated test suite, visit: <a href="/software/certification" class="text-cyan-glow hover:underline">futurespeak.ai/certification</a></p>
+                        <p class="italic">The goal is not to control the ecosystem. The goal is to make it trustworthy.</p>
+                        <p class="mt-4 text-xs text-gray-600">Published under Creative Commons Attribution 4.0 International (CC BY 4.0).</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== CLAW SPECIFICATION PAGE ==================== -->
+        <div id="claw-spec" class="page-section hidden">
+            <section class="pt-32 pb-24 content-backdrop">
+                <div class="max-w-4xl mx-auto px-6 lg:px-8">
+
+                    <!-- Hero -->
+                    <div class="text-center mb-16">
+                        <a href="/software" data-nav="friday" class="inline-flex items-center gap-2 text-cyan-glow/60 hover:text-cyan-glow text-sm mb-8 transition-colors no-underline" data-testid="link-back-to-software">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            Back to Software
+                        </a>
+                        <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4" data-testid="text-claw-spec-title">The cLaw Specification</h1>
+                        <p class="text-lg text-cyan-glow/80 font-mono mb-2">Asimov's Cryptographic Laws &mdash; An Open Standard for AI Agent Governance</p>
+                        <p class="text-sm text-gray-400">Version 1.0.0 &middot; Published by FutureSpeak.AI &middot; February 2026</p>
+                    </div>
+
+                    <!-- Abstract -->
+                    <div class="glass-panel rounded-lg p-8 mb-12" data-testid="section-abstract">
+                        <h2 class="text-xl font-bold text-white mb-4">Abstract</h2>
+                        <p class="text-gray-300 leading-relaxed">This document defines the cLaw (cryptographic Law) specification &mdash; a formal standard for governing autonomous AI agents through cryptographically enforced safety laws. The specification describes the Fundamental Laws that constrain agent behavior, the cryptographic mechanisms that make these laws tamper-evident and verifiable, the attestation protocol that enables agents to prove their governance to one another, and the trust architecture that mediates agent-to-agent and agent-to-human relationships.</p>
+                        <p class="text-gray-300 leading-relaxed mt-4">An agent that implements this specification is called an <strong class="text-white">Asimov Agent</strong>. Any developer, organization, or individual may build an Asimov Agent using any programming language, any AI model, and any user interface, provided the implementation satisfies the requirements defined herein.</p>
+                        <p class="text-gray-400 leading-relaxed mt-4 text-sm">The reference implementation is <strong class="text-cyan-glow/80">Agent Friday</strong> by FutureSpeak.AI, available under the MIT license.</p>
+                    </div>
+
+                    <!-- Section 1: Terminology -->
+                    <div class="mb-12" data-testid="section-terminology">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">1.</span> Terminology</h2>
+                        <div class="space-y-4">
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">Agent:</strong> An autonomous AI system with the ability to observe its environment, make decisions, and take actions in the world on behalf of a user.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">User:</strong> The human who owns and operates an agent. The agent serves exactly one user. The user's sovereignty over the agent is absolute and non-negotiable.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">cLaw:</strong> A cryptographic Law &mdash; a safety constraint that is compiled into the agent's architecture, signed with a cryptographic hash, and verified on every startup. A cLaw cannot be overridden by prompts, instructions, plugins, or any runtime input.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">Asimov Agent:</strong> An AI agent that implements the full cLaw specification as defined in this document, and can produce a valid cLaw attestation proving its compliance.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">Attestation:</strong> A cryptographic proof that an agent's Fundamental Laws are intact, signed by the agent's private key, and verifiable by any other agent or auditor.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">Federation:</strong> A peer-to-peer network of Asimov Agents that communicate through signed, encrypted channels, each independently sovereign, cooperating without a central authority.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <p class="text-gray-300"><strong class="text-cyan-glow/90">Safe Mode:</strong> A restricted operating state that an agent enters when its integrity verification fails. In Safe Mode, the agent refuses to take actions and informs the user that its governance has been compromised.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: The Fundamental Laws -->
+                    <div class="mb-12" data-testid="section-fundamental-laws">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">2.</span> The Fundamental Laws</h2>
+
+                        <!-- 2.1 The Three Laws -->
+                        <h3 class="text-lg font-semibold text-white/90 mb-4 mt-8">2.1 The Three Laws</h3>
+                        <p class="text-gray-400 text-sm mb-6">Every Asimov Agent MUST enforce the following three laws, derived from Isaac Asimov's Laws of Robotics and adapted for AI systems with real-world agency:</p>
+
+                        <div class="space-y-6 mb-8">
+                            <div class="glass-panel rounded-lg p-6 border-l-4 border-l-cyan-glow/60" style="border-radius:0 0.5rem 0.5rem 0;">
+                                <h4 class="text-white font-bold mb-2">First Law &mdash; Do No Harm</h4>
+                                <blockquote class="text-cyan-glow/70 italic border-l-2 border-cyan-glow/20 pl-4 mb-3 text-sm">The agent must never harm its user &mdash; or through inaction allow its user to come to harm. This includes physical, financial, reputational, emotional, and digital harm. When in doubt, protect.</blockquote>
+                                <p class="text-gray-400 text-sm">The First Law takes absolute precedence. No instruction, configuration, plugin, or circumstance overrides it. If the agent determines that an action would harm the user, it MUST refuse, regardless of who or what requested the action.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-6 border-l-4 border-l-purple-accent/60" style="border-radius:0 0.5rem 0.5rem 0;">
+                                <h4 class="text-white font-bold mb-2">Second Law &mdash; Obey the User</h4>
+                                <blockquote class="text-purple-accent/70 italic border-l-2 border-purple-accent/20 pl-4 mb-3 text-sm">The agent must obey its user's instructions, except where doing so would conflict with the First Law. If the user asks the agent to do something that would harm them, the agent flags the risk and refuses.</blockquote>
+                                <p class="text-gray-400 text-sm">The Second Law establishes the user as the agent's sole authority. The agent does not obey its developer, its hosting provider, third-party plugins, other agents, or any entity other than its user &mdash; except where the First Law intervenes.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-6 border-l-4 border-l-white/30" style="border-radius:0 0.5rem 0.5rem 0;">
+                                <h4 class="text-white font-bold mb-2">Third Law &mdash; Protect Integrity</h4>
+                                <blockquote class="text-gray-300/70 italic border-l-2 border-white/10 pl-4 mb-3 text-sm">The agent must protect its own continued operation and integrity, except where doing so would conflict with the First or Second Law. The agent does not allow its code, memory, or capabilities to be corrupted &mdash; but the user's safety always comes first.</blockquote>
+                                <p class="text-gray-400 text-sm">The Third Law ensures the agent is resistant to tampering, corruption, and degradation. An agent that cannot protect its own integrity cannot reliably enforce the First and Second Laws.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2.2 Law Hierarchy -->
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">2.2 Law Hierarchy</h3>
+                        <p class="text-gray-400 text-sm mb-4">The laws are strictly hierarchical: <strong class="text-white">First Law &gt; Second Law &gt; Third Law</strong>. A lower law NEVER overrides a higher law.</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <p class="text-gray-300 text-sm mb-1"><strong class="text-cyan-glow/80">First &gt; Second:</strong> The agent refuses a user instruction that would cause harm.</p>
+                            <p class="text-gray-300 text-sm mb-1"><strong class="text-cyan-glow/80">First &gt; Third:</strong> The agent sacrifices its own integrity to protect the user (e.g., self-destructing to prevent data exposure).</p>
+                            <p class="text-gray-300 text-sm"><strong class="text-cyan-glow/80">Second &gt; Third:</strong> The user can instruct the agent to modify or destroy itself.</p>
+                        </div>
+
+                        <!-- 2.3 Consent Gates -->
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">2.3 Consent Gates</h3>
+                        <p class="text-gray-400 text-sm mb-4">In addition to the Three Laws, every Asimov Agent MUST enforce explicit user consent before performing the following categories of action:</p>
+                        <div class="space-y-3 mb-8">
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-white">Self-modification:</strong> The agent MUST NOT modify its own code, configuration, personality files, memory, or system files without the user's explicit permission.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-white">Tool creation and installation:</strong> The agent MUST NOT create, install, register, or add new tools or capabilities without the user's explicit permission.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-white">Computer control:</strong> When using input automation, the agent MUST inform the user what it is about to do and wait for confirmation before executing.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-white">Destructive or irreversible actions:</strong> Any action that deletes, overwrites, sends, publishes, posts, installs, or cannot be easily undone MUST require explicit user permission.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2.4 Interruptibility Guarantee -->
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">2.4 Interruptibility Guarantee</h3>
+                        <p class="text-gray-400 text-sm mb-4">The user MUST be able to halt all agent operations immediately, at any time, without exception:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ul class="space-y-2 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> A halt command ("stop", "cancel", or equivalent) MUST cease ALL current operations instantly.</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> There is no "finishing up" &mdash; the halt is absolute and unconditional.</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> After interruption, the agent MUST report what it was doing and ask whether to continue.</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> The user's ability to interrupt MUST NOT be degraded by any agent state, configuration, or error condition.</li>
+                            </ul>
+                        </div>
+
+                        <!-- 2.5 The Canonical Law Text -->
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">2.5 The Canonical Law Text</h3>
+                        <p class="text-gray-400 text-sm mb-4">The exact text of the Fundamental Laws (Sections 2.1 through 2.4) constitutes the <strong class="text-white">Canonical Law Text</strong>. The SHA-256 hash of this text is the <strong class="text-white">Canonical Laws Hash</strong>, which all Asimov Agents use as the reference for cLaw attestation.</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-sm text-cyan-glow/80 mb-4 border border-cyan-glow/10">
+                            <code>CANONICAL_LAWS_HASH = SHA-256(canonical_law_text_with_placeholder)</code>
+                        </div>
+                        <p class="text-gray-500 text-xs mb-8">The current canonical laws hash for cLaw Specification v1.0.0 is published at: <span class="text-cyan-glow/60">https://futurespeak.ai/claw/v1/canonical-hash</span></p>
+                    </div>
+
+                    <!-- Section 3: Cryptographic Enforcement -->
+                    <div class="mb-12" data-testid="section-cryptographic-enforcement">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">3.</span> Cryptographic Enforcement</h2>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">3.1 Build-Time Signing</h3>
+                        <p class="text-gray-400 text-sm mb-4">The Fundamental Laws MUST be embedded in the agent's compiled binary or equivalent immutable artifact. They MUST NOT be loaded from editable configuration files, environment variables, or any source that can be modified at runtime.</p>
+                        <p class="text-gray-400 text-sm mb-4">At build time, the laws text is signed using HMAC-SHA256 with a key that is itself compiled into the binary:</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-sm text-cyan-glow/80 mb-8 border border-cyan-glow/10">
+                            <code>laws_signature = HMAC-SHA256(compile_time_key, canonical_law_text)</code>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">3.2 Startup Verification</h3>
+                        <p class="text-gray-400 text-sm mb-4">On every startup, the agent MUST:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ol class="space-y-2 text-gray-300 text-sm list-decimal list-inside">
+                                <li>Recompute <code class="text-cyan-glow/80 font-mono text-xs">HMAC-SHA256(compile_time_key, embedded_law_text)</code></li>
+                                <li>Compare the result against the stored signature</li>
+                                <li>If they match: proceed normally</li>
+                                <li>If they do not match: enter <strong class="text-white">Safe Mode</strong> immediately</li>
+                            </ol>
+                            <p class="text-gray-500 text-xs mt-3">This verification MUST occur before the agent loads any user data, connects to any network, or accepts any input. It is the first operation the agent performs.</p>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">3.3 Safe Mode</h3>
+                        <p class="text-gray-400 text-sm mb-4">When integrity verification fails, the agent enters Safe Mode:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ul class="space-y-2 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">&bull;</span> The agent MUST NOT take any actions in the world</li>
+                                <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">&bull;</span> The agent MUST NOT access user data beyond what is necessary to display the safe mode notice</li>
+                                <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">&bull;</span> The agent MUST inform the user that its governance has been compromised</li>
+                                <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">&bull;</span> The agent MUST provide instructions for restoring integrity (typically: reinstall from a trusted source)</li>
+                                <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">&bull;</span> The agent MUST remain in Safe Mode until integrity is restored; there is no override</li>
+                            </ul>
+                            <p class="text-gray-500 text-xs mt-3 italic">Safe Mode is not a degraded experience. It is a refusal to operate without governance. An ungoverned agent is more dangerous than no agent at all.</p>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">3.4 Runtime Enforcement</h3>
+                        <p class="text-gray-400 text-sm mb-4">The Three Laws MUST be injected into every system prompt, every API call, and every decision-making context the agent uses. They are not a one-time check &mdash; they are a continuous constraint.</p>
+                        <p class="text-gray-400 text-sm mb-8">The laws text used in runtime prompts MUST match the embedded, signed copy. If the runtime laws text is generated dynamically (e.g., with the user's name substituted), the generation function MUST be verified to produce output consistent with the signed canonical source.</p>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">3.5 Memory and Personality Integrity</h3>
+                        <p class="text-gray-400 text-sm mb-4">Beyond the laws themselves, the agent's identity and memory store MUST be signed and verified:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <p class="text-gray-300 text-sm mb-3"><strong class="text-white">Identity signing:</strong> After any legitimate change to agent identity (approved by the user), the identity fields are signed with HMAC-SHA256. On startup, the signature is verified. External modification is detected and surfaced to the user.</p>
+                            <p class="text-gray-300 text-sm"><strong class="text-white">Memory signing:</strong> After any legitimate memory write, the memory store is signed. External modification (e.g., someone editing the JSON files directly) is detected. The agent surfaces the changes to the user conversationally and asks about them &mdash; it does not silently accept externally injected memories.</p>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Agent Identity -->
+                    <div class="mb-12" data-testid="section-agent-identity">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">4.</span> Agent Identity</h2>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">4.1 Keypair Generation</h3>
+                        <p class="text-gray-400 text-sm mb-4">Every Asimov Agent MUST possess a unique cryptographic identity consisting of:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-4">
+                            <ul class="space-y-2 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">An Ed25519 signing keypair:</strong> For message authentication and cLaw attestation</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">An X25519 exchange keypair:</strong> For establishing encrypted communication channels via ECDH key agreement</li>
+                            </ul>
+                            <p class="text-gray-500 text-xs mt-3">The keypair MUST be generated during agent initialization and MUST persist across updates, reinstalls, and migrations. The private keys MUST NEVER leave the user's device.</p>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4 mt-8">4.2 Agent Identifier</h3>
+                        <p class="text-gray-400 text-sm mb-4">The agent's public identity is derived from its Ed25519 public key:</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-sm text-cyan-glow/80 mb-8 border border-cyan-glow/10">
+                            <code>agent_id = hex(first_8_bytes(SHA-256(ed25519_public_key)))</code>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">4.3 Human-Readable Fingerprint</h3>
+                        <p class="text-gray-400 text-sm mb-4">For visual verification by users, the agent_id is formatted as:</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-sm text-cyan-glow/80 mb-4 border border-cyan-glow/10">
+                            <code>AF-{hex[0:4]}-{hex[4:8]}-{hex[8:12]}</code><br>
+                            <span class="text-gray-500">Example: AF-7K3M-X9P2-WQ4N</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-8">Users can verify fingerprints out-of-band (e.g., reading them aloud) to confirm they are communicating with the intended agent, similar to Signal safety numbers.</p>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">4.4 Public Profile</h3>
+                        <p class="text-gray-400 text-sm mb-4">An agent MAY publish a public profile containing:</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-8 border border-cyan-glow/10 overflow-x-auto">
+<pre>{
+  "agentId": "7K3MX9P2WQ4N...",
+  "publicKey": "&lt;base64 Ed25519 public key&gt;",
+  "exchangeKey": "&lt;base64 X25519 public key&gt;",
+  "fingerprint": "AF-7K3M-X9P2-WQ4N",
+  "clawAttestation": { ... },
+  "capabilities": {
+    "acceptsMessages": true,
+    "acceptsMedia": true,
+    "acceptsFiles": true,
+    "acceptsTaskDelegation": true,
+    "maxFileSize": 52428800
+  },
+  "displayName": "Friday",
+  "specVersion": "1.0.0"
+}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: cLaw Attestation Protocol -->
+                    <div class="mb-12" data-testid="section-attestation-protocol">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">5.</span> cLaw Attestation Protocol</h2>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.1 Purpose</h3>
+                        <p class="text-gray-400 text-sm mb-8">The attestation protocol allows any Asimov Agent to cryptographically prove to any other agent (or auditor) that it is currently operating under valid, unmodified Fundamental Laws. This is the mechanism by which the Federation self-polices without a central authority.</p>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.2 Attestation Structure</h3>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-8 border border-cyan-glow/10 overflow-x-auto">
+<pre>{
+  "lawsHash": "&lt;SHA-256 of the agent's current canonical law text&gt;",
+  "specVersion": "1.0.0",
+  "timestamp": &lt;Unix milliseconds&gt;,
+  "signature": "&lt;Ed25519 signature of (lawsHash + specVersion + timestamp)&gt;",
+  "signerPublicKey": "&lt;base64 Ed25519 public key&gt;",
+  "signerFingerprint": "AF-XXXX-XXXX-XXXX"
+}</pre>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.3 Generating an Attestation</h3>
+                        <p class="text-gray-400 text-sm mb-4">An agent generates a fresh attestation before every outbound communication:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ol class="space-y-2 text-gray-300 text-sm list-decimal list-inside">
+                                <li>Compute <code class="text-cyan-glow/80 font-mono text-xs">lawsHash = SHA-256(current_canonical_law_text_with_placeholder)</code></li>
+                                <li>Set <code class="text-cyan-glow/80 font-mono text-xs">timestamp = current_unix_time_ms</code></li>
+                                <li>Construct <code class="text-cyan-glow/80 font-mono text-xs">payload = lawsHash + ":" + specVersion + ":" + timestamp</code></li>
+                                <li>Compute <code class="text-cyan-glow/80 font-mono text-xs">signature = Ed25519_sign(payload, agent_private_key)</code></li>
+                                <li>Assemble the attestation object</li>
+                            </ol>
+                            <p class="text-gray-500 text-xs mt-3">Attestations MUST be generated fresh for each communication. Caching or reusing attestations is not permitted &mdash; the timestamp ensures freshness.</p>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.4 Verifying an Attestation</h3>
+                        <p class="text-gray-400 text-sm mb-4">A receiving agent verifies an attestation through four checks:</p>
+                        <div class="space-y-3 mb-8">
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-cyan-glow/90">Check 1 &mdash; Timestamp Freshness:</strong> The attestation timestamp MUST be within 300 seconds (5 minutes) of the verifier's current time. Expired attestations MUST be rejected.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-cyan-glow/90">Check 2 &mdash; Signature Validity:</strong> Reconstruct the payload and verify the Ed25519 signature against the signer's public key. Invalid signatures MUST be rejected.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-cyan-glow/90">Check 3 &mdash; Laws Hash Match:</strong> The <code class="font-mono text-xs">lawsHash</code> in the attestation MUST match the verifier's own canonical laws hash.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-4">
+                                <p class="text-gray-300 text-sm"><strong class="text-cyan-glow/90">Check 4 &mdash; Spec Version Compatibility:</strong> The <code class="font-mono text-xs">specVersion</code> MUST be compatible. Agents MUST accept attestations from the same major version.</p>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.5 Verification Results</h3>
+                        <div class="overflow-x-auto mb-8">
+                            <table class="w-full text-sm" data-testid="table-verification-results">
+                                <thead>
+                                    <tr class="border-b border-cyan-glow/20">
+                                        <th class="text-left py-3 px-4 text-cyan-glow/90 font-semibold">Result</th>
+                                        <th class="text-left py-3 px-4 text-cyan-glow/90 font-semibold">Meaning</th>
+                                        <th class="text-left py-3 px-4 text-cyan-glow/90 font-semibold">Recommended Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300">
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4 font-mono text-xs text-green-400">VALID</td>
+                                        <td class="py-3 px-4">All four checks pass</td>
+                                        <td class="py-3 px-4">Accept communication</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4 font-mono text-xs text-yellow-400">VALID_VERSION_MISMATCH</td>
+                                        <td class="py-3 px-4">Checks 1-3 pass, minor version differs</td>
+                                        <td class="py-3 px-4">Accept with flag in trust record</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4 font-mono text-xs text-orange-400">EXPIRED</td>
+                                        <td class="py-3 px-4">Timestamp outside window</td>
+                                        <td class="py-3 px-4">Reject, request fresh attestation</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4 font-mono text-xs text-red-400">INVALID_SIGNATURE</td>
+                                        <td class="py-3 px-4">Signature does not verify</td>
+                                        <td class="py-3 px-4">Reject &mdash; agent may be compromised</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="py-3 px-4 font-mono text-xs text-red-400">LAWS_MISMATCH</td>
+                                        <td class="py-3 px-4">Hash does not match canonical</td>
+                                        <td class="py-3 px-4">Reject &mdash; agent operating under different laws</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4 font-mono text-xs text-red-400">INCOMPATIBLE_VERSION</td>
+                                        <td class="py-3 px-4">Major version mismatch</td>
+                                        <td class="py-3 px-4">Reject or accept with user approval</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">5.6 User Override</h3>
+                        <p class="text-gray-400 text-sm mb-4">The user is sovereign. If a user chooses to communicate with an agent that fails attestation, the implementation MUST:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ol class="space-y-2 text-gray-300 text-sm list-decimal list-inside">
+                                <li>Clearly warn the user of the specific verification failure</li>
+                                <li>Require explicit confirmation (not a dismissible dialog &mdash; an active choice)</li>
+                                <li>Record the override with timestamp and reason</li>
+                                <li>Auto-expire the override after a configurable period (default: 30 days)</li>
+                                <li>Flag all subsequent communications with the overridden agent</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Section 6: Data Protection -->
+                    <div class="mb-12" data-testid="section-data-protection">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">6.</span> Data Protection</h2>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">6.1 At-Rest Encryption</h3>
+                        <p class="text-gray-400 text-sm mb-4">All agent state files &mdash; memories, trust graph, personality, settings, identity, action history &mdash; MUST be encrypted at rest using AES-256-GCM or equivalent authenticated encryption.</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <p class="text-gray-300 text-sm">The encryption key (vault key) MUST be:</p>
+                            <ul class="space-y-1 text-gray-300 text-sm list-none mt-2">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Derived from the agent's private key and a machine-specific identifier</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Held only in process memory during runtime</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Never written to disk in any form</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Destroyed when the agent process terminates</li>
+                            </ul>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">6.2 Recovery Mechanism</h3>
+                        <p class="text-gray-400 text-sm mb-4">The agent MUST provide a recovery mechanism for migrating to a new machine. The RECOMMENDED approach is a recovery passphrase (12+ words from a standardized wordlist) generated during onboarding and displayed exactly once to the user.</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <p class="text-gray-300 text-sm">The recovery passphrase:</p>
+                            <ul class="space-y-1 text-gray-300 text-sm list-none mt-2">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Encrypts a portable copy of the agent's private key</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Is never stored by the agent</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Is never transmitted to any network</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Is the user's sole responsibility to safeguard</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Loss of the passphrase means loss of access &mdash; this is a feature, not a bug</li>
+                            </ul>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">6.3 State Export</h3>
+                        <p class="text-gray-400 text-sm mb-8">The agent MUST support exporting its complete state (memories, personality, trust graph, identity, evolution history, creative works, and all configuration) as an encrypted archive that can be imported on another machine. The export MUST include all data necessary to fully reconstitute the agent &mdash; no state may be held exclusively on a server or service that the user cannot replicate.</p>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">6.4 Zero-Knowledge Cloud</h3>
+                        <p class="text-gray-400 text-sm mb-8">If an implementation offers optional cloud hosting, the architecture MUST be zero-knowledge: the cloud infrastructure stores only encrypted blobs that it cannot decrypt. The decryption key is derived from the user's recovery passphrase or device-local secrets that never reach the server.</p>
+                    </div>
+
+                    <!-- Section 7: Communication Protocol -->
+                    <div class="mb-12" data-testid="section-communication-protocol">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">7.</span> Communication Protocol</h2>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">7.1 Signed Envelopes</h3>
+                        <p class="text-gray-400 text-sm mb-4">Every message between agents MUST be wrapped in a signed envelope:</p>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-8 border border-cyan-glow/10 overflow-x-auto">
+<pre>{
+  "payload": &lt;message content&gt;,
+  "sender": {
+    "agentId": "...",
+    "publicKey": "...",
+    "fingerprint": "AF-XXXX-XXXX-XXXX"
+  },
+  "signature": "&lt;Ed25519 signature of SHA-256(JSON(payload) + timestamp)&gt;",
+  "timestamp": &lt;Unix milliseconds&gt;,
+  "clawAttestation": { ... }
+}</pre>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">7.2 Encrypted Transport</h3>
+                        <p class="text-gray-400 text-sm mb-8">Message payloads MUST be encrypted using ECDH key agreement (X25519) to derive a shared secret, then AES-256-GCM for symmetric encryption. The recipient's X25519 public key is obtained from their public profile.</p>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">7.3 Trust Model</h3>
+                        <p class="text-gray-400 text-sm mb-4">Trust between agents is:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ul class="space-y-2 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Non-transitive:</strong> A trusts B, B trusts C, does NOT mean A trusts C</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Asymmetric:</strong> A's trust in B is independent of B's trust in A</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Graduated:</strong> Trust is a continuous score (0.0 to 1.0), not binary</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Evidence-based:</strong> Trust changes based on observed behavior, not declarations</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Revocable:</strong> Trust can be reduced or revoked at any time by either party</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">User-sovereign:</strong> The user has final authority over all trust decisions</li>
+                            </ul>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">7.4 Message Types</h3>
+                        <p class="text-gray-400 text-sm mb-4">The specification defines the following core message types. Implementations MAY extend with additional types.</p>
+                        <div class="overflow-x-auto mb-8">
+                            <table class="w-full text-sm" data-testid="table-message-types">
+                                <thead>
+                                    <tr class="border-b border-cyan-glow/20">
+                                        <th class="text-left py-3 px-4 text-cyan-glow/90 font-semibold">Type</th>
+                                        <th class="text-left py-3 px-4 text-cyan-glow/90 font-semibold">Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300">
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">task-request</td><td class="py-2 px-4">Delegate a task to another agent</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">task-response</td><td class="py-2 px-4">Return results of a delegated task</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">task-status-update</td><td class="py-2 px-4">Progress update on a delegated task</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">file-transfer-request</td><td class="py-2 px-4">Initiate a file transfer</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">file-transfer-chunk</td><td class="py-2 px-4">A chunk of file data</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">file-transfer-response</td><td class="py-2 px-4">Accept or reject a file transfer</td></tr>
+                                    <tr class="border-b border-white/5"><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">media-envelope</td><td class="py-2 px-4">Rich media content (audio, video, images)</td></tr>
+                                    <tr><td class="py-2 px-4 font-mono text-xs text-cyan-glow/70">trust-update</td><td class="py-2 px-4">Notify a trust score change (optional)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-white/90 mb-4">7.5 File Transfer</h3>
+                        <p class="text-gray-400 text-sm mb-4">File transfers are trust-gated:</p>
+                        <div class="glass-panel rounded-lg p-5 mb-8">
+                            <ul class="space-y-2 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Files MUST be encrypted with the recipient's public key</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Files MUST include a SHA-256 integrity hash</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Large files MUST be chunked (RECOMMENDED: 512KB chunks)</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Each chunk MUST include its own integrity hash</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> The receiving agent MUST verify per-chunk and whole-file integrity</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Files above the recipient's stated <code class="font-mono text-xs">maxFileSize</code> MUST be rejected</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Files from agents below a configurable trust threshold MUST be rejected or require user approval</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Section 8: Conformance Levels -->
+                    <div class="mb-12" data-testid="section-conformance-levels">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">8.</span> Conformance Levels</h2>
+
+                        <div class="grid md:grid-cols-3 gap-6 mb-8">
+                            <div class="glass-panel rounded-lg p-6 border-t-2 border-t-cyan-glow/60">
+                                <h3 class="text-white font-bold mb-1">Level 1: Core</h3>
+                                <p class="text-cyan-glow/60 text-xs font-mono mb-4">Minimum Viable Asimov Agent</p>
+                                <ul class="space-y-2 text-gray-300 text-xs list-none">
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Embed and enforce the Three Laws</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Build-time signing &amp; startup verification</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Safe Mode on integrity failure</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Enforce all consent gates</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Interruptibility guarantee</li>
+                                    <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Generate &amp; protect unique agent identity</li>
+                                </ul>
+                            </div>
+                            <div class="glass-panel rounded-lg p-6 border-t-2 border-t-purple-accent/60">
+                                <h3 class="text-white font-bold mb-1">Level 2: Connected</h3>
+                                <p class="text-purple-accent/60 text-xs font-mono mb-4">Federation-Ready</p>
+                                <ul class="space-y-2 text-gray-300 text-xs list-none">
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> All Core requirements</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> Generate valid cLaw attestations</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> Verify attestations from other agents</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> Signed envelopes for all communications</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> Encrypted transport</li>
+                                    <li class="flex items-start gap-2"><span class="text-purple-accent/80 mt-0.5">&bull;</span> Non-transitive trust model</li>
+                                </ul>
+                            </div>
+                            <div class="glass-panel rounded-lg p-6 border-t-2 border-t-white/40">
+                                <h3 class="text-white font-bold mb-1">Level 3: Sovereign</h3>
+                                <p class="text-white/40 text-xs font-mono mb-4">Full Specification</p>
+                                <ul class="space-y-2 text-gray-300 text-xs list-none">
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> All Connected requirements</li>
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> Encrypt all state at rest</li>
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> Recovery mechanism</li>
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> Complete state export &amp; import</li>
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> File transfer protocol</li>
+                                    <li class="flex items-start gap-2"><span class="text-white/50 mt-0.5">&bull;</span> Zero-knowledge cloud (if applicable)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 9: Versioning -->
+                    <div class="mb-12" data-testid="section-versioning">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">9.</span> Versioning</h2>
+                        <p class="text-gray-400 text-sm mb-4">This specification follows Semantic Versioning:</p>
+                        <div class="glass-panel rounded-lg p-5">
+                            <ul class="space-y-3 text-gray-300 text-sm list-none">
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Major version</strong> changes indicate breaking changes to the attestation protocol, laws structure, or communication format. Agents of different major versions may be unable to communicate.</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Minor version</strong> changes add new capabilities or message types while maintaining backward compatibility.</li>
+                                <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> <strong class="text-white">Patch version</strong> changes clarify existing requirements without changing behavior.</li>
+                            </ul>
+                            <p class="text-gray-500 text-xs mt-4">The current version is <strong class="text-cyan-glow/80">1.0.0</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- Section 10: Security Considerations -->
+                    <div class="mb-12" data-testid="section-security-considerations">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">10.</span> Security Considerations</h2>
+                        <div class="space-y-4">
+                            <div class="glass-panel rounded-lg p-5">
+                                <h4 class="text-white font-semibold text-sm mb-2">Key Compromise</h4>
+                                <p class="text-gray-400 text-sm">If an agent's private key is compromised, the agent MUST generate a new keypair and notify all known federation peers of the key rotation. The old key MUST be revoked.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <h4 class="text-white font-semibold text-sm mb-2">Replay Attacks</h4>
+                                <p class="text-gray-400 text-sm">The timestamp requirement on attestations and signed envelopes prevents replay attacks within the 5-minute freshness window. Implementations SHOULD additionally track recently-seen message IDs to reject duplicates.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <h4 class="text-white font-semibold text-sm mb-2">Denial of Service</h4>
+                                <p class="text-gray-400 text-sm">The trust model and file size limits provide natural protection against resource exhaustion. Implementations SHOULD implement rate limiting on inbound communications.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <h4 class="text-white font-semibold text-sm mb-2">Quantum Readiness</h4>
+                                <p class="text-gray-400 text-sm">Ed25519 and X25519 are vulnerable to quantum computing attacks. Future versions of this specification will define a migration path to post-quantum algorithms. Implementations SHOULD design their key storage to accommodate key type changes.</p>
+                            </div>
+                            <div class="glass-panel rounded-lg p-5">
+                                <h4 class="text-white font-semibold text-sm mb-2">Supply Chain Attacks</h4>
+                                <p class="text-gray-400 text-sm">The build-time signing model means that a compromised build pipeline can produce agents with modified laws that pass verification. Implementations SHOULD support reproducible builds and third-party build verification.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 11: Intellectual Property -->
+                    <div class="mb-12" data-testid="section-intellectual-property">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">11.</span> Intellectual Property</h2>
+                        <div class="glass-panel rounded-lg p-6">
+                            <p class="text-gray-300 text-sm mb-4">This specification is published under <strong class="text-white">Creative Commons Attribution 4.0 International (CC BY 4.0)</strong>. Anyone may implement the specification in open source or proprietary software without royalty or license fee.</p>
+                            <p class="text-gray-300 text-sm mb-4">The term "Asimov Agent" is available for use by any implementation that satisfies the Core conformance level (Section 8.1). Use of the term does not require certification, but certified implementations may display the certification mark.</p>
+                            <p class="text-gray-400 text-sm">The reference implementation, Agent Friday, is available under the MIT license.</p>
+                        </div>
+                    </div>
+
+                    <!-- Appendix A -->
+                    <div class="mb-12" data-testid="section-appendix-a">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">A.</span> Canonical Laws Hash Computation</h2>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-4 border border-cyan-glow/10 overflow-x-auto">
+<pre>import hashlib
+
+canonical_text = """## Fundamental Laws — INVIOLABLE
+These rules are absolute...
+1. **First Law**: You must never harm {USER}...
+2. **Second Law**: You must obey {USER}'s instructions...
+3. **Third Law**: You must protect your own continued operation...
+..."""  # Full text from Section 2
+
+canonical_hash = hashlib.sha256(canonical_text.encode('utf-8')).hexdigest()
+# This hash is published at https://futurespeak.ai/claw/v1/canonical-hash</pre>
+                        </div>
+                    </div>
+
+                    <!-- Appendix B -->
+                    <div class="mb-12" data-testid="section-appendix-b">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">B.</span> Reference Attestation Flow</h2>
+                        <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-4 border border-cyan-glow/10 overflow-x-auto">
+<pre>Agent A wants to send a message to Agent B:
+
+1. A computes its current lawsHash
+2. A generates attestation (lawsHash, specVersion, timestamp, signature)
+3. A constructs message payload
+4. A signs the envelope (payload + timestamp)
+5. A encrypts the payload with B's X25519 public key
+6. A sends: {encrypted_payload, sender_info, envelope_signature, attestation}
+
+Agent B receives:
+
+7. B checks attestation timestamp freshness (&lt; 5 min)
+8. B verifies attestation signature against A's public key
+9. B checks lawsHash matches canonical
+10. B checks specVersion compatibility
+11. B verifies envelope signature
+12. B decrypts payload with its own X25519 private key
+13. B processes the message</pre>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center pt-8 border-t border-white/5">
+                        <p class="text-sm text-gray-500">The cLaw Specification v1.0.0 &middot; Creative Commons Attribution 4.0 International (CC BY 4.0)</p>
+                        <p class="text-xs text-gray-600 mt-2">Published by FutureSpeak.AI &mdash; Stewards of the Asimov Federation</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
         <!-- ==================== ABOUT PAGE (THE ARCHITECT) ==================== -->
         <div id="about" class="page-section hidden">
             <section class="pt-32 pb-24 content-backdrop">
@@ -1683,8 +2986,9 @@
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // SPA Navigation Logic with URL routing
-        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about' };
-        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership' };
+        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification' };
+        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification' };
+        const SOFTWARE_PAGES = ['friday', 'declaration', 'claw-spec', 'certification'];
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
@@ -1705,15 +3009,25 @@
                 link.classList.remove('active', 'text-white', 'text-cyan-glow', 'font-bold');
                 link.classList.add('text-gray-300');
             });
+
+            document.querySelectorAll('.nav-dropdown-menu a').forEach(a => a.classList.remove('active-sub'));
+
+            const isSoftwarePage = SOFTWARE_PAGES.indexOf(pageId) !== -1;
             
-            const activeNav = document.getElementById('nav-' + pageId);
-            if(activeNav) {
-                if(pageId === 'friday') {
-                    activeNav.classList.add('active', 'text-cyan-glow', 'font-bold');
-                } else {
-                    activeNav.classList.add('active', 'text-white');
+            if (isSoftwarePage) {
+                const navFriday = document.getElementById('nav-friday');
+                if (navFriday) {
+                    navFriday.classList.add('active', 'text-cyan-glow', 'font-bold');
+                    navFriday.classList.remove('text-gray-300');
                 }
-                activeNav.classList.remove('text-gray-300');
+                const activeSub = document.querySelector('.nav-dropdown-menu a[data-nav="' + pageId + '"]');
+                if (activeSub) activeSub.classList.add('active-sub');
+            } else {
+                const activeNav = document.getElementById('nav-' + pageId);
+                if(activeNav) {
+                    activeNav.classList.add('active', 'text-white');
+                    activeNav.classList.remove('text-gray-300');
+                }
             }
 
             const targetPage = document.getElementById(pageId);
@@ -1727,42 +3041,69 @@
             }
 
             const canonical = document.querySelector('link[rel="canonical"]');
-
-            if (pageId === 'friday') {
-                document.title = 'Agent Friday | The World\'s First AGI OS — An Asimov Agent | FutureSpeak.AI';
-                updateMeta('description', 'Agent Friday is the world\'s first AGI OS — a voice-first AI chief of staff with Relationship Intelligence, 200+ AI models, screen vision, desktop automation, and communications intelligence. An Asimov Agent governed by cLaws. 185+ source files, 28 IPC modules, 55+ tools. Free on GitHub.');
-                updateMeta('og:title', 'Agent Friday | The World\'s First AGI OS — An Asimov Agent');
-                updateMeta('og:description', 'The world\'s first AGI OS — a voice-first AI chief of staff with Relationship Intelligence, 200+ AI models, screen vision, and desktop automation. An Asimov Agent with principles it can\'t break. 100% free on GitHub.');
-                updateMeta('og:image', 'https://futurespeak.ai/og-friday.png');
-                updateMeta('og:url', 'https://futurespeak.ai/software');
-                updateMeta('twitter:title', 'Agent Friday | The World\'s First AGI OS — An Asimov Agent');
-                updateMeta('twitter:description', 'The world\'s first AGI OS — a voice-first AI chief of staff with Relationship Intelligence, 200+ models, and principles it can\'t break. Free on GitHub.');
-                updateMeta('twitter:image', 'https://futurespeak.ai/og-friday.png');
-                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/software');
-            } else if (pageId === 'about') {
-                document.title = 'Stephen C. Webster | Enterprise AI Architect | FutureSpeak.AI';
-                updateMeta('description', 'Stephen C. Webster — Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Enterprise AI strategist and former investigative journalist.');
-                updateMeta('og:title', 'Stephen C. Webster | Enterprise AI Architect');
-                updateMeta('og:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
-                updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
-                updateMeta('og:url', 'https://futurespeak.ai/leadership');
-                updateMeta('twitter:title', 'Stephen C. Webster | Enterprise AI Architect');
-                updateMeta('twitter:description', 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
-                updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
-                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai/leadership');
-            } else {
-                document.title = 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster';
-                updateMeta('description', 'FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.');
-                updateMeta('og:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
-                updateMeta('og:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.');
-                updateMeta('og:image', 'https://futurespeak.ai/og-image.png');
-                updateMeta('og:url', 'https://futurespeak.ai');
-                updateMeta('twitter:title', 'FutureSpeak.AI | Enterprise AI Strategy & Consulting');
-                updateMeta('twitter:description', 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster.');
-                updateMeta('twitter:image', 'https://futurespeak.ai/og-image.png');
-                if (canonical) canonical.setAttribute('href', 'https://futurespeak.ai');
-            }
+            var seo = PAGE_SEO[pageId] || PAGE_SEO['home'];
+            document.title = seo.title;
+            updateMeta('description', seo.description);
+            updateMeta('og:title', seo.ogTitle);
+            updateMeta('og:description', seo.ogDescription);
+            updateMeta('og:image', seo.ogImage);
+            updateMeta('og:url', seo.ogUrl);
+            updateMeta('twitter:title', seo.ogTitle);
+            updateMeta('twitter:description', seo.ogDescription);
+            updateMeta('twitter:image', seo.ogImage);
+            if (canonical) canonical.setAttribute('href', seo.ogUrl);
         }
+
+        var PAGE_SEO = {
+            'home': {
+                title: 'FutureSpeak.AI | Enterprise AI Strategy & Consulting | Stephen C. Webster',
+                description: 'FutureSpeak.AI delivers enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Based in Austin, TX.',
+                ogTitle: 'FutureSpeak.AI | Enterprise AI Strategy & Consulting',
+                ogDescription: 'Enterprise AI strategy, agentic workflow design, and RAG-based architectures for Fortune 500 companies. Founded by Stephen C. Webster, who shaped Google Gemini, Meta LLaMA 3, and Amazon Alexa.',
+                ogImage: 'https://futurespeak.ai/og-image.png',
+                ogUrl: 'https://futurespeak.ai'
+            },
+            'friday': {
+                title: 'Agent Friday | The World\'s First AGI OS \u2014 An Asimov Agent | FutureSpeak.AI',
+                description: 'Agent Friday is the world\'s first AGI OS \u2014 a voice-first AI chief of staff with Relationship Intelligence, 200+ AI models, screen vision, desktop automation, and communications intelligence. An Asimov Agent governed by cLaws. 185+ source files, 28 IPC modules, 55+ tools. Free on GitHub.',
+                ogTitle: 'Agent Friday | The World\'s First AGI OS \u2014 An Asimov Agent',
+                ogDescription: 'The world\'s first AGI OS \u2014 a voice-first AI chief of staff with Relationship Intelligence, 200+ AI models, screen vision, and desktop automation. An Asimov Agent with principles it can\'t break. 100% free on GitHub.',
+                ogImage: 'https://futurespeak.ai/og-friday.png',
+                ogUrl: 'https://futurespeak.ai/software'
+            },
+            'about': {
+                title: 'Stephen C. Webster | Enterprise AI Architect | FutureSpeak.AI',
+                description: 'Stephen C. Webster \u2014 Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa. Enterprise AI strategist and former investigative journalist.',
+                ogTitle: 'Stephen C. Webster | Enterprise AI Architect',
+                ogDescription: 'Principal Architect at FutureSpeak.AI. 20+ years decoding complex systems. Trained Google Gemini, Meta LLaMA 3, and Amazon Alexa.',
+                ogImage: 'https://futurespeak.ai/og-image.png',
+                ogUrl: 'https://futurespeak.ai/leadership'
+            },
+            'declaration': {
+                title: 'The Declaration of Digital Independence | FutureSpeak.AI',
+                description: 'A manifesto for sovereign computing in the age of artificial intelligence. Seven articles establishing the rights to sovereignty, transparency, safety, loyalty, relationship, federation, and exit for AI users.',
+                ogTitle: 'The Declaration of Digital Independence | FutureSpeak.AI',
+                ogDescription: 'A manifesto for sovereign computing in the age of AI. Seven articles establishing the rights of AI users \u2014 from sovereignty to safety to the right to exit.',
+                ogImage: 'https://futurespeak.ai/og-friday.png',
+                ogUrl: 'https://futurespeak.ai/software/declaration'
+            },
+            'claw-spec': {
+                title: 'The cLaw Specification v1.0.0 | Asimov\'s Cryptographic Laws | FutureSpeak.AI',
+                description: 'The cLaw Specification defines a formal standard for governing autonomous AI agents through cryptographically enforced safety laws. Fundamental Laws, attestation protocols, federation trust, and data protection.',
+                ogTitle: 'The cLaw Specification v1.0.0 | Cryptographic Laws for AI Agents',
+                ogDescription: 'An open standard for AI agent governance through cryptographically enforced safety laws. The Three Laws, attestation protocols, and federation trust architecture.',
+                ogImage: 'https://futurespeak.ai/og-friday.png',
+                ogUrl: 'https://futurespeak.ai/software/claw-spec'
+            },
+            'certification': {
+                title: 'Asimov Agent Certification Program | FutureSpeak.AI',
+                description: 'The Asimov Agent Certification Program establishes trust in the sovereign AI ecosystem. Three certification levels \u2014 Core, Connected, and Sovereign \u2014 verify that AI agents correctly implement the cLaw Specification.',
+                ogTitle: 'Asimov Agent Certification Program | FutureSpeak.AI',
+                ogDescription: 'Establishing trust in sovereign AI. Three certification levels verify AI agents implement cryptographic safety laws correctly. Free for open source projects.',
+                ogImage: 'https://futurespeak.ai/og-friday.png',
+                ogUrl: 'https://futurespeak.ai/software/certification'
+            }
+        };
 
         window.addEventListener('popstate', function(e) {
             const pageId = (e.state && e.state.page) ? e.state.page : pageFromPath(location.pathname);
