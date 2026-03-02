@@ -1,128 +1,187 @@
-import { useConfig } from "@/hooks/use-config";
-import { motion } from "framer-motion";
-import { FileCode2, Globe, FileUp, Sparkles } from "lucide-react";
-import { CodeBlock } from "@/components/ui/code-block";
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
-};
+import PageLayout from "@/components/PageLayout";
+import StarField from "@/components/StarField";
+import FadeIn from "@/components/FadeIn";
+import { usePageMeta } from "@/hooks/use-page-meta";
+import { Link } from "wouter";
+import { Shield, Bot, Building2, ArrowRight } from "lucide-react";
 
 export default function Home() {
-  const { data: config } = useConfig();
+  usePageMeta({
+    title: "FutureSpeak.AI — The Governance Layer for Autonomous AI",
+    description:
+      "FutureSpeak.AI created the cLaw Specification — an open standard for cryptographically enforced AI agent safety — and Agent Friday, the reference implementation that proves it works.",
+  });
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 sm:p-12 font-sans selection:bg-foreground selection:text-background relative overflow-hidden">
-      
-      {/* Extremely subtle background gradient */}
-      <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-muted/50 to-transparent pointer-events-none -z-10" />
-
-      <motion.div 
-        variants={container} 
-        initial="hidden" 
-        animate="show" 
-        className="w-full max-w-4xl mx-auto flex flex-col items-center text-center"
+    <PageLayout>
+      <section
+        className="relative min-h-[80vh] flex items-center justify-center overflow-hidden"
+        data-testid="section-hero"
       >
-        {/* Status Indicator */}
-        <motion.div variants={item} className="flex items-center space-x-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-full mb-10">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span className="tracking-wide uppercase">Deployment Active</span>
-        </motion.div>
-
-        {/* Hero Copy */}
-        <motion.h1 variants={item} className="text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-foreground mb-6">
-          {config?.title || "Your blank canvas awaits."}
-        </motion.h1>
-
-        <motion.p variants={item} className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mb-16 leading-relaxed">
-          Your web server is running successfully. To display your own custom HTML, simply replace the default placeholder file.
-        </motion.p>
-
-        {/* Instructional Steps Grid */}
-        <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left mb-16">
-          <div className="p-6 rounded-2xl border border-border bg-card/50 shadow-sm shadow-black/[0.02] hover:shadow-md hover:bg-card transition-all duration-300">
-            <div className="w-10 h-10 rounded-full border border-border bg-background flex items-center justify-center mb-5 text-foreground shadow-sm">
-              <Globe className="w-4 h-4 text-muted-foreground" />
-            </div>
-            <h3 className="font-medium text-foreground mb-2 text-sm tracking-wide uppercase">1. Locate</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Open your project workspace and navigate directly to the <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded text-foreground">client/index.html</code> file.
+        <StarField />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FadeIn>
+            <h1
+              className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6"
+              data-testid="text-hero-headline"
+            >
+              The Governance Layer for{" "}
+              <span className="text-gradient-amber">Autonomous AI</span>
+            </h1>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <p
+              className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed"
+              data-testid="text-hero-subhead"
+            >
+              FutureSpeak.AI created the cLaw Specification — an open standard
+              for cryptographically enforced AI agent safety — and Agent Friday,
+              the reference implementation that proves it works.
             </p>
-          </div>
-
-          <div className="p-6 rounded-2xl border border-border bg-card/50 shadow-sm shadow-black/[0.02] hover:shadow-md hover:bg-card transition-all duration-300">
-            <div className="w-10 h-10 rounded-full border border-border bg-background flex items-center justify-center mb-5 text-foreground shadow-sm">
-              <FileCode2 className="w-4 h-4 text-muted-foreground" />
+          </FadeIn>
+          <FadeIn delay={0.3}>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/framework"
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3 rounded-md transition-colors"
+                data-testid="link-developer-cta"
+              >
+                I'm a Developer
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/consulting"
+                className="inline-flex items-center gap-2 border border-border text-foreground font-medium px-6 py-3 rounded-md backdrop-blur-sm bg-background/20 transition-colors hover:border-primary/50"
+                data-testid="link-enterprise-cta"
+              >
+                I Need Enterprise AI
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-            <h3 className="font-medium text-foreground mb-2 text-sm tracking-wide uppercase">2. Replace</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Delete the placeholder code and paste in your own custom HTML, CSS, and JS structure.
-            </p>
-          </div>
+          </FadeIn>
+        </div>
+      </section>
 
-          <div className="p-6 rounded-2xl border border-border bg-card/50 shadow-sm shadow-black/[0.02] hover:shadow-md hover:bg-card transition-all duration-300">
-            <div className="w-10 h-10 rounded-full border border-border bg-background flex items-center justify-center mb-5 text-foreground shadow-sm">
-              <Sparkles className="w-4 h-4 text-muted-foreground" />
+      <section
+        className="py-24"
+        data-testid="section-cards"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FadeIn delay={0}>
+              <Link href="/framework/claw-spec" data-testid="link-card-claw-spec">
+                <div className="glass-panel rounded-xl border border-border bg-card/50 p-8 h-full transition-all duration-300 hover:border-primary/30 hover:glow-amber group">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-5">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3
+                    className="font-heading text-xl font-semibold text-foreground mb-3"
+                    data-testid="text-card-title-claw"
+                  >
+                    The cLaw Specification
+                  </h3>
+                  <p
+                    className="text-muted-foreground leading-relaxed mb-4"
+                    data-testid="text-card-desc-claw"
+                  >
+                    An open standard for governing autonomous AI agents through
+                    cryptographically enforced safety laws. Morality as
+                    architecture, not marketing.
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-sm text-gradient-cyan font-medium group-hover:gap-2 transition-all">
+                    Learn more <ArrowRight className="w-4 h-4 text-accent" />
+                  </span>
+                </div>
+              </Link>
+            </FadeIn>
+
+            <FadeIn delay={0.15}>
+              <Link href="/framework/agent-friday" data-testid="link-card-agent-friday">
+                <div className="glass-panel rounded-xl border border-border bg-card/50 p-8 h-full transition-all duration-300 hover:border-primary/30 hover:glow-amber group">
+                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-5">
+                    <Bot className="w-6 h-6 text-accent" />
+                  </div>
+                  <h3
+                    className="font-heading text-xl font-semibold text-foreground mb-3"
+                    data-testid="text-card-title-friday"
+                  >
+                    Agent Friday
+                  </h3>
+                  <p
+                    className="text-muted-foreground leading-relaxed mb-4"
+                    data-testid="text-card-desc-friday"
+                  >
+                    The world's first Agentic OS — a desktop operating system
+                    governed by Asimov's cLaws. Multi-model, voice-first, fully
+                    local. Free and open source.
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-sm text-gradient-cyan font-medium group-hover:gap-2 transition-all">
+                    Learn more <ArrowRight className="w-4 h-4 text-accent" />
+                  </span>
+                </div>
+              </Link>
+            </FadeIn>
+
+            <FadeIn delay={0.3}>
+              <Link href="/consulting" data-testid="link-card-consulting">
+                <div className="glass-panel rounded-xl border border-border bg-card/50 p-8 h-full transition-all duration-300 hover:border-primary/30 hover:glow-amber group">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-5">
+                    <Building2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3
+                    className="font-heading text-xl font-semibold text-foreground mb-3"
+                    data-testid="text-card-title-consulting"
+                  >
+                    Enterprise Consulting
+                  </h3>
+                  <p
+                    className="text-muted-foreground leading-relaxed mb-4"
+                    data-testid="text-card-desc-consulting"
+                  >
+                    AI strategy from the team that trained Google Gemini. Agentic
+                    workflows, RAG architectures, and compliance frameworks for
+                    Fortune 500 companies.
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-sm text-gradient-cyan font-medium group-hover:gap-2 transition-all">
+                    Learn more <ArrowRight className="w-4 h-4 text-accent" />
+                  </span>
+                </div>
+              </Link>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="py-16 border-t border-border"
+        data-testid="section-credibility"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="flex flex-col items-center gap-4 text-center">
+              <p
+                className="text-sm text-muted-foreground tracking-wide"
+                data-testid="text-models-trained"
+              >
+                <span className="text-foreground/70 font-medium">
+                  Models trained:
+                </span>{" "}
+                Google Gemini · Meta LLaMA 3 · Amazon Alexa
+              </p>
+              <div className="w-16 h-px bg-border" />
+              <p
+                className="text-sm text-muted-foreground tracking-wide"
+                data-testid="text-enterprise-clients"
+              >
+                <span className="text-foreground/70 font-medium">
+                  Enterprise clients:
+                </span>{" "}
+                Sanofi · Merck · GM · Microsoft
+              </p>
             </div>
-            <h3 className="font-medium text-foreground mb-2 text-sm tracking-wide uppercase">3. Deploy</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Save the file. Your deployment will automatically pick up the changes and serve them instantly.
-            </p>
-          </div>
-        </motion.div>
-        
-        {/* Code Example Section */}
-        <motion.div variants={item} className="w-full text-left max-w-3xl">
-          <div className="mb-4 ml-2 flex items-center text-sm font-medium text-foreground tracking-wide uppercase">
-            <FileUp className="w-4 h-4 mr-2 text-muted-foreground" /> 
-            Starter Template
-          </div>
-          <CodeBlock 
-            filename="client/index.html"
-            language="html"
-            code={`<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Custom Website</title>
-    <!-- Add your custom fonts or CSS links here -->
-    <style>
-      body {
-        font-family: system-ui, sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-        background: #f9fafb;
-      }
-      h1 { color: #111827; font-weight: 500; }
-    </style>
-  </head>
-  <body>
-    <h1>Hello, World!</h1>
-  </body>
-</html>`} 
-          />
-        </motion.div>
-
-        {/* Footer */}
-        <motion.footer variants={item} className="mt-24 text-center text-xs text-muted-foreground tracking-widest uppercase">
-          Ready to build something amazing
-        </motion.footer>
-      </motion.div>
-    </div>
+          </FadeIn>
+        </div>
+      </section>
+    </PageLayout>
   );
 }
