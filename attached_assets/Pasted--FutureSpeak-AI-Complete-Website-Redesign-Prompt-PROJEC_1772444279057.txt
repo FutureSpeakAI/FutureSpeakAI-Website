@@ -1,0 +1,359 @@
+# FutureSpeak.AI — Complete Website Redesign Prompt
+
+## PROJECT OVERVIEW
+
+Redesign futurespeak.ai from scratch. This is a personal brand + open-source project + consulting practice site for Stephen C. Webster, an enterprise AI strategist who built the cLaw Specification (an open standard for AI agent governance) and Agent Friday (the reference implementation).
+
+The current site tries to serve enterprise consulting clients and open-source developers on the same page. The redesign separates these audiences while elevating the governance framework as the primary differentiator.
+
+## TECH STACK
+
+- Next.js 14+ (App Router)
+- TypeScript
+- Tailwind CSS
+- Framer Motion for animations
+- Deploy-ready for Vercel or Replit
+- No CMS — all content is static/hardcoded for now
+- Responsive (mobile-first)
+- Dark theme primary (space/night sky aesthetic — the brand uses 🌠🔭 star motifs)
+
+## DESIGN DIRECTION
+
+**Aesthetic:** Premium, editorial, slightly cinematic. Think: a beautiful open-source project page meets a high-end consulting firm. Not corporate sterile. Not hacker-dark-mode generic. Sophisticated with warmth.
+
+**Color palette:** Deep navy/black backgrounds. Warm amber/gold accents (the "warm glow" of Agent Friday). Cyan/teal for technical elements. White and soft gray for text. Subtle star-field or particle effects on hero sections — tasteful, not overwhelming.
+
+**Typography:** A clean sans-serif for body (Inter or similar). A slightly distinctive heading font that feels authoritative but not stuffy. Generous whitespace. Large, confident headlines.
+
+**Interactions:** Smooth scroll. Subtle fade-in animations on scroll. Nothing flashy — the content is the star.
+
+## SITE ARCHITECTURE
+
+```
+/ (homepage — the fork)
+/framework (The Asimov Framework overview)
+/framework/claw-spec (The cLaw Specification v1.0.0)
+/framework/agent-friday (Agent Friday — reference implementation)
+/framework/certification (Asimov Agent Certification Program)
+/framework/declaration (Declaration of Digital Independence)
+/consulting (Enterprise AI consulting services)
+/about (Stephen's bio + the Asimov tribute)
+/writing (Blog/thought leadership — placeholder for now)
+```
+
+## PAGE-BY-PAGE SPECIFICATIONS
+
+---
+
+### PAGE: Homepage `/`
+
+**Purpose:** Establish identity in 10 seconds. Let two audiences self-select.
+
+**Hero section:**
+- Large headline: **"The Governance Layer for Autonomous AI"**
+- Subhead: "FutureSpeak.AI created the cLaw Specification — an open standard for cryptographically enforced AI agent safety — and Agent Friday, the reference implementation that proves it works."
+- Two CTA buttons side by side:
+  - **"I'm a Developer"** → links to /framework
+  - **"I Need Enterprise AI"** → links to /consulting
+- Subtle animated background — slow-moving particles or a gentle star field. Keep it performant.
+
+**Below the fold — three cards:**
+
+Card 1: **The cLaw Specification**
+"An open standard for governing autonomous AI agents through cryptographically enforced safety laws. Morality as architecture, not marketing."
+→ Link to /framework/claw-spec
+
+Card 2: **Agent Friday**
+"The world's first Agentic OS — a desktop operating system governed by Asimov's cLaws. Multi-model, voice-first, fully local. Free and open source."
+→ Link to /framework/agent-friday
+
+Card 3: **Enterprise Consulting**
+"AI strategy from the team that trained Google Gemini. Agentic workflows, RAG architectures, and compliance frameworks for Fortune 500 companies."
+→ Link to /consulting
+
+**Brief credibility strip:** Small logos or text — "Models trained: Google Gemini · Meta LLaMA 3 · Amazon Alexa" and "Enterprise clients: Sanofi · Merck · GM · Microsoft"
+
+**Footer:** Standard footer with nav links, GitHub link, Discord link, LinkedIn link, "Built by Stephen C. Webster" with link to /about. Copyright 2025-2026. MIT License note for open-source components.
+
+---
+
+### PAGE: The Asimov Framework `/framework`
+
+**Purpose:** The main landing page for the developer/governance audience. Explains the big picture before diving into specifics.
+
+**Hero:**
+- Headline: **"Asimov's cLaws"**
+- Subhead: "What happens when you give Isaac Asimov's Three Laws of Robotics to an AI and ask it to build an agentic safety framework from first principles?"
+
+**Section: The Three Laws** (visual, not just text)
+Display the three laws in a visually striking way — perhaps as three cards or a vertical timeline:
+
+1. **Do No Harm** — "An agent must never harm its user — or through inaction allow its user to come to harm."
+2. **Obey the User** — "An agent must obey its user's instructions, except where such orders would conflict with the First Law."
+3. **Protect Integrity** — "An agent must protect its own continued operation and integrity, except where doing so would conflict with the First or Second Law."
+
+Brief paragraph: "These laws are not prompts. They are not guidelines. They are HMAC-SHA256 signed at build time, cryptographically verified on every startup, and enforced at every boundary. Tamper with them and the agent enters Safe Mode. This is morality as cryptography — not as suggestion."
+
+**Section: The Ecosystem** — Four linked cards:
+
+1. **The cLaw Specification v1.0.0** — "The open standard. A formal specification for governing autonomous AI agents through cryptographically enforced safety laws."
+   → /framework/claw-spec
+
+2. **Agent Friday** — "The reference implementation. The world's first Agentic OS — a desktop operating system that proves the framework works, with 55+ tools, 200+ models, voice-first interaction, and relationship intelligence."
+   → /framework/agent-friday
+
+3. **Certification Program** — "The trust signal. A voluntary certification verifying that AI agents correctly implement the cLaw Specification. Free for open source."
+   → /framework/certification
+
+4. **Declaration of Digital Independence** — "The philosophy. A manifesto for sovereign computing in the age of artificial intelligence."
+   → /framework/declaration
+
+**Section: Why This Matters**
+Brief prose (not bullet points):
+"Most AI safety frameworks are theoretical. This one ships. The cLaw Specification defines the standard. Agent Friday proves it works. The Certification Program makes it verifiable. And the Declaration articulates why it matters. Together, they form a complete governance layer for autonomous AI — from philosophy to cryptography to working code."
+
+**CTA:** "Start with the Specification →" linking to /framework/claw-spec
+
+---
+
+### PAGE: Agent Friday `/framework/agent-friday`
+
+**Purpose:** Sell the experience, not the feature list. This is a tight landing page, not an encyclopedia.
+
+**Hero:**
+- Headline: **"Agent Friday"**
+- Subhead: "The world's first Agentic OS — a desktop operating system with a heart. Voice-first, multi-model, fully local. The reference implementation of the cLaw Specification."
+- Two buttons: **"Download"** (GitHub releases link) | **"Source Code"** (GitHub repo link)
+- Small note: "100% Free — Bring Your Own API Keys"
+
+**Section: What Makes It Different** — exactly 4 items, each with a short heading and 2-3 sentence description:
+
+1. **Morality as Cryptography**
+"The Three cLaws are HMAC-SHA256 signed at build time and verified on every startup. If tampered with, Friday enters Safe Mode and refuses to operate. These aren't guidelines — they're tamper-evident structural constraints."
+
+2. **Relationship Intelligence**
+"Friday builds a Relationship Graph of your professional world — up to 200 profiles with contextual notes. Every email draft, meeting brief, and recommendation is informed by real relationship context. Trust isn't accumulated linearly — every new observation triggers a full recomputation through hermeneutic re-evaluation."
+
+3. **A Personality That Evolves**
+"Friday's personality is an 8-layer composition rebuilt for every interaction. The 3D desktop visualization directly expresses the agent's traits — warm agents drift toward amber, analytical agents shift toward cyan. After months of use, no two Fridays look alike."
+
+4. **Multi-Model Orchestra**
+"Not one AI — an orchestra. Gemini for voice and vision. Claude for deep reasoning. Perplexity for search. OpenAI for math. 200+ models via OpenRouter. ElevenLabs for cinema-quality voices. Each chosen for what it does best, all governed by the cLaws."
+
+**Section: See It In Action**
+- Placeholder for embedded video or screenshots
+- The 8-step onboarding narrative — but condensed to a visual timeline, not 8 full paragraphs. Each step gets a one-line summary. Users can expand for the full prose if they want.
+
+**Section: The Full Picture** — a grid of capability categories (not individual features). Each is a small card with icon + title + one line:
+- Voice-First Interaction
+- Screen Vision & Desktop Control
+- Parallel Agent Teams
+- Persistent Memory (3-tier)
+- On-the-Fly Code Generation
+- Communications Intelligence
+- Meeting Intelligence
+- Browser & Web Automation
+- Document Intelligence (PageIndex)
+- Self-Improvement (user-approved)
+- Scheduled Tasks & Workflows
+- 55+ Tools from 12+ Sources
+
+**Section: Open Source Ecosystem**
+Brief intro: "Agent Friday isn't a monolith. Our original subsystems have been extracted into standalone libraries."
+
+Two columns:
+- **Standalone Libraries:** trust-graph-engine, cognitive-memory, agent-integrity, personality-evolution, predictive-agent, self-improving-agent, meeting-intelligence — each with GitHub link
+- **Customized Forks:** World Monitor, PageIndex, Pixel Agents, OpenClaw, Self-Operating Computer, Browser Use — each with GitHub link and original author credit
+
+**Section: Tech Stack** — clean, minimal table or grid showing the key technologies.
+
+**CTA:** Links to GitHub, Discord, and back to the cLaw Specification.
+
+---
+
+### PAGE: The cLaw Specification `/framework/claw-spec`
+
+**Purpose:** Present the full specification as a serious technical document.
+
+**Layout:** This page should feel like a specification document — sidebar table of contents on the left (sticky on desktop, collapsible on mobile), main content on the right. Clean, readable, with code blocks for the technical sections.
+
+**Content:** Port the FULL cLaw Specification text from the current site. All 11 sections plus appendices. Do not cut or summarize — this is the canonical document. Sections:
+
+1. Terminology
+2. The Fundamental Laws (2.1-2.5)
+3. Cryptographic Enforcement (3.1-3.5)
+4. Agent Identity (4.1-4.4)
+5. cLaw Attestation Protocol (5.1-5.6)
+6. Data Protection (6.1-6.4)
+7. Communication Protocol (7.1-7.5)
+8. Conformance Levels
+9. Versioning
+10. Security Considerations
+11. Intellectual Property
+Appendix A: Canonical Laws Hash Computation
+Appendix B: Reference Attestation Flow
+
+**Header of the page:** "The cLaw Specification — Version 1.0.0" with publication date and CC BY 4.0 badge.
+
+**Code blocks** should be syntax-highlighted with a dark theme that matches the site.
+
+---
+
+### PAGE: Certification Program `/framework/certification`
+
+**Purpose:** Explain the certification program clearly and professionally.
+
+**Port the full content** from the current certification page, but with better visual structure:
+- Overview section
+- Three certification levels displayed as tiered cards (Core → Connected → Sovereign) with a visual progression
+- The certification process as a numbered timeline
+- Pricing table
+- Governance section
+- FAQ as an accordion
+- Application form at the bottom
+
+---
+
+### PAGE: Declaration of Digital Independence `/framework/declaration`
+
+**Purpose:** The philosophical companion piece. Positioned as important but not primary.
+
+**Port the full Declaration text.** Give it a dignified, document-like presentation — think founding document aesthetic. Serif font for the body text of the Declaration itself (to differentiate it from the rest of the site). The Preamble, Grievances, Declaration articles, and Commitment sections.
+
+Include the signature form at the bottom.
+
+---
+
+### PAGE: Enterprise Consulting `/consulting`
+
+**Purpose:** A separate, professional landing page for enterprise buyers.
+
+**Hero:**
+- Headline: **"Intelligence, Architected."**
+- Subhead: "Enterprise AI strategy from the team that trained Google Gemini. We design agentic workflows, RAG architectures, and AI transformation strategies for Fortune 500 companies in regulated industries."
+- CTA: **"Schedule a Strategy Session"** (mailto:contact@futurespeak.ai or a Calendly link)
+
+**Section: What We Do** — three service cards:
+
+1. **Agentic AI Workflow Design**
+"Multi-agent orchestration systems that automate complex enterprise processes. Custom autonomous workflows with built-in quality assurance and human-in-the-loop governance."
+
+2. **AI Compliance for Regulated Industries**
+"Enterprise AI architectures built for pharmaceutical, healthcare, and financial compliance. Proven deployment in Fortune 500 regulatory environments."
+
+3. **RAG & Knowledge Architecture**
+"Retrieval-augmented generation systems anchored to proprietary enterprise data. Reduce hallucination, increase accuracy, and build trustworthy AI-powered knowledge bases."
+
+**Section: Results**
+Display key proof points as large stat blocks:
+- "€120M in projected savings" — SAGE platform deployed for global pharmaceutical client
+- "5M+ monthly readers" — Built and scaled digital media operations from 50K
+- "Fortune 500 clients" — Sanofi, Merck, GM, Microsoft
+
+**Section: Case Study — SAGE** (brief)
+"SAGE (Strategic Adaptive Generative Engine) is a multi-agent AI platform developed for pharmaceutical clients. It automates complex compliance workflows, generates regulatory-ready content, and orchestrates multiple AI models in parallel — delivering €120 million in projected savings for a single enterprise engagement."
+
+**Section: Contact**
+Clean contact form: Name, Email, Subject, Message. Or simply a prominent email CTA and Calendly link.
+
+---
+
+### PAGE: About / Leadership `/about`
+
+**Purpose:** Stephen's bio with the connective narrative.
+
+**Opening narrative paragraph** (displayed prominently, larger text):
+"Most AI safety frameworks are written by researchers. This one was written by someone who trained Google Gemini, deployed AI for Fortune 500 pharma clients, and spent 20 years as an investigative journalist asking who has the power and what they're doing with it."
+
+**Photo:** Stephen's headshot (use the existing image at /1760623171257.jpg — or provide a placeholder)
+
+**Name and title:** Stephen C. Webster — Principal Architect, FutureSpeak.AI
+
+**Bio sections** (presented as a timeline or narrative blocks, NOT bullet points):
+
+1. **Frontier AI** — Trained Google Gemini (including during the 2024 election cycle), Meta LLaMA 3, Amazon Alexa. Developed response frameworks for politically sensitive queries at Google scale.
+
+2. **Enterprise AI** — Senior Director of Integrated Intelligence at Aquent Studios. AI strategy and implementation for Fortune 500 clients in regulated industries. Created SAGE, generating €120M in projected savings.
+
+3. **FutureSpeak.AI** — Founded consultancy connecting businesses with AI transformation. Clients include The Motley Fool, Kunai (fintech), INNEX Energy. Created the cLaw Specification, Agent Friday, and the Asimov Agent Certification Program.
+
+4. **Journalism** — 20+ years. Editor-in-Chief at Raw Story (grew from 50K to 5M monthly readers). Founded Austin.com. Led digital transformation at The Progressive. Work cited by NYT, Washington Post, Wired, Rolling Stone. Original reporting inspired a documentary that premiered at Sundance 2025.
+
+**Cited By strip:** NYT, Washington Post, Wired, Rolling Stone, Playboy, High Times, UK Parliament, ACLU Federal Litigation, Project Censored
+
+**The Asimov Tribute** — include the full "A Note on Isaac Asimov" text from the current certification page. It's beautiful and should be preserved. This is the right page for it.
+
+**Links:** LinkedIn, GitHub (FutureSpeakAI org), Discord
+
+---
+
+### PAGE: Writing `/writing`
+
+**Purpose:** Placeholder for future blog/thought leadership content.
+
+Simple page with:
+- Headline: "Writing"
+- Subhead: "Thoughts on AI governance, agent safety, enterprise AI, and building things that matter."
+- "Coming soon" message or 2-3 placeholder article cards
+- Link to Stephen's LinkedIn Featured section for existing thought leadership
+
+---
+
+## GLOBAL ELEMENTS
+
+### Navigation
+- **Desktop:** Horizontal top nav. Logo (FutureSpeak.AI) on left. Links: Framework (dropdown: Overview, cLaw Spec, Agent Friday, Certification, Declaration), Consulting, About, Writing. GitHub icon link on far right.
+- **Mobile:** Hamburger menu with full nav tree.
+
+### Footer
+- Three columns: Navigation links, Connect (GitHub, Discord, LinkedIn, Email), Legal (MIT License for code, CC BY 4.0 for specifications)
+- "Built by Stephen C. Webster · Austin, TX"
+- Copyright 2025-2026
+
+### SEO
+- Proper meta titles and descriptions for every page
+- Open Graph tags for social sharing
+- Structured data where appropriate
+
+### Performance
+- Lazy load below-fold content
+- Optimize animations (reduce motion for prefers-reduced-motion)
+- Keep JS bundle lean
+
+## CONTENT NOTES
+
+- All body copy should use natural prose paragraphs, NOT bullet points, unless displaying a specification or technical list
+- Tone is confident, warm, intellectually serious — not corporate, not hacker-casual
+- Avoid jargon dumps. Every technical claim should be followed by a plain-English explanation
+- The word "we" refers to FutureSpeak.AI. "I" is only used on the About page.
+- Use "Agentic OS" as the primary descriptor for Agent Friday. NOT "AGI OS." "Agentic OS" is accurate and defensible — it's an operating system built around autonomous agent capabilities. Use it confidently.
+- The star motif (🌠🔭) can appear in section headers or as decorative elements, but sparingly — it shouldn't feel like an emoji site
+
+## FORMS
+
+The site currently has three forms:
+1. **Consulting contact form** (Name, Email, Subject, Message) — on /consulting
+2. **Declaration signature form** (Name, Organization, Title) — on /framework/declaration
+3. **Certification inquiry form** (Name, Email, Org, GitHub Repo, Level, Details) — on /framework/certification
+
+For now, these can be frontend-only with a mailto: fallback or simple submission to a Formspree/similar endpoint. Don't build a backend unless it's trivial to set up.
+
+## WHAT NOT TO INCLUDE
+
+- The invoicing system (remove entirely from the public site)
+- The "AGI OS" branding (use "Agentic OS" instead — it's accurate and doesn't invite skepticism)
+- The exhaustive 30+ feature list on one page (reorganize into categories as specified above)
+- Any claim that Agent Friday is "the most powerful AI agent ever created" — let the features speak for themselves
+
+## PRIORITY ORDER
+
+If you need to build incrementally:
+1. Homepage (the fork)
+2. /framework (overview)
+3. /framework/agent-friday
+4. /consulting
+5. /about
+6. /framework/claw-spec (full spec with sidebar nav)
+7. /framework/certification
+8. /framework/declaration
+9. /writing (placeholder)
