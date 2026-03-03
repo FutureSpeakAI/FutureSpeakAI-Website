@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { desc, eq, sql } from "drizzle-orm";
-import { siteConfig, signatories, certificationInquiries, invoices, invoiceCounter, emailSubscribers, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory, type CertificationInquiry, type InsertCertificationInquiry, type Invoice, type InsertInvoice, type EmailSubscriber, type InsertEmailSubscriber } from "@shared/schema";
+import { desc, eq, sql, ilike } from "drizzle-orm";
+import { siteConfig, signatories, certificationInquiries, invoices, invoiceCounter, emailSubscribers, voiceSessions, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory, type CertificationInquiry, type InsertCertificationInquiry, type Invoice, type InsertInvoice, type EmailSubscriber, type InsertEmailSubscriber, type VoiceSessionRecord, type InsertVoiceSession } from "@shared/schema";
 
 export interface IStorage {
   getConfig(): Promise<SiteConfig | undefined>;
@@ -19,6 +19,9 @@ export interface IStorage {
   getNextInvoiceNumber(): Promise<string>;
   createEmailSubscriber(subscriber: InsertEmailSubscriber): Promise<EmailSubscriber>;
   listEmailSubscribers(): Promise<EmailSubscriber[]>;
+  findEmailSubscribersByName(firstName: string): Promise<EmailSubscriber[]>;
+  getVoiceSession(name: string, email?: string): Promise<VoiceSessionRecord | undefined>;
+  upsertVoiceSession(name: string, email: string | null, summary: string | null, pagesVisited: string[], lastPage: string | null): Promise<VoiceSessionRecord>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -108,6 +111,42 @@ export class DatabaseStorage implements IStorage {
 
   async listEmailSubscribers(): Promise<EmailSubscriber[]> {
     return db.select().from(emailSubscribers).orderBy(desc(emailSubscribers.subscribedAt));
+  }
+
+  async findEmailSubscribersByName(firstName: string): Promise<EmailSubscriber[]> {
+    return db.select().from(emailSubscribers).where(ilike(emailSubscribers.name, `${firstName}%`));
+  }
+
+  async getVoiceSession(name: string, email?: string): Promise<VoiceSessionRecord | undefined> {
+    if (email) {
+      const [record] = await db.select().from(voiceSessions).where(eq(voiceSessions.email, email)).limit(1);
+      if (record) return record;
+    }
+    const [record] = await db.select().from(voiceSessions).where(ilike(voiceSessions.name, name)).limit(1);
+    return record;
+  }
+
+  async upsertVoiceSession(name: string, email: string | null, summary: string | null, pagesVisited: string[], lastPage: string | null): Promise<VoiceSessionRecord> {
+    const existing = await this.getVoiceSession(name, email || undefined);
+    if (existing) {
+      const mergedPages = Array.from(new Set([...(existing.pagesVisited || []), ...pagesVisited]));
+      const [updated] = await db.update(voiceSessions).set({
+        conversationSummary: summary || existing.conversationSummary,
+        pagesVisited: mergedPages,
+        lastPage: lastPage || existing.lastPage,
+        lastInteractionAt: new Date(),
+        ...(email ? { email } : {}),
+      }).where(eq(voiceSessions.id, existing.id)).returning();
+      return updated;
+    }
+    const [created] = await db.insert(voiceSessions).values({
+      name,
+      email,
+      conversationSummary: summary,
+      pagesVisited,
+      lastPage,
+    }).returning();
+    return created;
   }
 }
 

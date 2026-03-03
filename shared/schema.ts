@@ -86,3 +86,17 @@ export const emailSubscribers = pgTable("email_subscribers", {
 export const insertEmailSubscriberSchema = createInsertSchema(emailSubscribers).omit({ id: true, subscribedAt: true });
 export type EmailSubscriber = typeof emailSubscribers.$inferSelect;
 export type InsertEmailSubscriber = z.infer<typeof insertEmailSubscriberSchema>;
+
+export const voiceSessions = pgTable("voice_sessions", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email"),
+  conversationSummary: text("conversation_summary"),
+  pagesVisited: text("pages_visited").array().default([]),
+  lastPage: text("last_page"),
+  lastInteractionAt: timestamp("last_interaction_at").defaultNow().notNull(),
+});
+
+export const insertVoiceSessionSchema = createInsertSchema(voiceSessions).omit({ id: true, lastInteractionAt: true });
+export type VoiceSessionRecord = typeof voiceSessions.$inferSelect;
+export type InsertVoiceSession = z.infer<typeof insertVoiceSessionSchema>;

@@ -43,9 +43,11 @@ Preferred communication style: Simple, everyday language.
     -   **Email Services**: Utilizes Resend for sending invoice emails (with attachments), certification inquiry notifications, and payment confirmations.
     -   **Signatory Management**: API for collecting and listing signatories for the Declaration of Digital Independence.
     -   **Certification Inquiries**: API for submitting and storing certification program inquiries.
--   **Voice Agent (Friday)**: Gemini 2.5 Flash native audio voice agent via WebSocket proxy (`server/gemini-live.ts`). Features: Kore voice, function calling for name capture (`saveUserName`), email signup (`showEmailSignupPopup`, `saveEmailSubscriber`), session persistence via localStorage, auto-reconnect, and AudioWorklet-based PCM capture/playback. "Talk to Friday" buttons in header and all Software pages.
+-   **Voice Agent (Friday)**: Gemini 2.5 Flash native audio voice agent via WebSocket proxy (`server/gemini-live.ts`). Features: Kore voice, function calling for name capture (`saveUserName`), returning-user recognition (`confirmReturningUser`), email signup (`showEmailSignupPopup`, `saveEmailSubscriber`), cross-session memory via `voice_sessions` DB table, page-aware context (sends `page_change` events on navigation), session persistence via localStorage, auto-reconnect, and AudioWorklet-based PCM capture/playback.
+    -   **Two-Tier AI Button System**: Generic top-of-page buttons ("Ask Your AI: What Is This?" / microphone icon) persist site-wide; contextual mid-page buttons ("Ask Your AI About This Page" / "Ask Friday About This Page") on Consulting, Agent Friday, Declaration, Certification, cLaw Spec, and Leadership pages with page-specific prompts.
     -   **Email Subscribers**: Database table for collecting email signups from voice agent or popup form.
-    -   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and all Software tab pages.
+    -   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and contextual `-ctx` buttons on all major pages.
+    -   **Page Context Map**: Server maintains `PAGE_CONTEXT` with talking points for each page; Gemini receives page-aware system instructions and mid-session navigation updates.
 -   **Authentication**: Admin routes are password-protected via an `x-admin-password` header checked against a `SESSION_SECRET` environment variable.
 
 ### Data Storage

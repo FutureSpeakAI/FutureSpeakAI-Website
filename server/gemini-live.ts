@@ -55,6 +55,7 @@ ${SITE_CONTEXT}
 interface VoiceSession {
   sessionId: string;
   userName: string | null;
+  userEmail: string | null;
   exchangeCount: number;
   nameAsked: boolean;
   emailAsked: boolean;
@@ -65,7 +66,38 @@ interface VoiceSession {
   clientWs: WebSocket | null;
   isModelSpeaking: boolean;
   setupComplete: boolean;
+  currentPage: string;
+  pagesVisited: string[];
+  returningUser: boolean;
+  previousSummary: string | null;
 }
+
+const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
+  home: {
+    name: "Consulting Services",
+    talkingPoints: "The user is on the consulting/homepage. Focus on FutureSpeak.AI's enterprise AI consulting services: agentic workflow design, RAG architecture, AI compliance for regulated industries, AI safety & governance, and training. Mention Stephen's background training Gemini, LLaMA 3, and his Fortune 500 consulting experience at Aquent Studios."
+  },
+  friday: {
+    name: "Agent Friday",
+    talkingPoints: "The user is on the Agent Friday page. Focus on what Agent Friday is: the world's first AGI OS, a desktop AI operating system with voice-first interaction, 200+ models, relationship intelligence, local-first privacy, Asimov Agent safety framework, and the onboarding experience. Explain how it differs from ChatGPT, Siri, and Alexa."
+  },
+  declaration: {
+    name: "Declaration of Digital Independence",
+    talkingPoints: "The user is on the Declaration page. Focus on the five grievances (surveillance, dependency, loyalty, opacity, agency), the seven articles of rights, and how the cLaw specification cryptographically enforces these principles as mathematical guarantees."
+  },
+  certification: {
+    name: "Asimov Agent Certification Program",
+    talkingPoints: "The user is on the Certification page. Focus on the three certification levels (Core, Connected, Sovereign), the Wi-Fi Alliance analogy, the charitable vision with fee waivers for open source and underrepresented communities, and why bottom-up cryptographic governance is more trustworthy than top-down regulation."
+  },
+  "claw-spec": {
+    name: "cLaw Specification",
+    talkingPoints: "The user is on the cLaw Spec page. Focus on the Three Fundamental Laws, the HMAC-SHA256 cryptographic enforcement, the attestation protocol for agent-to-agent trust, owner identity binding, and why encoding safety in math rather than policy is the only approach that scales."
+  },
+  about: {
+    name: "Leadership — Stephen C. Webster",
+    talkingPoints: "The user is on the Leadership page. Focus on Stephen's full background: training Google Gemini during the 2024 election, Meta LLaMA 3, Amazon Alexa, his Senior Director role at Aquent Studios, founding FutureSpeak.AI, his journalism career (Raw Story, Austin.com), and consulting services."
+  },
+};
 
 const sessions = new Map<string, VoiceSession>();
 
@@ -83,17 +115,37 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   let instruction = SYSTEM_INSTRUCTION_BASE;
 
   let stepBehavior = "";
-  if (!session.nameAsked && session.exchangeCount < 3) {
-    stepBehavior += "- After 2-3 exchanges with the user, naturally and warmly ask for their name. For example: 'By the way, I'd love to know who I'm talking to — what's your name?' When they tell you their name, immediately call the saveUserName function with their name.\n";
+
+  if (session.returningUser && session.userName) {
+    stepBehavior += `- RETURNING USER: This is "${session.userName}" — you've spoken before. Greet them warmly by name, like "Hey ${session.userName}! Great to hear from you again." Then naturally reference what you discussed last time and segue into what's on their current page.\n`;
+    if (session.previousSummary) {
+      stepBehavior += `- Previous conversation summary: ${session.previousSummary}\n`;
+    }
+    if (session.pagesVisited.length > 0) {
+      const unvisited = Object.keys(PAGE_CONTEXT).filter(p => !session.pagesVisited.includes(p));
+      if (unvisited.length > 0) {
+        const suggestions = unvisited.map(p => PAGE_CONTEXT[p]?.name).filter(Boolean).join(", ");
+        stepBehavior += `- Pages they haven't explored yet: ${suggestions}. If appropriate, suggest one of these as something they might find interesting.\n`;
+      }
+    }
+  } else if (!session.nameAsked && !session.userName) {
+    stepBehavior += "- After 1-2 exchanges, naturally and warmly ask who you're talking to. For example: 'By the way, I'd love to know who I'm talking to — what's your name?' When they tell you their name, immediately call the saveUserName function. If the lookupUser function returns a match, ask 'Is this [name] who I've spoken with before?' If they confirm, warmly greet them as a returning visitor.\n";
   }
-  if (session.userName && !session.emailAsked) {
+
+  if (session.userName) {
     stepBehavior += `- The user's name is "${session.userName}". Use it occasionally to be personal.\n`;
+  }
+
+  if (session.userName && !session.emailAsked && !session.emailCollected) {
     stepBehavior += "- After about 8-10 total exchanges, naturally ask if they'd like to sign up for email updates from FutureSpeak.AI. If they say yes, ask: 'Would you like to just tell me your email address, or would you prefer to type it out?' If they want to tell you, ask for their email and then call the saveEmailSubscriber function. If they want to type, call the showEmailSignupPopup function.\n";
-  } else if (session.userName) {
-    stepBehavior += `- The user's name is "${session.userName}". Use it occasionally.\n`;
   }
   if (session.emailCollected) {
-    stepBehavior += "- The user has already signed up for emails. Do not ask again.\n";
+    stepBehavior += "- The user has already signed up for emails. Do not ask again. Focus on deeper content engagement.\n";
+  }
+
+  const pageCtx = PAGE_CONTEXT[session.currentPage];
+  if (pageCtx) {
+    stepBehavior += `\nCURRENT PAGE CONTEXT:\nThe user is currently viewing: "${pageCtx.name}"\n${pageCtx.talkingPoints}\nTailor your conversation to this page's content. When the user first connects or navigates here, proactively offer to explain what's on this page.\n`;
   }
 
   instruction = instruction.replace("STEP_TRACKING_PLACEHOLDER", stepBehavior);
@@ -178,7 +230,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "saveUserName",
                   description:
-                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
+                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name. This will also check if the name matches a known user and return their previous session data if found.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -188,6 +240,21 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                       },
                     },
                     required: ["name"],
+                  },
+                },
+                {
+                  name: "confirmReturningUser",
+                  description:
+                    "Called when the user confirms they are a returning visitor whose name was matched. Loads their full previous session context.",
+                  parameters: {
+                    type: "OBJECT",
+                    properties: {
+                      confirmed: {
+                        type: "BOOLEAN",
+                        description: "True if the user confirmed they are the returning visitor",
+                      },
+                    },
+                    required: ["confirmed"],
                   },
                 },
               ],
@@ -302,21 +369,82 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                   JSON.stringify({ type: "name_saved", name: fc.args.name })
                 );
               }
+
+              let resultMsg = `Name saved as "${fc.args.name}". Use their name naturally in conversation going forward.`;
+              try {
+                const subscribers = await storage.findEmailSubscribersByName(fc.args.name);
+                const voiceRecord = await storage.getVoiceSession(fc.args.name);
+                if (subscribers.length > 0 || voiceRecord) {
+                  const matchedEmail = subscribers[0]?.email || voiceRecord?.email;
+                  const matchedName = subscribers[0]?.name || voiceRecord?.name;
+                  resultMsg = `Name saved. IMPORTANT: A user named "${matchedName}" ${matchedEmail ? `(${matchedEmail})` : ''} was found in our records. Ask: "Wait — is this ${matchedName} who I've spoken with before?" If they confirm, call the confirmReturningUser function with confirmed=true. If not, just continue as normal.`;
+                  if (voiceRecord) {
+                    session.previousSummary = voiceRecord.conversationSummary;
+                    session.pagesVisited = [...session.pagesVisited, ...(voiceRecord.pagesVisited || [])];
+                  }
+                  if (subscribers.length > 0) {
+                    session.emailCollected = true;
+                    session.userEmail = subscribers[0].email;
+                  }
+                }
+              } catch (err) {
+                console.error("Error looking up user:", err);
+              }
+
               if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
                 session.geminiWs.send(
                   JSON.stringify({
                     toolResponse: {
                       functionResponses: [
                         {
-                          response: {
-                            result: `Name saved as "${fc.args.name}". Use their name naturally in conversation going forward.`,
-                          },
+                          response: { result: resultMsg },
                           id: fc.id,
                         },
                       ],
                     },
                   })
                 );
+              }
+            } else if (fc.name === "confirmReturningUser") {
+              if (fc.args.confirmed) {
+                session.returningUser = true;
+                let returnMsg = `Confirmed returning user "${session.userName}". Warmly welcome them back by name.`;
+                if (session.previousSummary) {
+                  returnMsg += ` Previous conversation summary: ${session.previousSummary}. Reference this naturally.`;
+                }
+                const pageCtx = PAGE_CONTEXT[session.currentPage];
+                if (pageCtx) {
+                  returnMsg += ` They are currently viewing "${pageCtx.name}". ${pageCtx.talkingPoints}`;
+                }
+                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                  session.geminiWs.send(
+                    JSON.stringify({
+                      toolResponse: {
+                        functionResponses: [
+                          {
+                            response: { result: returnMsg },
+                            id: fc.id,
+                          },
+                        ],
+                      },
+                    })
+                  );
+                }
+              } else {
+                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                  session.geminiWs.send(
+                    JSON.stringify({
+                      toolResponse: {
+                        functionResponses: [
+                          {
+                            response: { result: "Not a returning user. Continue as a new conversation." },
+                            id: fc.id,
+                          },
+                        ],
+                      },
+                    })
+                  );
+                }
               }
             } else if (fc.name === "showEmailSignupPopup") {
               session.emailAsked = true;
@@ -454,6 +582,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
     const url = new URL(req.url!, `http://${req.headers.host}`);
     const sessionId = url.searchParams.get("sessionId") || crypto.randomUUID();
     const userName = url.searchParams.get("userName") || null;
+    const rawPage = url.searchParams.get("page") || "home";
+    const currentPage = PAGE_CONTEXT[rawPage] ? rawPage : "home";
+    const userEmail = url.searchParams.get("userEmail") || null;
 
     const existingSession = sessions.get(sessionId);
     const isReconnect = !!existingSession;
@@ -463,25 +594,60 @@ export function setupVoiceWebSocket(httpServer: Server) {
       session = existingSession;
       session.clientWs = ws;
       session.lastActiveAt = new Date();
+      session.currentPage = currentPage;
+      if (!session.pagesVisited.includes(currentPage)) {
+        session.pagesVisited.push(currentPage);
+      }
       if (userName && !session.userName) session.userName = userName;
+      if (userEmail && !session.userEmail) session.userEmail = userEmail;
       if (session.geminiWs) {
         session.geminiWs.close();
         session.geminiWs = null;
       }
     } else {
+      let returningUser = false;
+      let previousSummary: string | null = null;
+      let emailCollected = false;
+      let storedEmail: string | null = userEmail;
+      let existingPages: string[] = [];
+
+      if (userName) {
+        try {
+          const voiceRecord = await storage.getVoiceSession(userName, userEmail || undefined);
+          if (voiceRecord) {
+            returningUser = true;
+            previousSummary = voiceRecord.conversationSummary;
+            existingPages = voiceRecord.pagesVisited || [];
+            if (voiceRecord.email) storedEmail = voiceRecord.email;
+          }
+          const subscribers = await storage.findEmailSubscribersByName(userName);
+          if (subscribers.length > 0) {
+            emailCollected = true;
+            if (!storedEmail) storedEmail = subscribers[0].email;
+          }
+        } catch (err) {
+          console.error("Error looking up returning user:", err);
+        }
+      }
+
       session = {
         sessionId,
         userName,
+        userEmail: storedEmail,
         exchangeCount: 0,
-        nameAsked: false,
-        emailAsked: false,
-        emailCollected: false,
+        nameAsked: !!userName,
+        emailAsked: emailCollected,
+        emailCollected,
         conversationHistory: [],
         lastActiveAt: new Date(),
         geminiWs: null,
         clientWs: ws,
         isModelSpeaking: false,
         setupComplete: false,
+        currentPage,
+        pagesVisited: Array.from(new Set([...existingPages, currentPage])),
+        returningUser,
+        previousSummary,
       };
       sessions.set(sessionId, session);
     }
@@ -547,6 +713,39 @@ export function setupVoiceWebSocket(httpServer: Server) {
               })
             );
           }
+        } else if (msg.type === "page_change") {
+          const rawNewPage = msg.page || "home";
+          const newPage = PAGE_CONTEXT[rawNewPage] ? rawNewPage : "home";
+          if (newPage !== session.currentPage) {
+            session.currentPage = newPage;
+            if (!session.pagesVisited.includes(newPage)) {
+              session.pagesVisited.push(newPage);
+            }
+            const pageCtx = PAGE_CONTEXT[newPage];
+            if (
+              session.geminiWs &&
+              session.geminiWs.readyState === WebSocket.OPEN &&
+              pageCtx
+            ) {
+              session.geminiWs.send(
+                JSON.stringify({
+                  clientContent: {
+                    turns: [
+                      {
+                        role: "user",
+                        parts: [
+                          {
+                            text: `[System: The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`,
+                          },
+                        ],
+                      },
+                    ],
+                    turnComplete: true,
+                  },
+                })
+              );
+            }
+          }
         } else if (msg.type === "ping") {
           ws.send(JSON.stringify({ type: "pong" }));
           session.lastActiveAt = new Date();
@@ -556,11 +755,28 @@ export function setupVoiceWebSocket(httpServer: Server) {
       }
     });
 
-    ws.on("close", () => {
+    ws.on("close", async () => {
       session.clientWs = null;
       if (session.geminiWs) {
         session.geminiWs.close();
         session.geminiWs = null;
+      }
+      if (session.userName) {
+        try {
+          const recentHistory = session.conversationHistory.slice(-30);
+          const summary = recentHistory.length > 0
+            ? recentHistory.map(e => `${e.role}: ${e.text}`).join(" | ").slice(0, 2000)
+            : `User ${session.userName} connected briefly.`;
+          await storage.upsertVoiceSession(
+            session.userName,
+            session.userEmail,
+            summary,
+            session.pagesVisited,
+            session.currentPage
+          );
+        } catch (err) {
+          console.error("Error saving voice session:", err);
+        }
       }
     });
 
