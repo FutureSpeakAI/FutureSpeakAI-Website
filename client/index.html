@@ -411,6 +411,284 @@
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.05), inset 0 0 20px rgba(0, 240, 255, 0.02);
             background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(6, 11, 25, 0.9) 100%);
         }
+
+        .voice-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.08);
+            color: #00F0FF;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Fira Code', monospace;
+        }
+        .voice-btn:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .voice-btn .mic-icon {
+            width: 16px;
+            height: 16px;
+            animation: none;
+        }
+        .voice-btn.active {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: #00F0FF;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+        }
+        .voice-btn.active .mic-icon {
+            animation: pulse-mic 1.5s infinite;
+        }
+        @keyframes pulse-mic {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .voice-overlay {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 360px;
+            max-height: 280px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            background: rgba(6, 11, 25, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .voice-overlay.visible {
+            display: flex;
+        }
+        .voice-overlay-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .voice-overlay-header .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .voice-overlay-header .agent-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00F0FF;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .voice-overlay-header .agent-dot.listening {
+            animation: pulse-dot 1s infinite;
+        }
+        .voice-overlay-header .agent-dot.speaking {
+            animation: pulse-dot 0.5s infinite;
+            background: #8A2BE2;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+        .voice-overlay-header .agent-dot.connecting {
+            animation: pulse-dot 2s infinite;
+            background: #FFA500;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+        }
+        .voice-close-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .voice-close-btn:hover {
+            background: rgba(255, 50, 50, 0.2);
+            border-color: rgba(255, 50, 50, 0.4);
+            color: #ff5555;
+        }
+        .voice-overlay-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .voice-status {
+            font-size: 13px;
+            color: #999;
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+        }
+        .voice-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 40px;
+        }
+        .voice-visualizer .bar {
+            width: 4px;
+            border-radius: 2px;
+            background: linear-gradient(to top, #00F0FF, #8A2BE2);
+            transition: height 0.1s ease;
+            height: 8px;
+        }
+        .voice-visualizer.active .bar {
+            animation: visualizer-bar 0.6s ease-in-out infinite alternate;
+        }
+        .voice-visualizer .bar:nth-child(1) { animation-delay: 0s; }
+        .voice-visualizer .bar:nth-child(2) { animation-delay: 0.1s; }
+        .voice-visualizer .bar:nth-child(3) { animation-delay: 0.2s; }
+        .voice-visualizer .bar:nth-child(4) { animation-delay: 0.3s; }
+        .voice-visualizer .bar:nth-child(5) { animation-delay: 0.4s; }
+        .voice-visualizer .bar:nth-child(6) { animation-delay: 0.3s; }
+        .voice-visualizer .bar:nth-child(7) { animation-delay: 0.2s; }
+        .voice-visualizer .bar:nth-child(8) { animation-delay: 0.1s; }
+        .voice-visualizer .bar:nth-child(9) { animation-delay: 0s; }
+        @keyframes visualizer-bar {
+            0% { height: 8px; }
+            100% { height: 36px; }
+        }
+
+        .email-popup-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 11, 25, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .email-popup-overlay.visible { display: flex; }
+        .email-popup {
+            width: 400px;
+            max-width: 90vw;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(0, 240, 255, 0.1);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .email-popup h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #F8FAFC;
+        }
+        .email-popup p {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .email-popup input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #F8FAFC;
+            font-size: 14px;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .email-popup input:focus {
+            border-color: rgba(0, 240, 255, 0.5);
+        }
+        .email-popup input::placeholder {
+            color: #555;
+        }
+        .email-popup-submit {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.1);
+            color: #00F0FF;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fira Code', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .email-popup-submit:hover {
+            background: #00F0FF;
+            color: #060B19;
+        }
+        .email-popup-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .email-thank-you {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: rgba(15, 23, 42, 0.98);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+            border-radius: 16px;
+        }
+        .email-thank-you.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .email-thank-you h3 {
+            font-size: 24px;
+            background: linear-gradient(to right, #00F0FF, #8A2BE2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .email-thank-you p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .voice-overlay {
+                bottom: 12px;
+                right: 12px;
+                left: 12px;
+                width: auto;
+            }
+            .voice-btn span.btn-label {
+                display: none;
+            }
+            .voice-btn {
+                padding: 8px 12px;
+            }
+        }
     </style>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
@@ -470,6 +748,7 @@
                     </div>
                     <a href="/leadership" data-nav="about" id="nav-about" class="nav-link text-gray-300 hover:text-white font-medium tracking-wide text-sm uppercase no-underline">Leadership</a>
                     <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-header"></span>
+                    <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-header"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Talk to Friday</span></button>
                 </nav>
 
                 <div class="md:hidden flex items-center">
@@ -593,6 +872,7 @@
                 <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
                     <div class="flex justify-end mb-4">
                         <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-friday"></span>
+                        <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-friday"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Talk to Friday: What Is This All About?</span></button>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
@@ -1605,6 +1885,7 @@
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
                     <div class="flex justify-end mb-4">
                         <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-declaration"></span>
+                        <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-declaration"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Talk to Friday: What Is This All About?</span></button>
                     </div>
                     <nav class="mb-10" aria-label="Breadcrumb" data-testid="nav-declaration-breadcrumb">
                         <a href="/software" data-nav="friday" class="inline-flex items-center gap-2 text-sm text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline font-mono tracking-wide uppercase" data-testid="link-back-software">
@@ -1858,6 +2139,7 @@
 
                     <div class="flex justify-end mb-4">
                         <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-certification"></span>
+                        <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-certification"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Talk to Friday: What Is This All About?</span></button>
                     </div>
 
                     <nav class="mb-8" data-testid="certification-breadcrumb">
@@ -2332,6 +2614,7 @@
 
                     <div class="flex justify-end mb-4">
                         <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-claw-spec"></span>
+                        <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-claw-spec"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Talk to Friday: What Is This All About?</span></button>
                     </div>
 
                     <!-- Hero -->
@@ -3288,6 +3571,42 @@ Agent B receives:
         </div>
 
     </main>
+
+    <div id="voice-overlay" class="voice-overlay" data-testid="voice-overlay">
+        <div class="voice-overlay-header">
+            <div class="agent-info">
+                <div id="voice-agent-dot" class="agent-dot connecting"></div>
+                <div>
+                    <div style="font-weight:600;font-size:14px;color:#F8FAFC;">Friday</div>
+                    <div id="voice-status" class="voice-status" data-testid="voice-status">Connecting...</div>
+                </div>
+            </div>
+            <button id="voice-close-btn" class="voice-close-btn" data-testid="button-voice-close" aria-label="Close voice agent">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="voice-overlay-body">
+            <div id="voice-visualizer" class="voice-visualizer">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="email-popup-overlay" class="email-popup-overlay" data-testid="email-popup-overlay">
+        <div class="email-popup" data-testid="email-popup">
+            <h3>Stay in the Loop</h3>
+            <p>Get updates from FutureSpeak.AI — no spam, just big ideas.</p>
+            <input type="text" id="email-popup-name" placeholder="Your name" data-testid="input-email-popup-name" />
+            <input type="email" id="email-popup-email" placeholder="Your email address" data-testid="input-email-popup-email" />
+            <button id="email-popup-submit" class="email-popup-submit" data-testid="button-email-popup-submit">Subscribe</button>
+            <div id="email-thank-you" class="email-thank-you">
+                <h3>Thank You</h3>
+                <p>Welcome to the future.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="border-t border-white/5 bg-navy-900/80 backdrop-blur-md mt-auto relative z-10">
@@ -4994,6 +5313,394 @@ Agent B receives:
             }
         }
 
+    })();
+    </script>
+    <script>
+    (function() {
+        var SESSION_KEY = 'friday_voice_session';
+        var NAME_KEY = 'friday_user_name';
+
+        var ws = null;
+        var audioContext = null;
+        var playbackContext = null;
+        var mediaStream = null;
+        var workletNode = null;
+        var isActive = false;
+        var isConnected = false;
+        var isModelSpeaking = false;
+        var sessionId = localStorage.getItem(SESSION_KEY) || generateId();
+        var userName = localStorage.getItem(NAME_KEY) || null;
+        var reconnectTimer = null;
+        var pingInterval = null;
+        var playbackQueue = [];
+        var nextPlayTime = 0;
+        var currentSources = [];
+
+        localStorage.setItem(SESSION_KEY, sessionId);
+
+        function generateId() {
+            return 'fs_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        var overlay = document.getElementById('voice-overlay');
+        var statusEl = document.getElementById('voice-status');
+        var agentDot = document.getElementById('voice-agent-dot');
+        var visualizer = document.getElementById('voice-visualizer');
+        var closeBtn = document.getElementById('voice-close-btn');
+
+        var emailPopupOverlay = document.getElementById('email-popup-overlay');
+        var emailPopupName = document.getElementById('email-popup-name');
+        var emailPopupEmail = document.getElementById('email-popup-email');
+        var emailPopupSubmit = document.getElementById('email-popup-submit');
+        var emailThankYou = document.getElementById('email-thank-you');
+
+        function setStatus(text, state) {
+            if (statusEl) statusEl.textContent = text;
+            if (agentDot) {
+                agentDot.className = 'agent-dot';
+                if (state) agentDot.classList.add(state);
+            }
+            if (visualizer) {
+                visualizer.classList.toggle('active', state === 'speaking' || state === 'listening');
+            }
+        }
+
+        function updateVoiceButtons(active) {
+            var btns = document.querySelectorAll('.voice-btn');
+            btns.forEach(function(btn) {
+                btn.classList.toggle('active', active);
+            });
+        }
+
+        var processorCode = [
+            'class PCMProcessor extends AudioWorkletProcessor {',
+            '  constructor() { super(); this._buf = []; }',
+            '  process(inputs) {',
+            '    var ch = inputs[0] && inputs[0][0];',
+            '    if (!ch) return true;',
+            '    for (var i = 0; i < ch.length; i++) this._buf.push(ch[i]);',
+            '    while (this._buf.length >= 1600) {',
+            '      var chunk = this._buf.splice(0, 1600);',
+            '      this.port.postMessage({ samples: new Float32Array(chunk), rate: sampleRate });',
+            '    }',
+            '    return true;',
+            '  }',
+            '}',
+            "registerProcessor('pcm-processor', PCMProcessor);"
+        ].join('\n');
+
+        function resampleAndEncode(samples, inputRate) {
+            var targetRate = 16000;
+            var ratio = inputRate / targetRate;
+            var outLen = Math.floor(samples.length / ratio);
+            var out = new Int16Array(outLen);
+            for (var i = 0; i < outLen; i++) {
+                var srcIdx = Math.floor(i * ratio);
+                var s = Math.max(-1, Math.min(1, samples[srcIdx]));
+                out[i] = s < 0 ? Math.round(s * 0x8000) : Math.round(s * 0x7FFF);
+            }
+            var bytes = new Uint8Array(out.buffer);
+            var binary = '';
+            for (var j = 0; j < bytes.length; j++) binary += String.fromCharCode(bytes[j]);
+            return btoa(binary);
+        }
+
+        function decodePCM(base64Data, sampleRate) {
+            var binary = atob(base64Data);
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            var int16 = new Int16Array(bytes.buffer);
+            var float32 = new Float32Array(int16.length);
+            for (var i = 0; i < int16.length; i++) {
+                float32[i] = int16[i] / (int16[i] < 0 ? 0x8000 : 0x7FFF);
+            }
+            if (!playbackContext) playbackContext = new AudioContext();
+            var audioBuffer = playbackContext.createBuffer(1, float32.length, sampleRate || 24000);
+            audioBuffer.getChannelData(0).set(float32);
+            return audioBuffer;
+        }
+
+        function clearPlayback() {
+            currentSources.forEach(function(s) { try { s.stop(); } catch(e) {} });
+            currentSources = [];
+            playbackQueue = [];
+            nextPlayTime = 0;
+        }
+
+        function queueAudioPlayback(base64Data, mimeType) {
+            if (!playbackContext) playbackContext = new AudioContext();
+            if (playbackContext.state === 'suspended') playbackContext.resume();
+
+            var rate = 24000;
+            if (mimeType && mimeType.indexOf('rate=') !== -1) {
+                var m = mimeType.match(/rate=(\d+)/);
+                if (m) rate = parseInt(m[1]);
+            }
+
+            var audioBuffer = decodePCM(base64Data, rate);
+            var source = playbackContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(playbackContext.destination);
+
+            var now = playbackContext.currentTime;
+            if (nextPlayTime < now) nextPlayTime = now;
+            source.start(nextPlayTime);
+            nextPlayTime += audioBuffer.duration;
+            currentSources.push(source);
+
+            source.onended = function() {
+                var idx = currentSources.indexOf(source);
+                if (idx !== -1) currentSources.splice(idx, 1);
+            };
+        }
+
+        async function startAudioCapture() {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        channelCount: 1
+                    }
+                });
+
+                audioContext = new AudioContext({ sampleRate: 16000 });
+                if (audioContext.sampleRate !== 16000) {
+                    audioContext.close();
+                    audioContext = new AudioContext();
+                }
+
+                var source = audioContext.createMediaStreamSource(mediaStream);
+
+                var blob = new Blob([processorCode], { type: 'application/javascript' });
+                var url = URL.createObjectURL(blob);
+                await audioContext.audioWorklet.addModule(url);
+                URL.revokeObjectURL(url);
+
+                workletNode = new AudioWorkletNode(audioContext, 'pcm-processor');
+                workletNode.port.onmessage = function(e) {
+                    if (!isActive || !isConnected) return;
+                    var d = e.data;
+                    var encoded = resampleAndEncode(d.samples, d.rate);
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: 'audio', data: encoded }));
+                    }
+                };
+
+                source.connect(workletNode);
+                var silentGain = audioContext.createGain();
+                silentGain.gain.value = 0;
+                workletNode.connect(silentGain);
+                silentGain.connect(audioContext.destination);
+            } catch (err) {
+                console.error('Mic access error:', err);
+                setStatus('Microphone access denied', '');
+                throw err;
+            }
+        }
+
+        function stopAudioCapture() {
+            if (workletNode) { try { workletNode.disconnect(); } catch(e) {} workletNode = null; }
+            if (audioContext) { try { audioContext.close(); } catch(e) {} audioContext = null; }
+            if (mediaStream) { mediaStream.getTracks().forEach(function(t) { t.stop(); }); mediaStream = null; }
+        }
+
+        function connectWebSocket() {
+            if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+            var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            var wsUrl = protocol + '//' + location.host + '/ws/voice?sessionId=' + encodeURIComponent(sessionId);
+            if (userName) wsUrl += '&userName=' + encodeURIComponent(userName);
+
+            setStatus('Connecting...', 'connecting');
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = function() {
+                isConnected = true;
+                startPing();
+            };
+
+            ws.onmessage = function(event) {
+                try {
+                    var msg = JSON.parse(event.data);
+
+                    if (msg.type === 'setup_complete') {
+                        sessionId = msg.sessionId;
+                        localStorage.setItem(SESSION_KEY, sessionId);
+                        setStatus('Listening...', 'listening');
+                        if (!msg.isReconnect) {
+                            isModelSpeaking = false;
+                        } else {
+                            setStatus('Listening...', 'listening');
+                        }
+                    } else if (msg.type === 'audio') {
+                        isModelSpeaking = true;
+                        setStatus('Speaking...', 'speaking');
+                        queueAudioPlayback(msg.data, msg.mimeType);
+                    } else if (msg.type === 'turn_complete') {
+                        isModelSpeaking = false;
+                        setStatus('Listening...', 'listening');
+                    } else if (msg.type === 'interrupted') {
+                        isModelSpeaking = false;
+                        clearPlayback();
+                        setStatus('Listening...', 'listening');
+                    } else if (msg.type === 'name_saved') {
+                        userName = msg.name;
+                        localStorage.setItem(NAME_KEY, userName);
+                    } else if (msg.type === 'show_email_popup') {
+                        showEmailPopup();
+                    } else if (msg.type === 'email_saved') {
+                        showEmailSavedNotice(msg.name);
+                    } else if (msg.type === 'gemini_disconnected') {
+                        if (isActive) {
+                            setStatus('Reconnecting...', 'connecting');
+                            scheduleReconnect();
+                        }
+                    } else if (msg.type === 'error') {
+                        setStatus('Connection error', '');
+                        console.error('Voice error:', msg.message);
+                    }
+                } catch (err) {
+                    console.error('WS message parse error:', err);
+                }
+            };
+
+            ws.onclose = function() {
+                isConnected = false;
+                stopPing();
+                if (isActive) {
+                    setStatus('Reconnecting...', 'connecting');
+                    scheduleReconnect();
+                }
+            };
+
+            ws.onerror = function(err) {
+                console.error('WS error:', err);
+            };
+        }
+
+        function scheduleReconnect() {
+            if (reconnectTimer) return;
+            reconnectTimer = setTimeout(function() {
+                reconnectTimer = null;
+                if (isActive) connectWebSocket();
+            }, 2000);
+        }
+
+        function startPing() {
+            stopPing();
+            pingInterval = setInterval(function() {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 25000);
+        }
+
+        function stopPing() {
+            if (pingInterval) { clearInterval(pingInterval); pingInterval = null; }
+        }
+
+        function showEmailPopup() {
+            if (emailPopupName && userName) emailPopupName.value = userName;
+            emailPopupOverlay.classList.add('visible');
+            emailThankYou.classList.remove('visible');
+        }
+
+        function showEmailSavedNotice(name) {
+            if (name && name !== userName) {
+                userName = name;
+                localStorage.setItem(NAME_KEY, userName);
+            }
+        }
+
+        emailPopupSubmit.addEventListener('click', async function() {
+            var name = emailPopupName.value.trim();
+            var email = emailPopupEmail.value.trim();
+            if (!name || !email) return;
+
+            emailPopupSubmit.disabled = true;
+            emailPopupSubmit.textContent = 'Subscribing...';
+
+            try {
+                var resp = await fetch('/api/email-subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, email: email, source: 'voice_agent_popup' })
+                });
+
+                if (resp.ok) {
+                    if (!userName) {
+                        userName = name;
+                        localStorage.setItem(NAME_KEY, userName);
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'set_name', name: userName }));
+                        }
+                    }
+                    emailThankYou.classList.add('visible');
+                    setTimeout(function() {
+                        emailPopupOverlay.classList.remove('visible');
+                        emailPopupSubmit.disabled = false;
+                        emailPopupSubmit.textContent = 'Subscribe';
+                        emailPopupName.value = '';
+                        emailPopupEmail.value = '';
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'email_popup_submitted' }));
+                        }
+                    }, 2800);
+                } else {
+                    emailPopupSubmit.disabled = false;
+                    emailPopupSubmit.textContent = 'Subscribe';
+                }
+            } catch (err) {
+                console.error('Email subscribe error:', err);
+                emailPopupSubmit.disabled = false;
+                emailPopupSubmit.textContent = 'Subscribe';
+            }
+        });
+
+        async function startVoice() {
+            isActive = true;
+            overlay.classList.add('visible');
+            updateVoiceButtons(true);
+            setStatus('Starting...', 'connecting');
+
+            try {
+                await startAudioCapture();
+                connectWebSocket();
+            } catch (err) {
+                stopVoice();
+            }
+        }
+
+        function stopVoice() {
+            isActive = false;
+            isConnected = false;
+            isModelSpeaking = false;
+            overlay.classList.remove('visible');
+            updateVoiceButtons(false);
+            clearPlayback();
+            stopAudioCapture();
+            stopPing();
+            if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+            if (ws) { ws.close(); ws = null; }
+        }
+
+        closeBtn.addEventListener('click', function() { stopVoice(); });
+
+        window.fridayVoice = {
+            toggle: function() {
+                if (isActive) {
+                    stopVoice();
+                } else {
+                    startVoice();
+                }
+            }
+        };
+
+        window.addEventListener('beforeunload', function() {
+            if (isActive) stopVoice();
+        });
     })();
     </script>
     <script src="https://promptpush.ai/scripts/1.0.0/promptpush.js"></script>

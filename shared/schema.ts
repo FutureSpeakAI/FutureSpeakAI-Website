@@ -74,3 +74,15 @@ export const invoiceCounter = pgTable("invoice_counter", {
   year: integer("year").notNull().unique(),
   lastNumber: integer("last_number").notNull().default(0),
 });
+
+export const emailSubscribers = pgTable("email_subscribers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  source: text("source").default("voice_agent"),
+  subscribedAt: timestamp("subscribed_at").defaultNow().notNull(),
+});
+
+export const insertEmailSubscriberSchema = createInsertSchema(emailSubscribers).omit({ id: true, subscribedAt: true });
+export type EmailSubscriber = typeof emailSubscribers.$inferSelect;
+export type InsertEmailSubscriber = z.infer<typeof insertEmailSubscriberSchema>;

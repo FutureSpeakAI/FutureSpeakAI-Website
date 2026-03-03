@@ -43,6 +43,9 @@ Preferred communication style: Simple, everyday language.
     -   **Email Services**: Utilizes Resend for sending invoice emails (with attachments), certification inquiry notifications, and payment confirmations.
     -   **Signatory Management**: API for collecting and listing signatories for the Declaration of Digital Independence.
     -   **Certification Inquiries**: API for submitting and storing certification program inquiries.
+-   **Voice Agent (Friday)**: Gemini 2.5 Flash native audio voice agent via WebSocket proxy (`server/gemini-live.ts`). Features: Kore voice, function calling for name capture (`saveUserName`), email signup (`showEmailSignupPopup`, `saveEmailSubscriber`), session persistence via localStorage, auto-reconnect, and AudioWorklet-based PCM capture/playback. "Talk to Friday" buttons in header and all Software pages.
+    -   **Email Subscribers**: Database table for collecting email signups from voice agent or popup form.
+    -   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and all Software tab pages.
 -   **Authentication**: Admin routes are password-protected via an `x-admin-password` header checked against a `SESSION_SECRET` environment variable.
 
 ### Data Storage
@@ -95,3 +98,4 @@ Preferred communication style: Simple, everyday language.
 -   `DATABASE_URL`: PostgreSQL connection string.
 -   `SESSION_SECRET`: Admin password for invoice management.
 -   `REPLIT_DOMAINS`: Used for webhook URL and payment link generation.
+-   `GEMINI_API_KEY`: Google Gemini API key for Friday voice agent.

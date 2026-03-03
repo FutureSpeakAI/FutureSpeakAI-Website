@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
-import { insertSignatorySchema, insertCertificationInquirySchema, lineItemSchema } from "@shared/schema";
+import { insertSignatorySchema, insertCertificationInquirySchema, insertEmailSubscriberSchema, lineItemSchema } from "@shared/schema";
 import { getUncachableResendClient } from "./resend";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripe";
 import { z } from "zod";
@@ -338,6 +338,20 @@ export async function registerRoutes(
       console.error("Payment confirmation error:", err);
       res.status(500).json({ message: "Payment confirmation failed" });
     }
+  });
+
+  app.post("/api/email-subscribe", async (req, res) => {
+    const parsed = insertEmailSubscriberSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Invalid input", errors: parsed.error.flatten().fieldErrors });
+    }
+    const subscriber = await storage.createEmailSubscriber(parsed.data);
+    res.status(201).json({ success: true, id: subscriber.id });
+  });
+
+  app.get("/api/admin/email-subscribers", adminAuth, async (req, res) => {
+    const subscribers = await storage.listEmailSubscribers();
+    res.json(subscribers);
   });
 
   return httpServer;

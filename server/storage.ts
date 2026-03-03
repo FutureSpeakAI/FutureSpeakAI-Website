@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { desc, eq, sql } from "drizzle-orm";
-import { siteConfig, signatories, certificationInquiries, invoices, invoiceCounter, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory, type CertificationInquiry, type InsertCertificationInquiry, type Invoice, type InsertInvoice } from "@shared/schema";
+import { siteConfig, signatories, certificationInquiries, invoices, invoiceCounter, emailSubscribers, type SiteConfig, type InsertSiteConfig, type Signatory, type InsertSignatory, type CertificationInquiry, type InsertCertificationInquiry, type Invoice, type InsertInvoice, type EmailSubscriber, type InsertEmailSubscriber } from "@shared/schema";
 
 export interface IStorage {
   getConfig(): Promise<SiteConfig | undefined>;
@@ -17,6 +17,8 @@ export interface IStorage {
   updateInvoicePaidAt(id: number, paidAt: Date, stripePaymentIntentId: string): Promise<Invoice | undefined>;
   updateInvoiceStripePaymentIntent(id: number, stripePaymentIntentId: string): Promise<Invoice | undefined>;
   getNextInvoiceNumber(): Promise<string>;
+  createEmailSubscriber(subscriber: InsertEmailSubscriber): Promise<EmailSubscriber>;
+  listEmailSubscribers(): Promise<EmailSubscriber[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -97,6 +99,15 @@ export class DatabaseStorage implements IStorage {
     }
 
     return `FS-${currentYear}-${String(nextNum).padStart(3, '0')}`;
+  }
+
+  async createEmailSubscriber(subscriber: InsertEmailSubscriber): Promise<EmailSubscriber> {
+    const [newSubscriber] = await db.insert(emailSubscribers).values(subscriber).returning();
+    return newSubscriber;
+  }
+
+  async listEmailSubscribers(): Promise<EmailSubscriber[]> {
+    return db.select().from(emailSubscribers).orderBy(desc(emailSubscribers.subscribedAt));
   }
 }
 
