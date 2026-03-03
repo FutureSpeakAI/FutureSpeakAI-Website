@@ -287,7 +287,9 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(6,11,25,0.7) 0%, rgba(6,11,25,0.92) 30%, rgba(6,11,25,0.95) 100%);
+            background: linear-gradient(180deg, rgba(6,11,25,0.75) 0%, rgba(6,11,25,0.93) 30%, rgba(6,11,25,0.96) 100%);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             pointer-events: none;
             z-index: -1;
         }
@@ -4260,6 +4262,9 @@ Agent B receives:
 
             const pulse = Math.sin(time * 0.3) * 0.5 + 0.5;
 
+            const audioLevel = window.fridaySmoothedLevel || 0;
+            const audioWave = audioLevel * audioLevel;
+
             const posArr = particleGeo.attributes.position.array;
             const colArr = particleGeo.attributes.customColor.array;
             const sizeArr = particleGeo.attributes.size.array;
@@ -4270,7 +4275,7 @@ Agent B receives:
                 const i3 = i * 3;
                 const bx = basePositions[i3], by = basePositions[i3+1], bz = basePositions[i3+2];
 
-                const orbitRadius = 8 + pulse * 4;
+                const orbitRadius = 8 + pulse * 4 + audioWave * 6;
                 const speed = 0.15 + (i % 7) * 0.02;
 
                 const px = bx + Math.sin(time * speed + phaseOffsets[i3]) * orbitRadius;
@@ -4293,10 +4298,15 @@ Agent B receives:
                 const c2 = colorPalette[Math.min(ci + 1, colorPalette.length - 1)];
                 tmpColor.copy(c1).lerp(c2, cf);
 
+                if (audioWave > 0.01) {
+                    const audioBright = audioWave * 0.3;
+                    tmpColor.lerp(WHITE, audioBright);
+                }
+
                 colArr[i3] = tmpColor.r; colArr[i3+1] = tmpColor.g; colArr[i3+2] = tmpColor.b;
 
                 const sizePulse = Math.sin(time * 0.8 + phaseOffsets[i3+1]);
-                sizeArr[i] = 2.5 + sizePulse * 1.0 + pulse * 0.5;
+                sizeArr[i] = 2.5 + sizePulse * 1.0 + pulse * 0.5 + audioWave * 2.0;
                 speeds[i] = colorIdx;
             }
 
@@ -4380,7 +4390,7 @@ Agent B receives:
                         lc[li6+1] = lc[li6+4] = tmpColor.g;
                         lc[li6+2] = lc[li6+5] = tmpColor.b;
                         const edgeAlpha = Math.max(bI, bJ) * 0.18;
-                        la[li2] = la[li2+1] = fade * fade * 0.5 + edgeAlpha;
+                        la[li2] = la[li2+1] = fade * fade * 0.5 + edgeAlpha + audioWave * 0.25;
                         lineIdx++;
                     }
                 }
@@ -4390,6 +4400,8 @@ Agent B receives:
             lineGeo.attributes.position.needsUpdate = true;
             lineGeo.attributes.customColor.needsUpdate = true;
             lineGeo.attributes.alpha.needsUpdate = true;
+
+            bloomPass.strength = 1.5 + audioWave * 1.2;
 
             composer.render();
         }
@@ -4656,10 +4668,13 @@ Agent B receives:
                     if (f > maxExpandFactor) maxExpandFactor = f;
                 });
 
-                coreGroup.rotation.y = time * 0.06 + smoothMouseX * 0.15;
-                coreGroup.rotation.x = time * 0.035 + smoothMouseY * 0.1;
+                const cubeAudioLevel = window.fridaySmoothedLevel || 0;
+                const cubeAudioWave = cubeAudioLevel * cubeAudioLevel;
 
-                const scaleBreath = 2.3 + Math.sin(time * 0.4) * 0.03;
+                coreGroup.rotation.y = time * 0.06 + smoothMouseX * 0.15 + cubeAudioWave * Math.sin(time * 0.3) * 0.08;
+                coreGroup.rotation.x = time * 0.035 + smoothMouseY * 0.1 + cubeAudioWave * Math.cos(time * 0.25) * 0.05;
+
+                const scaleBreath = 2.3 + Math.sin(time * 0.4) * 0.03 + cubeAudioWave * 0.12;
                 const scalePulse = maxExpandFactor * 0.08;
                 coreGroup.scale.set(scaleBreath + scalePulse, scaleBreath + scalePulse, scaleBreath + scalePulse);
 
@@ -4677,7 +4692,8 @@ Agent B receives:
                     const breathe = Math.sin(time * 0.8 + d.noiseOffset) * 0.05;
                     const wave = Math.sin(time * 0.5 + d.basePos.x * 1.2 + d.basePos.y * 0.7) * 0.03;
                     const drift = Math.sin(time * 0.25 + d.phaseOffset) * 0.02;
-                    const idleExpand = breathe + wave + drift;
+                    const audioBreath = cubeAudioWave * Math.sin(time * 0.6 + d.noiseOffset * 2) * 0.08;
+                    const idleExpand = breathe + wave + drift + audioBreath;
 
                     let tx = d.basePos.x + d.randomDir.x * idleExpand + mouseInfluenceX * (0.03 + mouseReact);
                     let ty = d.basePos.y + d.randomDir.y * idleExpand + mouseInfluenceY * (0.03 + mouseReact);
@@ -4760,23 +4776,27 @@ Agent B receives:
                         tmpColor.lerp(PINK, pinkBlend * edgePhase);
                     }
 
+                    if (cubeAudioWave > 0.01) {
+                        tmpColor.lerp(whiteFlash, cubeAudioWave * 0.25);
+                    }
                     d.edgeMat.color.copy(tmpColor);
 
                     const faceOsc = Math.sin(time * 0.6 + d.noiseOffset * 1.5 + d.basePos.x * 0.8) * 0.5 + 0.5;
                     const faceOsc2 = Math.sin(time * 0.35 + d.phaseOffset) * 0.5 + 0.5;
                     const faceTarget = new THREE.Color().copy(coreBaseColor);
-                    faceTarget.lerp(coreHighCyan, faceOsc * 0.45);
+                    faceTarget.lerp(coreHighCyan, faceOsc * 0.45 + cubeAudioWave * 0.2);
                     faceTarget.lerp(coreHighPurple, faceOsc2 * 0.35);
                     if (totalExpandForce > 0.01) {
                         faceTarget.lerp(new THREE.Color(0x1a4060), totalExpandForce * 0.6);
                     }
                     piece.material.color.copy(faceTarget);
-                    piece.material.emissiveIntensity = 0.7 + faceOsc * 0.5 + totalExpandForce * 0.8;
+                    piece.material.emissiveIntensity = 0.7 + faceOsc * 0.5 + totalExpandForce * 0.8 + cubeAudioWave * 0.6;
 
                     const opacityBase = 0.18 + Math.sin(time * 0.5 + d.noiseOffset * 2) * 0.08;
                     const opacityExpand = totalExpandForce * 0.3;
                     const opacityRipple = edgeRipple * 0.6;
-                    d.edgeMat.opacity = Math.min(opacityBase + opacityExpand + opacityRipple, 1.0);
+                    const opacityAudio = cubeAudioWave * 0.2;
+                    d.edgeMat.opacity = Math.min(opacityBase + opacityExpand + opacityRipple + opacityAudio, 1.0);
                 });
 
                 const rippleSpeed = 3.0;
@@ -4800,7 +4820,7 @@ Agent B receives:
                     const midZ = (posA.z + posB.z) * 0.5;
 
                     const idleGlow = 0.25 + Math.sin(time * 0.6 + ci * 0.3) * 0.1;
-                    let brightness = idleGlow;
+                    let brightness = idleGlow + cubeAudioWave * 0.35;
 
                     ripples.forEach(r => {
                         const distFromClick = Math.sqrt(
@@ -4835,29 +4855,29 @@ Agent B receives:
                 }
                 connGeo.attributes.position.needsUpdate = true;
                 connGeo.attributes.color.needsUpdate = true;
-                connMat.opacity = 0.35 + maxExpandFactor * 0.5;
+                connMat.opacity = 0.35 + maxExpandFactor * 0.5 + cubeAudioWave * 0.25;
 
                 const lightPhase = Math.sin(time * 0.12) * 0.5 + 0.5;
                 tmpColor.copy(CYAN).lerp(PURPLE, lightPhase);
                 pointLight1.color.copy(tmpColor);
                 pointLight1.position.x = Math.sin(time * 0.2) * 10;
                 pointLight1.position.y = Math.cos(time * 0.15) * 6;
-                pointLight1.intensity = 45 + Math.sin(time * 0.18) * 10 + maxExpandFactor * 25;
+                pointLight1.intensity = 45 + Math.sin(time * 0.18) * 10 + maxExpandFactor * 25 + cubeAudioWave * 20;
 
                 tmpColor.copy(PURPLE).lerp(CYAN, lightPhase);
                 pointLight2.color.copy(tmpColor);
                 pointLight2.position.x = Math.cos(time * 0.18) * 8;
                 pointLight2.position.y = Math.sin(time * 0.22) * 5;
-                pointLight2.intensity = 35 + Math.cos(time * 0.2) * 8 + maxExpandFactor * 15;
+                pointLight2.intensity = 35 + Math.cos(time * 0.2) * 8 + maxExpandFactor * 15 + cubeAudioWave * 15;
 
                 floaters.forEach((f) => {
                     f.position.y += f.userData.floatSpeed;
                     f.position.x += f.userData.driftX;
-                    f.rotation.x += f.userData.rotSpeed.x;
-                    f.rotation.y += f.userData.rotSpeed.y;
+                    f.rotation.x += f.userData.rotSpeed.x + cubeAudioWave * 0.005;
+                    f.rotation.y += f.userData.rotSpeed.y + cubeAudioWave * 0.003;
                     if (f.position.y > 8) f.position.y = -8;
                     if (Math.abs(f.position.x) > 8) f.userData.driftX *= -1;
-                    f.material.opacity = f.userData.baseOpacity + Math.sin(time * 0.4 + f.userData.phaseOffset) * 0.03;
+                    f.material.opacity = f.userData.baseOpacity + Math.sin(time * 0.4 + f.userData.phaseOffset) * 0.03 + cubeAudioWave * 0.06;
                 });
 
                 camera.position.x += (smoothMouseX * 1.8 - camera.position.x) * 0.025;
@@ -5456,11 +5476,49 @@ Agent B receives:
             currentSources = [];
             playbackQueue = [];
             nextPlayTime = 0;
+            window.fridayAudioLevel = 0;
+        }
+
+        window.fridayAudioLevel = 0;
+        window.fridaySmoothedLevel = 0;
+        var playbackAnalyser = null;
+        var analyserData = null;
+        var audioLevelRaf = null;
+
+        function updateAudioLevel() {
+            if (playbackAnalyser && analyserData && currentSources.length > 0) {
+                playbackAnalyser.getByteTimeDomainData(analyserData);
+                var sum = 0;
+                for (var i = 0; i < analyserData.length; i++) {
+                    var v = (analyserData[i] - 128) / 128;
+                    sum += v * v;
+                }
+                var rms = Math.sqrt(sum / analyserData.length);
+                window.fridayAudioLevel = Math.min(rms * 3.0, 1.0);
+            } else {
+                window.fridayAudioLevel *= 0.92;
+            }
+            window.fridaySmoothedLevel += (window.fridayAudioLevel - window.fridaySmoothedLevel) * 0.08;
+            if (window.fridaySmoothedLevel < 0.001 && currentSources.length === 0) {
+                window.fridaySmoothedLevel = 0;
+                window.fridayAudioLevel = 0;
+                audioLevelRaf = null;
+                return;
+            }
+            audioLevelRaf = requestAnimationFrame(updateAudioLevel);
         }
 
         function queueAudioPlayback(base64Data, mimeType) {
             if (!playbackContext) playbackContext = new AudioContext();
             if (playbackContext.state === 'suspended') playbackContext.resume();
+
+            if (!playbackAnalyser) {
+                playbackAnalyser = playbackContext.createAnalyser();
+                playbackAnalyser.fftSize = 256;
+                analyserData = new Uint8Array(playbackAnalyser.frequencyBinCount);
+                playbackAnalyser.connect(playbackContext.destination);
+            }
+            if (!audioLevelRaf) updateAudioLevel();
 
             var rate = 24000;
             if (mimeType && mimeType.indexOf('rate=') !== -1) {
@@ -5471,7 +5529,7 @@ Agent B receives:
             var audioBuffer = decodePCM(base64Data, rate);
             var source = playbackContext.createBufferSource();
             source.buffer = audioBuffer;
-            source.connect(playbackContext.destination);
+            source.connect(playbackAnalyser);
 
             var now = playbackContext.currentTime;
             if (nextPlayTime < now) nextPlayTime = now;

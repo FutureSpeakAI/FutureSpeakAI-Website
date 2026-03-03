@@ -48,6 +48,7 @@ Preferred communication style: Simple, everyday language.
     -   **Email Subscribers**: Database table for collecting email signups from voice agent or popup form.
     -   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and contextual `-ctx` buttons on all major pages.
     -   **Page Context Map**: Server maintains `PAGE_CONTEXT` with talking points for each page; Gemini receives page-aware system instructions and mid-session navigation updates.
+    -   **Audio-Reactive Visuals**: When Agent Friday speaks, the site's visuals pulse with her voice. The playback audio path includes an AnalyserNode that exposes `window.fridaySmoothedLevel` (0-1). The background lattice responds with particle size growth, orbit expansion, white color blend, brighter connections, and bloom intensity. The cube of cubes responds with slow scale breathing, rotational sway, edge glow, connection brightness, and light intensity. RAF loop auto-stops when audio fades. Text readability preserved via `content-backdrop` with `backdrop-filter: blur(2px)`.
 -   **Authentication**: Admin routes are password-protected via an `x-admin-password` header checked against a `SESSION_SECRET` environment variable.
 
 ### Data Storage
