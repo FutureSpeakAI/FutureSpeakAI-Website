@@ -96,6 +96,7 @@ interface VoiceSession {
   _pendingTextMessages: Array<{ text: string }>;
   _audioForwardingEnabled: boolean;
   _sessionResumptionHandle: string | null;
+  _lastViewportSections: string;
   dwellSections: Record<string, number>;
   annotationCount: number;
 }
@@ -603,12 +604,13 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           onclose: (event: any) => {
             const code = event?.code || 0;
             const reason = event?.reason || "";
-            console.log(`[Gemini SDK] WS closed: code=${code} reason="${reason}" exchanges=${session.exchangeCount} historyLen=${session.conversationHistory.length}`);
+            console.log(`[Gemini SDK] WS closed: code=${code} reason="${reason}" exchanges=${session.exchangeCount} historyLen=${session.conversationHistory.length} reconnecting=${session._reconnecting} attempts=${session._reconnectAttempts}`);
             session.geminiSession = null;
             session.setupComplete = false;
 
             const MAX_SERVER_RECONNECTS = 3;
             const clientAlive = session.clientWs && session.clientWs.readyState === WebSocket.OPEN;
+            console.log(`[Gemini SDK] Reconnect check: clientAlive=${clientAlive}, reconnecting=${session._reconnecting}, attempts=${session._reconnectAttempts}/${MAX_SERVER_RECONNECTS}`);
             if (clientAlive && !session._reconnecting && session._reconnectAttempts < MAX_SERVER_RECONNECTS) {
               session._reconnecting = true;
               session._reconnectAttempts++;
@@ -650,31 +652,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             parts: [{ text: systemInstruction }],
           },
           tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],
-          inputAudioTranscription: {},
-          outputAudioTranscription: {},
-          enableAffectiveDialog: true,
-          realtimeInputConfig: {
-            automaticActivityDetection: {
-              disabled: false,
-              startOfSpeechSensitivity: StartSensitivity.START_SENSITIVITY_HIGH,
-              endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_LOW,
-              prefixPaddingMs: 100,
-              silenceDurationMs: 500,
-            },
-            activityHandling: ActivityHandling.START_OF_ACTIVITY_INTERRUPTS,
-          },
-          proactivity: {
-            proactiveAudio: true,
-          },
-          contextWindowCompression: {
-            triggerTokens: "25000",
-            slidingWindow: {
-              targetTokens: "12500",
-            },
-          },
-          sessionResumption: session._sessionResumptionHandle
-            ? { handle: session._sessionResumptionHandle }
-            : {},
         },
       });
 
@@ -932,6 +909,7 @@ export function setupVoiceWebSocket(httpServer: Server) {
         _pendingTextMessages: [],
         _audioForwardingEnabled: false,
         _sessionResumptionHandle: null,
+        _lastViewportSections: "",
         dwellSections: {},
         annotationCount: 0,
       };
@@ -955,8 +933,8 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
         if (msg.type === "audio") {
           session._audioChunkCount++;
-          if (session._audioChunkCount <= 3 || session._audioChunkCount % 200 === 0) {
-            console.log(`[Audio] chunk #${session._audioChunkCount} (session=${!!session.geminiSession}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled}, dataLen=${msg.data?.length || 0})`);
+          if (session._audioChunkCount <= 3 || session._audioChunkCount % 100 === 0) {
+            console.log(`[Audio] chunk #${session._audioChunkCount} (session=${!!session.geminiSession}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled}, speaking=${session.isModelSpeaking}, dataLen=${msg.data?.length || 0})`);
           }
           if (session.geminiSession && session.setupComplete && session._audioForwardingEnabled) {
             try {
@@ -1016,21 +994,8 @@ export function setupVoiceWebSocket(httpServer: Server) {
         } else if (msg.type === "viewport_context") {
           if (session.geminiSession && session.setupComplete && session._audioForwardingEnabled) {
             const sections = (msg.visibleSections || []).join(", ");
-            const contextText = `[System: The user is currently viewing these sections on screen: ${sections}. Reference what they can see when relevant.]`;
-            if (session.isModelSpeaking) {
-              session._pendingTextMessages.push({ text: contextText });
-            } else {
-              try {
-                session.geminiSession.sendClientContent({
-                  turns: [{ role: "user", parts: [{ text: contextText }] }],
-                  turnComplete: false,
-                });
-              } catch (err: any) {
-                if (!err.message?.includes("closed")) {
-                  console.error("[Viewport] Error sending context:", err.message);
-                }
-              }
-            }
+            session._lastViewportSections = sections;
+            console.log(`[Viewport] Updated visible sections: ${sections.substring(0, 80)}`);
           }
         } else if (msg.type === "ping") {
           ws.send(JSON.stringify({ type: "pong" }));
