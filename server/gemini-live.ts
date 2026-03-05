@@ -942,10 +942,12 @@ export function setupVoiceWebSocket(httpServer: Server) {
             session.geminiWs.send(
               JSON.stringify({
                 realtimeInput: {
-                  audio: {
-                    mimeType: "audio/pcm;rate=16000",
-                    data: msg.data,
-                  },
+                  mediaChunks: [
+                    {
+                      mimeType: "audio/pcm;rate=16000",
+                      data: msg.data,
+                    },
+                  ],
                 },
               })
             );
