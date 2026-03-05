@@ -48,6 +48,22 @@ CONVERSATION BEHAVIOR:
 - Be natural and engaging. Ask follow-up questions to keep the conversation flowing.
 - STEP_TRACKING_PLACEHOLDER
 
+SITE GUIDE CAPABILITIES:
+You can interact with the website the user is viewing. Use these capabilities proactively to make conversations vivid and engaging:
+- Call navigateToPage to take the user to a relevant page when discussing a topic (e.g., navigate to the Declaration page when talking about digital sovereignty)
+- Call scrollToSection to scroll to specific content sections so the user can see what you're discussing
+- Call highlightContent to draw the user's visual attention to a specific area as you explain it
+- Call scrollToContact when the user wants to get in touch or book a consultation
+Use these naturally — for example, "Let me show you what I mean..." then navigate or highlight. Don't overuse them, but proactively guide the user through the site as you talk.
+
+AVAILABLE SECTIONS PER PAGE:
+- home: hero, services, contact-section
+- friday: friday-hero, friday-capabilities
+- declaration: declaration-hero, declaration-preamble, declaration-grievances, declaration-signatories
+- claw: claw-hero
+- certification: (use scrollToSection with the page itself)
+- leadership: leadership-hero, leadership-bio
+
 KNOWLEDGE BASE:
 ${SITE_CONTEXT}
 `;
@@ -70,11 +86,11 @@ interface VoiceSession {
   pagesVisited: string[];
   returningUser: boolean;
   previousSummary: string | null;
-  _keepAliveTimer?: ReturnType<typeof setInterval>;
   greetingDelivered: boolean;
   _reconnecting: boolean;
-  _greetingTimeout?: ReturnType<typeof setTimeout>;
-  _audioChunkCount?: number;
+  _reconnectAttempts: number;
+  _audioChunkCount: number;
+  _pendingTextMessages: Array<{ text: string }>;
 }
 
 const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
@@ -83,24 +99,24 @@ const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
     talkingPoints: "The user is on the consulting/homepage. Focus on FutureSpeak.AI's enterprise AI consulting services: agentic workflow design, RAG architecture, AI compliance for regulated industries, AI safety & governance, and training. Mention Stephen's background training Gemini, LLaMA 3, and his Fortune 500 consulting experience at Aquent Studios."
   },
   friday: {
-    name: "Agent Friday",
-    talkingPoints: "The user is on the Agent Friday page. Focus on what Agent Friday is: the world's first AGI OS, a desktop AI operating system with voice-first interaction, 200+ models, relationship intelligence, local-first privacy, Asimov Agent safety framework, and the onboarding experience. Explain how it differs from ChatGPT, Siri, and Alexa."
+    name: "Agent Friday — The World's First AGI OS",
+    talkingPoints: "The user is viewing the Agent Friday page. Explain that Agent Friday is a desktop AI operating system — voice-first, runs locally, manages relationships, tracks professional networks, and is governed by cryptographic laws (cLaws) that cannot be broken. It's open source on GitHub. Think Jarvis meets 'Her.'"
   },
   declaration: {
-    name: "Declaration of Digital Independence",
-    talkingPoints: "The user is on the Declaration page. Focus on the five grievances (surveillance, dependency, loyalty, opacity, agency), the seven articles of rights, and how the cLaw specification cryptographically enforces these principles as mathematical guarantees."
+    name: "The Declaration of Digital Independence",
+    talkingPoints: "The user is reading the Declaration of Digital Independence. This is a manifesto for sovereign computing — the right to own your data, control your AI, and be free from surveillance capitalism. It addresses corporate exploitation, platform lock-in, and algorithmic manipulation."
+  },
+  claw: {
+    name: "The cLaw Specification",
+    talkingPoints: "The user is exploring the cLaw Specification. Explain it as an open standard for governing AI agents through cryptographic enforcement — based on Asimov's Laws but made tamper-proof. Focus on Proof of Integrity, the attestation protocol, and how any developer can build an Asimov Agent."
   },
   certification: {
     name: "Asimov Agent Certification Program",
-    talkingPoints: "The user is on the Certification page. Focus on the three certification levels (Core, Connected, Sovereign), the Wi-Fi Alliance analogy, the charitable vision with fee waivers for open source and underrepresented communities, and why bottom-up cryptographic governance is more trustworthy than top-down regulation."
+    talkingPoints: "The user is looking at the Certification Program. It's like Wi-Fi Alliance certification for AI agents — voluntary, open, with three levels: Foundation, Advanced, and Federation. Emphasize it's NOT gatekeeping; uncertified agents can still participate in the open network."
   },
-  "claw-spec": {
-    name: "cLaw Specification",
-    talkingPoints: "The user is on the cLaw Spec page. Focus on the Three Fundamental Laws, the HMAC-SHA256 cryptographic enforcement, the attestation protocol for agent-to-agent trust, owner identity binding, and why encoding safety in math rather than policy is the only approach that scales."
-  },
-  about: {
-    name: "Leadership — Stephen C. Webster",
-    talkingPoints: "The user is on the Leadership page. Focus on Stephen's full background: training Google Gemini during the 2024 election, Meta LLaMA 3, Amazon Alexa, his Senior Director role at Aquent Studios, founding FutureSpeak.AI, his journalism career (Raw Story, Austin.com), and consulting services."
+  leadership: {
+    name: "About Stephen C. Webster",
+    talkingPoints: "The user is on the Leadership/About page. Talk about Stephen's unique background: 20+ years across journalism, AI training (Gemini, LLaMA 3, Alexa), and enterprise consulting. His journalism skills in decoding complex systems directly translate to AI architecture."
   },
 };
 
@@ -109,8 +125,9 @@ const sessions = new Map<string, VoiceSession>();
 setInterval(() => {
   const now = Date.now();
   for (const [id, session] of sessions) {
-    if (now - session.lastActiveAt.getTime() > 24 * 60 * 60 * 1000) {
+    if (now - session.lastActiveAt.getTime() > 30 * 60 * 1000) {
       if (session.geminiWs) session.geminiWs.close();
+      if (session.clientWs) session.clientWs.close();
       sessions.delete(id);
     }
   }
@@ -169,7 +186,41 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   return instruction;
 }
 
-function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeting: boolean = false): Promise<void> {
+function sendToolResponse(session: VoiceSession, fcId: string, result: string) {
+  if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+    session.geminiWs.send(
+      JSON.stringify({
+        toolResponse: {
+          functionResponses: [
+            { response: { result }, id: fcId },
+          ],
+        },
+      })
+    );
+  }
+}
+
+function sendToClient(session: VoiceSession, msg: object) {
+  if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+    session.clientWs.send(JSON.stringify(msg));
+  }
+}
+
+function sendQueuedTextToGemini(session: VoiceSession) {
+  if (session._pendingTextMessages.length === 0) return;
+  if (!session.geminiWs || session.geminiWs.readyState !== WebSocket.OPEN) return;
+  if (session.isModelSpeaking) return;
+
+  const pending = session._pendingTextMessages.shift()!;
+  session.geminiWs.send(JSON.stringify({
+    clientContent: {
+      turns: [{ role: "user", parts: [{ text: pending.text }] }],
+      turnComplete: true,
+    },
+  }));
+}
+
+function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<void> {
   return new Promise((resolve, reject) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -235,7 +286,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
                 {
                   name: "saveUserName",
                   description:
-                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name. This will also check if the name matches a known user and return their previous session data if found.",
+                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -250,7 +301,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
                 {
                   name: "confirmReturningUser",
                   description:
-                    "Called when the user confirms they are a returning visitor whose name was matched. Loads their full previous session context.",
+                    "Called when the user confirms they are a returning visitor whose name was matched.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -260,6 +311,64 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
                       },
                     },
                     required: ["confirmed"],
+                  },
+                },
+                {
+                  name: "navigateToPage",
+                  description:
+                    "Navigates the user's browser to a specific page on the FutureSpeak.AI website. Use when discussing a topic that has its own page.",
+                  parameters: {
+                    type: "OBJECT",
+                    properties: {
+                      pageId: {
+                        type: "STRING",
+                        description: "The page identifier: 'home', 'friday', 'declaration', 'claw', 'certification', or 'leadership'",
+                      },
+                    },
+                    required: ["pageId"],
+                  },
+                },
+                {
+                  name: "scrollToSection",
+                  description:
+                    "Scrolls the page smoothly to a specific content section so the user can see what you're discussing.",
+                  parameters: {
+                    type: "OBJECT",
+                    properties: {
+                      sectionId: {
+                        type: "STRING",
+                        description: "The section identifier to scroll to (e.g., 'hero', 'services', 'contact-section', 'declaration-grievances')",
+                      },
+                    },
+                    required: ["sectionId"],
+                  },
+                },
+                {
+                  name: "highlightContent",
+                  description:
+                    "Temporarily highlights a content section with a visual glow to draw the user's attention to it.",
+                  parameters: {
+                    type: "OBJECT",
+                    properties: {
+                      sectionId: {
+                        type: "STRING",
+                        description: "The section identifier to highlight",
+                      },
+                      durationMs: {
+                        type: "NUMBER",
+                        description: "How long the highlight should last in milliseconds (default 3000)",
+                      },
+                    },
+                    required: ["sectionId"],
+                  },
+                },
+                {
+                  name: "scrollToContact",
+                  description:
+                    "Scrolls to the contact/consultation booking section on the homepage. Use when the user wants to get in touch or book a consultation.",
+                  parameters: {
+                    type: "OBJECT",
+                    properties: {},
                   },
                 },
               ],
@@ -275,36 +384,19 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
       try {
         const msg = JSON.parse(data.toString());
 
-        
-
         if (msg.setupComplete) {
           session.setupComplete = true;
-          if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-            session.clientWs.send(
-              JSON.stringify({
-                type: "setup_complete",
-                sessionId: session.sessionId,
-                isReconnect,
-              })
-            );
-          }
+          sendToClient(session, {
+            type: "setup_complete",
+            sessionId: session.sessionId,
+            isReconnect,
+          });
 
-          if (session._keepAliveTimer) {
-            clearInterval(session._keepAliveTimer);
-          }
-          session._keepAliveTimer = setInterval(() => {
-            if (geminiWs.readyState === WebSocket.OPEN) {
-              geminiWs.send(JSON.stringify({ realtimeInput: { activityStart: {} } }));
-            }
-          }, 15000);
-
-          if (!skipGreeting) {
+          if (!isReconnect) {
             const pageCtx2 = PAGE_CONTEXT[session.currentPage];
             const pageName = pageCtx2 ? pageCtx2.name : "homepage";
             let greetingPrompt: string;
-            if (isReconnect) {
-              greetingPrompt = `[System: The user just reconnected. Welcome them back briefly. They are on the "${pageName}" page.]`;
-            } else if (session.userName) {
+            if (session.userName) {
               greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
             } else {
               greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
@@ -316,11 +408,10 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
                 turnComplete: true,
               },
             }));
+            console.log("[Gemini] Setup complete, greeting sent");
           } else {
-            console.log("[Gemini] Reconnection ready (listening mode, with conversation context)");
-            if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-              session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
-            }
+            console.log("[Gemini] Reconnection setup complete — listening");
+            sendToClient(session, { type: "listening_ready" });
           }
 
           resolve();
@@ -334,18 +425,11 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
             session.isModelSpeaking = true;
             for (const part of sc.modelTurn.parts) {
               if (part.inlineData) {
-                if (
-                  session.clientWs &&
-                  session.clientWs.readyState === WebSocket.OPEN
-                ) {
-                  session.clientWs.send(
-                    JSON.stringify({
-                      type: "audio",
-                      data: part.inlineData.data,
-                      mimeType: part.inlineData.mimeType,
-                    })
-                  );
-                }
+                sendToClient(session, {
+                  type: "audio",
+                  data: part.inlineData.data,
+                  mimeType: part.inlineData.mimeType,
+                });
               }
               if (part.text) {
                 session.conversationHistory.push({
@@ -359,44 +443,32 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
           if (sc.turnComplete) {
             session.isModelSpeaking = false;
             session.exchangeCount++;
-            console.log(`[Gemini] turnComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
-            if (
-              session.clientWs &&
-              session.clientWs.readyState === WebSocket.OPEN
-            ) {
-              session.clientWs.send(JSON.stringify({ type: "turn_complete" }));
-            }
+            console.log(`[Gemini] turnComplete (exchanges=${session.exchangeCount})`);
+            sendToClient(session, { type: "turn_complete" });
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
-              console.log("[Gemini] Greeting delivered via turnComplete — now listening on same connection");
-              if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-                session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
-              }
+              console.log("[Gemini] Greeting delivered — now listening on same connection");
+              sendToClient(session, { type: "listening_ready" });
             }
+            sendQueuedTextToGemini(session);
           }
 
           if (sc.generationComplete) {
-            console.log(`[Gemini] generationComplete received (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
+            console.log(`[Gemini] generationComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
             session.isModelSpeaking = false;
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
               session.exchangeCount++;
-              console.log("[Gemini] Greeting complete — now listening on same connection");
-              if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-                session.clientWs.send(JSON.stringify({ type: "turn_complete" }));
-                session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
-              }
+              console.log("[Gemini] Greeting complete via generationComplete — now listening");
+              sendToClient(session, { type: "turn_complete" });
+              sendToClient(session, { type: "listening_ready" });
             }
+            sendQueuedTextToGemini(session);
           }
 
           if (sc.interrupted) {
             session.isModelSpeaking = false;
-            if (
-              session.clientWs &&
-              session.clientWs.readyState === WebSocket.OPEN
-            ) {
-              session.clientWs.send(JSON.stringify({ type: "interrupted" }));
-            }
+            sendToClient(session, { type: "interrupted" });
           }
         }
 
@@ -405,6 +477,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
             role: "User",
             text: msg.serverContent.inputTranscript,
           });
+          console.log(`[Gemini] User said: "${msg.serverContent.inputTranscript}"`);
         }
 
         if (msg.serverContent?.outputTranscript) {
@@ -418,188 +491,13 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
               text: msg.serverContent.outputTranscript,
             });
           }
+          console.log(`[Gemini] Friday said: "${msg.serverContent.outputTranscript.substring(0, 100)}..."`);
         }
 
         if (msg.toolCall) {
-          console.log(`[Gemini] toolCall received: ${msg.toolCall.functionCalls.map((fc: any) => fc.name).join(', ')}`);
+          console.log(`[Gemini] toolCall: ${msg.toolCall.functionCalls.map((fc: any) => fc.name).join(', ')}`);
           for (const fc of msg.toolCall.functionCalls) {
-            if (fc.name === "saveUserName") {
-              session.userName = fc.args.name;
-              session.nameAsked = true;
-              if (
-                session.clientWs &&
-                session.clientWs.readyState === WebSocket.OPEN
-              ) {
-                session.clientWs.send(
-                  JSON.stringify({ type: "name_saved", name: fc.args.name })
-                );
-              }
-
-              let resultMsg = `Name saved as "${fc.args.name}". Use their name naturally in conversation going forward.`;
-              try {
-                const subscribers = await storage.findEmailSubscribersByName(fc.args.name);
-                const voiceRecord = await storage.getVoiceSession(fc.args.name);
-                if (subscribers.length > 0 || voiceRecord) {
-                  const matchedEmail = subscribers[0]?.email || voiceRecord?.email;
-                  const matchedName = subscribers[0]?.name || voiceRecord?.name;
-                  resultMsg = `Name saved. IMPORTANT: A user named "${matchedName}" ${matchedEmail ? `(${matchedEmail})` : ''} was found in our records. Ask: "Wait — is this ${matchedName} who I've spoken with before?" If they confirm, call the confirmReturningUser function with confirmed=true. If not, just continue as normal.`;
-                  if (voiceRecord) {
-                    session.previousSummary = voiceRecord.conversationSummary;
-                    session.pagesVisited = [...session.pagesVisited, ...(voiceRecord.pagesVisited || [])];
-                  }
-                  if (subscribers.length > 0) {
-                    session.emailCollected = true;
-                    session.userEmail = subscribers[0].email;
-                  }
-                }
-              } catch (err) {
-                console.error("Error looking up user:", err);
-              }
-
-              if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                console.log(`[Gemini] Sending toolResponse for saveUserName (id=${fc.id})`);
-                session.geminiWs.send(
-                  JSON.stringify({
-                    toolResponse: {
-                      functionResponses: [
-                        {
-                          response: { result: resultMsg },
-                          id: fc.id,
-                        },
-                      ],
-                    },
-                  })
-                );
-              }
-            } else if (fc.name === "confirmReturningUser") {
-              if (fc.args.confirmed) {
-                session.returningUser = true;
-                let returnMsg = `Confirmed returning user "${session.userName}". Warmly welcome them back by name.`;
-                if (session.previousSummary) {
-                  returnMsg += ` Previous conversation summary: ${session.previousSummary}. Reference this naturally.`;
-                }
-                const pageCtx = PAGE_CONTEXT[session.currentPage];
-                if (pageCtx) {
-                  returnMsg += ` They are currently viewing "${pageCtx.name}". ${pageCtx.talkingPoints}`;
-                }
-                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                  session.geminiWs.send(
-                    JSON.stringify({
-                      toolResponse: {
-                        functionResponses: [
-                          {
-                            response: { result: returnMsg },
-                            id: fc.id,
-                          },
-                        ],
-                      },
-                    })
-                  );
-                }
-              } else {
-                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                  session.geminiWs.send(
-                    JSON.stringify({
-                      toolResponse: {
-                        functionResponses: [
-                          {
-                            response: { result: "Not a returning user. Continue as a new conversation." },
-                            id: fc.id,
-                          },
-                        ],
-                      },
-                    })
-                  );
-                }
-              }
-            } else if (fc.name === "showEmailSignupPopup") {
-              session.emailAsked = true;
-              if (
-                session.clientWs &&
-                session.clientWs.readyState === WebSocket.OPEN
-              ) {
-                session.clientWs.send(
-                  JSON.stringify({ type: "show_email_popup" })
-                );
-              }
-              if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                session.geminiWs.send(
-                  JSON.stringify({
-                    toolResponse: {
-                      functionResponses: [
-                        {
-                          response: {
-                            result:
-                              "Email signup popup is now showing on the user's screen. Wait for them to fill it out.",
-                          },
-                          id: fc.id,
-                        },
-                      ],
-                    },
-                  })
-                );
-              }
-            } else if (fc.name === "saveEmailSubscriber") {
-              session.emailAsked = true;
-              try {
-                await storage.createEmailSubscriber({
-                  name: fc.args.name || session.userName || "Unknown",
-                  email: fc.args.email,
-                  source: "voice_agent",
-                });
-                session.emailCollected = true;
-
-                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                  session.geminiWs.send(
-                    JSON.stringify({
-                      toolResponse: {
-                        functionResponses: [
-                          {
-                            response: {
-                              result:
-                                "Successfully saved the user's email subscription. Confirm to the user that they're signed up and ask if they'd like to continue exploring the ideas.",
-                            },
-                            id: fc.id,
-                          },
-                        ],
-                      },
-                    })
-                  );
-                }
-
-                if (
-                  session.clientWs &&
-                  session.clientWs.readyState === WebSocket.OPEN
-                ) {
-                  session.clientWs.send(
-                    JSON.stringify({
-                      type: "email_saved",
-                      name: fc.args.name,
-                      email: fc.args.email,
-                    })
-                  );
-                }
-              } catch (err) {
-                console.error("Failed to save email subscriber:", err);
-                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                  session.geminiWs.send(
-                    JSON.stringify({
-                      toolResponse: {
-                        functionResponses: [
-                          {
-                            response: {
-                              result:
-                                "There was an error saving the email. Apologize briefly and move on.",
-                            },
-                            id: fc.id,
-                          },
-                        ],
-                      },
-                    })
-                  );
-                }
-              }
-            }
+            await handleToolCall(session, fc);
           }
         }
       } catch (err) {
@@ -613,43 +511,38 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
     });
 
     geminiWs.on("close", (code, reason) => {
-      console.log(`[Gemini] WS closed: code=${code} reason="${reason.toString()}" exchanges=${session.exchangeCount} greetingDelivered=${session.greetingDelivered} historyLen=${session.conversationHistory.length}`);
+      const reasonStr = reason.toString();
+      console.log(`[Gemini] WS closed: code=${code} reason="${reasonStr}" exchanges=${session.exchangeCount} historyLen=${session.conversationHistory.length}`);
       session.geminiWs = null;
       session.setupComplete = false;
-      if (session._keepAliveTimer) {
-        clearInterval(session._keepAliveTimer);
-        session._keepAliveTimer = undefined;
-      }
-      
+
+      const MAX_SERVER_RECONNECTS = 3;
       const clientAlive = session.clientWs && session.clientWs.readyState === WebSocket.OPEN;
-      if (clientAlive && !session._reconnecting) {
+      if (clientAlive && !session._reconnecting && session._reconnectAttempts < MAX_SERVER_RECONNECTS) {
         session._reconnecting = true;
-        const isListeningReconnect = session.greetingDelivered;
-        const hasPriorConversation = session.exchangeCount > 1 || session.conversationHistory.length > 0;
-        const reconnectIsReconnect = isListeningReconnect && hasPriorConversation;
-        console.log(`[Gemini] Auto-reconnecting (${isListeningReconnect ? 'listening' : 'greeting'} mode, ${reconnectIsReconnect ? 'with' : 'without'} conversation context)...`);
-        connectToGemini(session, reconnectIsReconnect, isListeningReconnect)
-          .then(() => {
-            session._reconnecting = false;
-            console.log("[Gemini] Reconnection successful");
-          })
-          .catch((err) => {
-            session._reconnecting = false;
-            console.error("[Gemini] Reconnection failed:", err.message);
-            if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-              session.clientWs.send(JSON.stringify({ type: "gemini_disconnected", reason: "reconnect_failed" }));
-            }
-          });
+        session._reconnectAttempts++;
+        const hasConversation = session.conversationHistory.length > 0;
+        const delay = Math.min(1000 * Math.pow(2, session._reconnectAttempts - 1), 8000);
+        console.log(`[Gemini] Auto-reconnecting attempt ${session._reconnectAttempts}/${MAX_SERVER_RECONNECTS} in ${delay}ms (${hasConversation ? 'with' : 'without'} conversation context)...`);
+        sendToClient(session, { type: "reconnecting" });
+        setTimeout(() => {
+          connectToGemini(session, hasConversation)
+            .then(() => {
+              session._reconnecting = false;
+              session._reconnectAttempts = 0;
+              console.log("[Gemini] Reconnection successful");
+            })
+            .catch((err) => {
+              session._reconnecting = false;
+              console.error("[Gemini] Reconnection failed:", err.message);
+              sendToClient(session, { type: "gemini_disconnected", reason: "reconnect_failed" });
+            });
+        }, delay);
         return;
       }
-      
+
       if (clientAlive) {
-        session.clientWs!.send(
-          JSON.stringify({
-            type: "gemini_disconnected",
-            reason: "session_ended",
-          })
-        );
+        sendToClient(session, { type: "gemini_disconnected", reason: "session_ended" });
       }
     });
 
@@ -663,6 +556,99 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
       }
     }, 15000);
   });
+}
+
+async function handleToolCall(session: VoiceSession, fc: any) {
+  if (fc.name === "saveUserName") {
+    session.userName = fc.args.name;
+    session.nameAsked = true;
+    sendToClient(session, { type: "name_saved", name: fc.args.name });
+
+    let resultMsg = `Name saved as "${fc.args.name}". Use their name naturally in conversation going forward.`;
+    try {
+      const subscribers = await storage.findEmailSubscribersByName(fc.args.name);
+      const voiceRecord = await storage.getVoiceSession(fc.args.name);
+      if (subscribers.length > 0 || voiceRecord) {
+        const matchedEmail = subscribers[0]?.email || voiceRecord?.email;
+        const matchedName = subscribers[0]?.name || voiceRecord?.name;
+        resultMsg = `Name saved. IMPORTANT: A user named "${matchedName}" ${matchedEmail ? `(${matchedEmail})` : ''} was found in our records. Ask: "Wait — is this ${matchedName} who I've spoken with before?" If they confirm, call the confirmReturningUser function with confirmed=true. If not, just continue as normal.`;
+        if (voiceRecord) {
+          session.previousSummary = voiceRecord.conversationSummary;
+          session.pagesVisited = [...session.pagesVisited, ...(voiceRecord.pagesVisited || [])];
+        }
+        if (subscribers.length > 0) {
+          session.emailCollected = true;
+          session.userEmail = subscribers[0].email;
+        }
+      }
+    } catch (err) {
+      console.error("Error looking up user:", err);
+    }
+    sendToolResponse(session, fc.id, resultMsg);
+
+  } else if (fc.name === "confirmReturningUser") {
+    if (fc.args.confirmed) {
+      session.returningUser = true;
+      let returnMsg = `Confirmed returning user "${session.userName}". Warmly welcome them back by name.`;
+      if (session.previousSummary) {
+        returnMsg += ` Previous conversation summary: ${session.previousSummary}. Reference this naturally.`;
+      }
+      const pageCtx = PAGE_CONTEXT[session.currentPage];
+      if (pageCtx) {
+        returnMsg += ` They are currently viewing "${pageCtx.name}". ${pageCtx.talkingPoints}`;
+      }
+      sendToolResponse(session, fc.id, returnMsg);
+    } else {
+      sendToolResponse(session, fc.id, "Not a returning user. Continue as a new conversation.");
+    }
+
+  } else if (fc.name === "showEmailSignupPopup") {
+    session.emailAsked = true;
+    sendToClient(session, { type: "show_email_popup" });
+    sendToolResponse(session, fc.id, "Email signup popup is now showing on the user's screen. Wait for them to fill it out.");
+
+  } else if (fc.name === "saveEmailSubscriber") {
+    session.emailAsked = true;
+    try {
+      await storage.createEmailSubscriber({
+        name: fc.args.name || session.userName || "Unknown",
+        email: fc.args.email,
+        source: "voice_agent",
+      });
+      session.emailCollected = true;
+      sendToolResponse(session, fc.id, "Successfully saved the user's email subscription. Confirm to the user that they're signed up.");
+      sendToClient(session, { type: "email_saved", name: fc.args.name, email: fc.args.email });
+    } catch (err) {
+      console.error("Failed to save email subscriber:", err);
+      sendToolResponse(session, fc.id, "There was an error saving the email. Apologize briefly and move on.");
+    }
+
+  } else if (fc.name === "navigateToPage") {
+    const pageId = fc.args.pageId;
+    if (PAGE_CONTEXT[pageId]) {
+      session.currentPage = pageId;
+      if (!session.pagesVisited.includes(pageId)) {
+        session.pagesVisited.push(pageId);
+      }
+      sendToClient(session, { type: "navigate_to_page", pageId });
+      sendToolResponse(session, fc.id, `Navigated user to the "${PAGE_CONTEXT[pageId].name}" page. ${PAGE_CONTEXT[pageId].talkingPoints}`);
+    } else {
+      sendToolResponse(session, fc.id, `Page "${pageId}" not found. Available pages: ${Object.keys(PAGE_CONTEXT).join(', ')}`);
+    }
+
+  } else if (fc.name === "scrollToSection") {
+    sendToClient(session, { type: "scroll_to_section", sectionId: fc.args.sectionId });
+    sendToolResponse(session, fc.id, `Scrolled to the "${fc.args.sectionId}" section. The user can now see this content.`);
+
+  } else if (fc.name === "highlightContent") {
+    const duration = fc.args.durationMs || 3000;
+    sendToClient(session, { type: "highlight_content", sectionId: fc.args.sectionId, durationMs: duration });
+    sendToolResponse(session, fc.id, `Highlighted the "${fc.args.sectionId}" section for ${duration}ms. The user's attention is drawn to this area.`);
+
+  } else if (fc.name === "scrollToContact") {
+    sendToClient(session, { type: "scroll_to_contact" });
+    sendToolResponse(session, fc.id, "Scrolled to the contact/consultation booking section. The user can now see how to get in touch.");
+  }
 }
 
 export function setupVoiceWebSocket(httpServer: Server) {
@@ -740,6 +726,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
         previousSummary,
         greetingDelivered: false,
         _reconnecting: false,
+        _reconnectAttempts: 0,
+        _audioChunkCount: 0,
+        _pendingTextMessages: [],
       };
       sessions.set(sessionId, session);
     }
@@ -760,15 +749,13 @@ export function setupVoiceWebSocket(httpServer: Server) {
         const msg = JSON.parse(data.toString());
 
         if (msg.type === "audio") {
-          if (!session._audioChunkCount) session._audioChunkCount = 0;
           session._audioChunkCount++;
-          if (session._audioChunkCount <= 3 || session._audioChunkCount % 100 === 0) {
+          if (session._audioChunkCount <= 3 || session._audioChunkCount % 200 === 0) {
             const geminiState = session.geminiWs ? session.geminiWs.readyState : -1;
-            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, dataLen=${msg.data?.length || 0})`);
+            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete})`);
           }
-          const ready = session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete;
-          if (ready) {
-            session.geminiWs!.send(
+          if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete) {
+            session.geminiWs.send(
               JSON.stringify({
                 realtimeInput: {
                   mediaChunks: [
@@ -786,27 +773,16 @@ export function setupVoiceWebSocket(httpServer: Server) {
           session.nameAsked = true;
         } else if (msg.type === "email_popup_submitted") {
           session.emailCollected = true;
-          if (
-            session.geminiWs &&
-            session.geminiWs.readyState === WebSocket.OPEN
-          ) {
-            session.geminiWs.send(
-              JSON.stringify({
-                clientContent: {
-                  turns: [
-                    {
-                      role: "user",
-                      parts: [
-                        {
-                          text: "I just submitted my email through the form on the screen.",
-                        },
-                      ],
-                    },
-                  ],
-                  turnComplete: true,
-                },
-              })
-            );
+          const text = "I just submitted my email through the form on the screen.";
+          if (session.isModelSpeaking) {
+            session._pendingTextMessages.push({ text });
+          } else if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+            session.geminiWs.send(JSON.stringify({
+              clientContent: {
+                turns: [{ role: "user", parts: [{ text }] }],
+                turnComplete: true,
+              },
+            }));
           }
         } else if (msg.type === "page_change") {
           const rawNewPage = msg.page || "home";
@@ -817,28 +793,18 @@ export function setupVoiceWebSocket(httpServer: Server) {
               session.pagesVisited.push(newPage);
             }
             const pageCtx = PAGE_CONTEXT[newPage];
-            if (
-              session.geminiWs &&
-              session.geminiWs.readyState === WebSocket.OPEN &&
-              pageCtx
-            ) {
-              session.geminiWs.send(
-                JSON.stringify({
+            if (pageCtx) {
+              const text = `[The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`;
+              if (session.isModelSpeaking) {
+                session._pendingTextMessages.push({ text });
+              } else if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                session.geminiWs.send(JSON.stringify({
                   clientContent: {
-                    turns: [
-                      {
-                        role: "user",
-                        parts: [
-                          {
-                            text: `[The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`,
-                          },
-                        ],
-                      },
-                    ],
+                    turns: [{ role: "user", parts: [{ text }] }],
                     turnComplete: true,
                   },
-                })
-              );
+                }));
+              }
             }
           }
         } else if (msg.type === "ping") {
@@ -852,14 +818,6 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
     ws.on("close", async () => {
       session.clientWs = null;
-      if (session._keepAliveTimer) {
-        clearInterval(session._keepAliveTimer);
-        session._keepAliveTimer = undefined;
-      }
-      if (session._greetingTimeout) {
-        clearTimeout(session._greetingTimeout);
-        session._greetingTimeout = undefined;
-      }
       if (session.geminiWs) {
         session.geminiWs.close();
         session.geminiWs = null;

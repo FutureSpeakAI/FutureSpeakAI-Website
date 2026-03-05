@@ -549,6 +549,18 @@
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.3); opacity: 0.6; }
         }
+        .friday-highlight {
+            outline: 2px solid rgba(0, 240, 255, 0.7) !important;
+            outline-offset: 4px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.05) !important;
+            border-radius: 8px;
+            animation: friday-glow 1.5s ease-in-out infinite;
+            transition: outline 0.3s ease, box-shadow 0.3s ease;
+        }
+        @keyframes friday-glow {
+            0%, 100% { outline-color: rgba(0, 240, 255, 0.7); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+            50% { outline-color: rgba(138, 43, 226, 0.7); box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); }
+        }
         .voice-close-btn {
             width: 28px;
             height: 28px;
@@ -830,7 +842,7 @@
         <!-- ==================== HOME PAGE ==================== -->
         <div id="home" class="page-section active">
             <!-- Hero Section -->
-            <section class="min-h-[85vh] flex items-center relative overflow-hidden" aria-label="Enterprise AI consulting hero">
+            <section id="hero" data-section="hero" class="min-h-[85vh] flex items-center relative overflow-hidden" aria-label="Enterprise AI consulting hero">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center md:text-left w-full">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 glass-panel text-gray-300 text-xs font-mono mb-8 uppercase tracking-widest">
                         <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow animate-pulse" aria-hidden="true"></span>
@@ -853,7 +865,7 @@
             </section>
 
             <!-- Services/Features snippet -->
-            <section class="py-24 border-t border-white/5 glass-panel content-backdrop" aria-label="AI consulting services">
+            <section id="services" data-section="services" class="py-24 border-t border-white/5 glass-panel content-backdrop" aria-label="AI consulting services">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/90">AI Consulting <span class="font-bold text-white">Services</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -924,7 +936,7 @@
         <div id="friday" class="page-section hidden">
 
             <!-- HERO — The Big Promise -->
-            <section class="pt-32 pb-20 min-h-[90vh] flex items-center content-backdrop" aria-label="Agent Friday — The World's First AGI OS">
+            <section id="friday-hero" data-section="friday-hero" class="pt-32 pb-20 min-h-[90vh] flex items-center content-backdrop" aria-label="Agent Friday — The World's First AGI OS">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
@@ -1332,7 +1344,7 @@
             </section>
 
             <!-- CAPABILITIES — What Friday Can Actually Do -->
-            <section class="py-20 content-backdrop" aria-label="Key Capabilities">
+            <section id="friday-capabilities" data-section="friday-capabilities" class="py-20 content-backdrop" aria-label="Key Capabilities">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-bold tracking-tight mb-4 text-center" data-testid="text-capabilities-title">&#x1F320;&#x1F52D; What Friday Can Actually Do</h2>
                     <p class="text-gray-400 text-center mb-14 max-w-2xl mx-auto font-light">You've seen why Friday is trustworthy. Now here's what that trust makes possible.</p>
@@ -1941,7 +1953,7 @@
         <div id="declaration" class="page-section hidden">
 
             <!-- HERO -->
-            <section class="pt-32 pb-20 content-backdrop" aria-label="Declaration of Digital Independence">
+            <section id="declaration-hero" data-section="declaration-hero" class="pt-32 pb-20 content-backdrop" aria-label="Declaration of Digital Independence">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
                     <nav class="mb-10" aria-label="Breadcrumb" data-testid="nav-declaration-breadcrumb">
                         <a href="/software" data-nav="friday" class="inline-flex items-center gap-2 text-sm text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline font-mono tracking-wide uppercase" data-testid="link-back-software">
@@ -1966,7 +1978,7 @@
             </section>
 
             <!-- PREAMBLE -->
-            <section class="py-20 content-backdrop" aria-label="Preamble" data-testid="section-declaration-preamble">
+            <section id="declaration-preamble" data-section="declaration-preamble" class="py-20 content-backdrop" aria-label="Preamble" data-testid="section-declaration-preamble">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-preamble-heading">Preamble</h2>
                     <div class="space-y-6 text-gray-300 text-lg font-light leading-relaxed">
@@ -1979,7 +1991,7 @@
             </section>
 
             <!-- THE GRIEVANCES -->
-            <section class="py-20 content-backdrop" aria-label="The Grievances" data-testid="section-declaration-grievances">
+            <section id="declaration-grievances" data-section="declaration-grievances" class="py-20 content-backdrop" aria-label="The Grievances" data-testid="section-declaration-grievances">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-bold tracking-tight mb-4 text-cyan-glow/90" data-testid="text-grievances-heading">The Grievances</h2>
                     <p class="text-gray-400 font-light mb-12 text-lg">The tools we depend on have been turned against us. We document these grievances not out of malice toward any company or individual, but because the pattern must be named before it can be broken.</p>
@@ -2138,7 +2150,7 @@
             </section>
 
             <!-- SIGNATORIES & CLOSING -->
-            <section class="py-20 content-backdrop" aria-label="Signatories" data-testid="section-declaration-signatories">
+            <section id="declaration-signatories" data-section="declaration-signatories" class="py-20 content-backdrop" aria-label="Signatories" data-testid="section-declaration-signatories">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
                     <div class="text-center mb-16">
                         <h2 class="text-3xl font-bold tracking-tight mb-8 text-cyan-glow/90" data-testid="text-signatories-heading">Signatories</h2>
@@ -2681,7 +2693,7 @@
 
 
                     <!-- Hero -->
-                    <div class="text-center mb-16">
+                    <div id="claw-hero" data-section="claw-hero" class="text-center mb-16">
                         <a href="/software" data-nav="friday" class="inline-flex items-center gap-2 text-cyan-glow/60 hover:text-cyan-glow text-sm mb-8 transition-colors no-underline" data-testid="link-back-to-software">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                             Back to Software
@@ -3498,10 +3510,10 @@ Agent B receives:
 
         <!-- ==================== ABOUT PAGE (THE ARCHITECT) ==================== -->
         <div id="about" class="page-section hidden">
-            <section class="pt-32 pb-24 content-backdrop">
+            <section id="leadership-hero" data-section="leadership-hero" class="pt-32 pb-24 content-backdrop">
                 <div class="max-w-5xl mx-auto px-6 lg:px-8">
                     
-                    <div class="flex flex-col md:flex-row items-center md:items-start gap-12 mb-20">
+                    <div id="leadership-bio" data-section="leadership-bio" class="flex flex-col md:flex-row items-center md:items-start gap-12 mb-20">
                         <div class="w-48 h-48 flex-shrink-0 rounded-full bg-navy-800 p-1 border border-cyan-glow/30 relative group shadow-[0_0_30px_rgba(0,240,255,0.1)]">
                             <div class="w-full h-full rounded-full bg-navy-900 flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
                                <img src="/1760623171257.jpg" alt="Stephen C. Webster" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
@@ -5432,6 +5444,8 @@ Agent B receives:
         var sessionId = localStorage.getItem(SESSION_KEY) || generateId();
         var userName = localStorage.getItem(NAME_KEY) || null;
         var reconnectTimer = null;
+        var reconnectAttempts = 0;
+        var MAX_RECONNECT_ATTEMPTS = 5;
         var pingInterval = null;
         var playbackQueue = [];
         var nextPlayTime = 0;
@@ -5454,6 +5468,28 @@ Agent B receives:
         var emailPopupEmail = document.getElementById('email-popup-email');
         var emailPopupSubmit = document.getElementById('email-popup-submit');
         var emailThankYou = document.getElementById('email-thank-you');
+
+        function fridayScrollToSection(sectionId) {
+            var el = document.getElementById(sectionId) ||
+                     document.querySelector('[data-section="' + sectionId + '"]') ||
+                     document.querySelector('.' + sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function fridayHighlightSection(sectionId, durationMs) {
+            var el = document.getElementById(sectionId) ||
+                     document.querySelector('[data-section="' + sectionId + '"]') ||
+                     document.querySelector('.' + sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.classList.add('friday-highlight');
+                setTimeout(function() {
+                    el.classList.remove('friday-highlight');
+                }, durationMs || 3000);
+            }
+        }
 
         function setStatus(text, state) {
             if (statusEl) statusEl.textContent = text;
@@ -5647,7 +5683,10 @@ Agent B receives:
 
         function getCurrentPage() {
             var active = document.querySelector('.page-section.active');
-            return active ? active.id : 'home';
+            if (!active) return 'home';
+            var id = active.id;
+            var reverseMap = { 'claw-spec': 'claw', 'about': 'leadership' };
+            return reverseMap[id] || id;
         }
 
         function connectWebSocket() {
@@ -5674,6 +5713,7 @@ Agent B receives:
                     if (msg.type === 'setup_complete') {
                         sessionId = msg.sessionId;
                         localStorage.setItem(SESSION_KEY, sessionId);
+                        reconnectAttempts = 0;
                         setStatus('Listening...', 'listening');
                         if (!msg.isReconnect) {
                             isModelSpeaking = false;
@@ -5700,6 +5740,24 @@ Agent B receives:
                         showEmailSavedNotice(msg.name);
                     } else if (msg.type === 'listening_ready') {
                         setStatus('Listening...', 'listening');
+                    } else if (msg.type === 'reconnecting') {
+                        setStatus('Reconnecting...', 'connecting');
+                    } else if (msg.type === 'navigate_to_page') {
+                        if (typeof navigate === 'function') {
+                            var pageMap = { 'claw': 'claw-spec', 'leadership': 'about' };
+                            var targetPage = pageMap[msg.pageId] || msg.pageId;
+                            navigate(targetPage);
+                        }
+                    } else if (msg.type === 'scroll_to_section') {
+                        fridayScrollToSection(msg.sectionId);
+                    } else if (msg.type === 'highlight_content') {
+                        fridayHighlightSection(msg.sectionId, msg.durationMs || 3000);
+                    } else if (msg.type === 'scroll_to_contact') {
+                        if (typeof scrollToContact === 'function') {
+                            scrollToContact();
+                        } else {
+                            fridayScrollToSection('contact-section');
+                        }
                     } else if (msg.type === 'gemini_disconnected') {
                         if (isActive) {
                             setStatus('Reconnecting...', 'connecting');
@@ -5730,10 +5788,18 @@ Agent B receives:
 
         function scheduleReconnect() {
             if (reconnectTimer) return;
+            if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+                setStatus('Connection lost', '');
+                console.log('[Voice] Max reconnect attempts reached');
+                return;
+            }
+            var delay = Math.min(2000 * Math.pow(1.5, reconnectAttempts), 15000);
+            reconnectAttempts++;
+            console.log('[Voice] Reconnect attempt ' + reconnectAttempts + '/' + MAX_RECONNECT_ATTEMPTS + ' in ' + delay + 'ms');
             reconnectTimer = setTimeout(function() {
                 reconnectTimer = null;
                 if (isActive) connectWebSocket();
-            }, 2000);
+            }, delay);
         }
 
         function startPing() {
