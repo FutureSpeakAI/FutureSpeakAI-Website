@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import type { Server } from "http";
 import { storage } from "./storage";
-import { GoogleGenAI, type Session, type LiveServerMessage, Modality } from "@google/genai";
+import { GoogleGenAI, type Session, type LiveServerMessage, Modality, ActivityHandling, StartSensitivity, EndSensitivity } from "@google/genai";
 
 const MODEL = "gemini-2.5-flash-native-audio-preview-12-2025";
 
@@ -95,6 +95,7 @@ interface VoiceSession {
   _audioChunkCount: number;
   _pendingTextMessages: Array<{ text: string }>;
   _audioForwardingEnabled: boolean;
+  _sessionResumptionHandle: string | null;
   dwellSections: Record<string, number>;
   annotationCount: number;
 }
@@ -530,15 +531,20 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 }
               }
 
-              if ((msg as any).serverContent?.inputTranscript) {
+              const inputText = (msg as any).serverContent?.inputTranscript
+                || (msg as any).serverContent?.inputTranscription?.text;
+              if (inputText) {
                 session.conversationHistory.push({
                   role: "User",
-                  text: (msg as any).serverContent.inputTranscript,
+                  text: inputText,
                 });
-                console.log(`[Gemini SDK] User said: "${(msg as any).serverContent.inputTranscript}"`);
+                sendToClient(session, { type: "transcript", role: "user", text: inputText });
+                console.log(`[Gemini SDK] User said: "${inputText}"`);
               }
 
-              if ((msg as any).serverContent?.outputTranscript) {
+              const outputText = (msg as any).serverContent?.outputTranscript
+                || (msg as any).serverContent?.outputTranscription?.text;
+              if (outputText) {
                 const existingLast =
                   session.conversationHistory[
                     session.conversationHistory.length - 1
@@ -546,10 +552,11 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 if (!existingLast || existingLast.role !== "Friday") {
                   session.conversationHistory.push({
                     role: "Friday",
-                    text: (msg as any).serverContent.outputTranscript,
+                    text: outputText,
                   });
                 }
-                console.log(`[Gemini SDK] Friday said: "${(msg as any).serverContent.outputTranscript.substring(0, 100)}..."`);
+                sendToClient(session, { type: "transcript", role: "friday", text: outputText });
+                console.log(`[Gemini SDK] Friday said: "${outputText.substring(0, 100)}..."`);
               }
 
               if (msg.toolCall) {
@@ -561,9 +568,24 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 }
               }
 
+              if ((msg as any).sessionResumptionUpdate) {
+                const sru = (msg as any).sessionResumptionUpdate;
+                if (sru.newHandle) {
+                  session._sessionResumptionHandle = sru.newHandle;
+                  console.log(`[Gemini SDK] Session resumption handle updated`);
+                }
+              }
+
+              if ((msg as any).voiceActivity) {
+                const va = (msg as any).voiceActivity;
+                if (va.state === "VOICE_ACTIVITY_START") {
+                  console.log("[Gemini SDK] Voice activity detected — user is speaking");
+                }
+              }
+
               if (!msg.setupComplete && !msg.serverContent && !msg.toolCall) {
                 const keys = Object.keys(msg);
-                if (keys.length > 0 && !keys.every(k => k === 'usageMetadata' || k === 'sessionResumptionUpdate' || k === 'goAway')) {
+                if (keys.length > 0 && !keys.every(k => k === 'usageMetadata' || k === 'sessionResumptionUpdate' || k === 'goAway' || k === 'voiceActivity')) {
                   console.log(`[Gemini SDK] Other message: ${keys.join(', ')}`, JSON.stringify(msg).substring(0, 300));
                 }
                 if ((msg as any).goAway) {
@@ -628,6 +650,31 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             parts: [{ text: systemInstruction }],
           },
           tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],
+          inputAudioTranscription: {},
+          outputAudioTranscription: {},
+          enableAffectiveDialog: true,
+          realtimeInputConfig: {
+            automaticActivityDetection: {
+              disabled: false,
+              startOfSpeechSensitivity: StartSensitivity.START_SENSITIVITY_HIGH,
+              endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_LOW,
+              prefixPaddingMs: 100,
+              silenceDurationMs: 500,
+            },
+            activityHandling: ActivityHandling.START_OF_ACTIVITY_INTERRUPTS,
+          },
+          proactivity: {
+            proactiveAudio: true,
+          },
+          contextWindowCompression: {
+            triggerTokens: "25000",
+            slidingWindow: {
+              targetTokens: "12500",
+            },
+          },
+          sessionResumption: session._sessionResumptionHandle
+            ? { handle: session._sessionResumptionHandle, transparent: true }
+            : { transparent: true },
         },
       });
 
@@ -884,6 +931,7 @@ export function setupVoiceWebSocket(httpServer: Server) {
         _audioChunkCount: 0,
         _pendingTextMessages: [],
         _audioForwardingEnabled: false,
+        _sessionResumptionHandle: null,
         dwellSections: {},
         annotationCount: 0,
       };
@@ -961,6 +1009,25 @@ export function setupVoiceWebSocket(httpServer: Server) {
                   });
                 } catch (err: any) {
                   console.error("[Gemini SDK] Error sending page change:", err.message);
+                }
+              }
+            }
+          }
+        } else if (msg.type === "viewport_context") {
+          if (session.geminiSession && session.setupComplete && session._audioForwardingEnabled) {
+            const sections = (msg.visibleSections || []).join(", ");
+            const contextText = `[System: The user is currently viewing these sections on screen: ${sections}. Reference what they can see when relevant.]`;
+            if (session.isModelSpeaking) {
+              session._pendingTextMessages.push({ text: contextText });
+            } else {
+              try {
+                session.geminiSession.sendClientContent({
+                  turns: [{ role: "user", parts: [{ text: contextText }] }],
+                  turnComplete: false,
+                });
+              } catch (err: any) {
+                if (!err.message?.includes("closed")) {
+                  console.error("[Viewport] Error sending context:", err.message);
                 }
               }
             }

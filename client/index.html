@@ -562,6 +562,27 @@
             50% { outline-color: rgba(138, 43, 226, 0.7); box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); }
         }
 
+        .voice-transcript {
+            max-height: 60px;
+            overflow: hidden;
+            padding: 0 16px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: rgba(248, 250, 252, 0.6);
+            text-align: center;
+            transition: opacity 0.3s ease;
+        }
+        .voice-transcript .transcript-line {
+            margin: 2px 0;
+            animation: transcript-fade 0.3s ease;
+        }
+        .voice-transcript .transcript-user { color: rgba(0, 240, 255, 0.7); }
+        .voice-transcript .transcript-friday { color: rgba(248, 250, 252, 0.5); font-style: italic; }
+        @keyframes transcript-fade {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* === CINEMATIC SPOTLIGHT MODE === */
         .friday-cinematic-overlay {
             position: fixed; inset: 0; z-index: 8000;
@@ -3910,6 +3931,7 @@ Agent B receives:
                 <div class="bar"></div><div class="bar"></div><div class="bar"></div>
                 <div class="bar"></div><div class="bar"></div><div class="bar"></div>
             </div>
+            <div id="voice-transcript" class="voice-transcript" data-testid="voice-transcript"></div>
         </div>
     </div>
 
@@ -6316,6 +6338,19 @@ Agent B receives:
                         isModelSpeaking = false;
                         clearPlayback();
                         setStatus('Listening...', 'listening');
+                    } else if (msg.type === 'transcript') {
+                        var transcriptEl = document.getElementById('voice-transcript');
+                        if (transcriptEl) {
+                            var line = document.createElement('div');
+                            line.className = 'transcript-line ' + (msg.role === 'user' ? 'transcript-user' : 'transcript-friday');
+                            var prefix = msg.role === 'user' ? 'You: ' : 'Friday: ';
+                            line.textContent = prefix + (msg.text || '').substring(0, 120);
+                            transcriptEl.appendChild(line);
+                            while (transcriptEl.children.length > 3) {
+                                transcriptEl.removeChild(transcriptEl.firstChild);
+                            }
+                            transcriptEl.scrollTop = transcriptEl.scrollHeight;
+                        }
                     } else if (msg.type === 'name_saved') {
                         userName = msg.name;
                         localStorage.setItem(NAME_KEY, userName);
@@ -6325,6 +6360,7 @@ Agent B receives:
                         showEmailSavedNotice(msg.name);
                     } else if (msg.type === 'listening_ready') {
                         setStatus('Listening...', 'listening');
+                        startScreenContext();
                     } else if (msg.type === 'reconnecting') {
                         setStatus('Reconnecting...', 'connecting');
                     } else if (msg.type === 'navigate_to_page') {
@@ -6482,6 +6518,37 @@ Agent B receives:
             }
         });
 
+        var _screenContextTimer = null;
+        var _lastVisibleSections = '';
+        function startScreenContext() {
+            if (_screenContextTimer) return;
+            _screenContextTimer = setInterval(function() {
+                if (!ws || ws.readyState !== WebSocket.OPEN || !isConnected) return;
+                try {
+                    var sections = document.querySelectorAll('[data-section], section[id], .section-card, .hero-section');
+                    var visible = [];
+                    for (var i = 0; i < sections.length; i++) {
+                        var r = sections[i].getBoundingClientRect();
+                        if (r.top < window.innerHeight && r.bottom > 0) {
+                            var id = sections[i].getAttribute('data-section') || sections[i].id || '';
+                            var heading = sections[i].querySelector('h1, h2, h3');
+                            var label = heading ? heading.textContent.trim().substring(0, 80) : id;
+                            if (label) visible.push(label);
+                        }
+                    }
+                    var key = visible.join('|');
+                    if (key && key !== _lastVisibleSections) {
+                        _lastVisibleSections = key;
+                        ws.send(JSON.stringify({ type: 'viewport_context', visibleSections: visible }));
+                    }
+                } catch(e) {}
+            }, 3000);
+        }
+        function stopScreenContext() {
+            if (_screenContextTimer) { clearInterval(_screenContextTimer); _screenContextTimer = null; }
+            _lastVisibleSections = '';
+        }
+
         async function startVoice() {
             isActive = true;
             overlay.classList.add('visible');
@@ -6506,6 +6573,9 @@ Agent B receives:
             updateVoiceButtons(false);
             clearPlayback();
             stopAudioCapture();
+            stopScreenContext();
+            var transcriptEl = document.getElementById('voice-transcript');
+            if (transcriptEl) transcriptEl.innerHTML = '';
             stopPing();
             if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
             if (ws) { ws.close(); ws = null; }
