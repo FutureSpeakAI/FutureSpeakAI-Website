@@ -102,3 +102,10 @@ Preferred communication style: Simple, everyday language.
 -   `SESSION_SECRET`: Admin password for invoice management.
 -   `REPLIT_DOMAINS`: Used for webhook URL and payment link generation.
 -   `GEMINI_API_KEY`: Google Gemini API key for Friday voice agent.
+
+### Voice Model
+-   **Model**: `models/gemini-2.5-flash-native-audio-latest` (Gemini Live bidiGenerateContent API)
+-   **Voice**: Kore (warm American female)
+
+### Contextual Button Styling
+-   Page-level AI buttons use `.ctx-action-bar` CSS class — a frosted glass bar with gradient accent, "Explore" label, dividers, PromptPush widget, and voice button integrated inline.
