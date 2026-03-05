@@ -561,6 +561,234 @@
             0%, 100% { outline-color: rgba(0, 240, 255, 0.7); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
             50% { outline-color: rgba(138, 43, 226, 0.7); box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); }
         }
+
+        /* === CINEMATIC SPOTLIGHT MODE === */
+        .friday-cinematic-overlay {
+            position: fixed; inset: 0; z-index: 8000;
+            background: rgba(0, 0, 0, 0.85);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+        .friday-cinematic-overlay.active { opacity: 1; pointer-events: auto; }
+        .friday-cinematic-spotlight {
+            position: relative; z-index: 8001;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 240, 255, 0.4), 0 0 120px rgba(138, 43, 226, 0.2);
+            border-radius: 12px;
+            transition: box-shadow 0.4s ease;
+        }
+        .friday-cinematic-narration {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            z-index: 8002; background: rgba(10, 10, 20, 0.9);
+            border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 12px;
+            padding: 12px 24px; color: #e0e0e0; font-size: 14px;
+            font-family: 'Inter', sans-serif; backdrop-filter: blur(12px);
+            animation: fadeIn 0.5s ease; max-width: 500px; text-align: center;
+        }
+
+        /* === FLOATING ANNOTATIONS === */
+        .friday-annotation {
+            position: absolute; z-index: 7000;
+            background: rgba(10, 10, 30, 0.92); backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 10px;
+            padding: 12px 16px; max-width: 260px;
+            color: #d0d0d0; font-size: 13px; line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.1);
+            animation: annotationSlideIn 0.4s ease;
+        }
+        .friday-annotation::before {
+            content: '✦'; color: #00F0FF; font-size: 10px;
+            position: absolute; top: 8px; left: 10px;
+        }
+        .friday-annotation .annotation-text { padding-left: 16px; }
+        .friday-annotation.right { right: -280px; }
+        .friday-annotation.left { left: -280px; }
+        @keyframes annotationSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === AMBIENT PRESENCE ORB === */
+        .friday-ambient-orb {
+            position: fixed; bottom: 100px; right: 24px; z-index: 6000;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, rgba(0, 240, 255, 0.6), rgba(138, 43, 226, 0.4));
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(138, 43, 226, 0.15);
+            cursor: pointer; opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .friday-ambient-orb.visible { opacity: 1; pointer-events: auto; }
+        .friday-ambient-orb:hover { transform: scale(1.15); }
+        .friday-ambient-orb.speaking {
+            animation: orbSpeak 1s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5), 0 0 60px rgba(138, 43, 226, 0.3);
+        }
+        .friday-ambient-orb.listening {
+            animation: orbListen 2s ease-in-out infinite;
+        }
+        @keyframes orbSpeak {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
+            50% { transform: scale(1.2); box-shadow: 0 0 50px rgba(0, 240, 255, 0.7); }
+        }
+        @keyframes orbListen {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(138, 43, 226, 0.4); }
+        }
+        .friday-orb-ring {
+            position: absolute; inset: -4px; border-radius: 50%;
+            border: 2px solid rgba(0, 240, 255, 0.2);
+            animation: orbRingPulse 3s ease-in-out infinite;
+        }
+        @keyframes orbRingPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 0; }
+        }
+
+        /* === INTERACTIVE DEMO OVERLAY === */
+        .friday-demo-overlay {
+            position: fixed; inset: 0; z-index: 9000;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+        }
+        .friday-demo-overlay.visible { display: flex; }
+        .friday-demo-container {
+            width: 90%; max-width: 800px; max-height: 80vh;
+            background: rgba(15, 15, 30, 0.95); border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: demoSlideUp 0.5s ease;
+        }
+        .friday-demo-header {
+            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 240, 255, 0.03);
+        }
+        .friday-demo-header h3 { font-size: 16px; color: #fff; font-weight: 600; }
+        .friday-demo-close {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05);
+            color: #999; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; transition: all 0.2s;
+        }
+        .friday-demo-close:hover { background: rgba(255, 50, 50, 0.2); color: #ff5555; }
+        .friday-demo-body { padding: 24px; overflow-y: auto; max-height: calc(80vh - 60px); }
+        .demo-step { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .demo-step-number {
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff;
+            background: linear-gradient(135deg, #8A2BE2, #00F0FF);
+        }
+        .demo-step-number.active { box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
+        .demo-step-content h4 { color: #fff; font-size: 14px; margin-bottom: 4px; }
+        .demo-step-content p { color: #999; font-size: 12px; line-height: 1.5; }
+        .demo-arrow { color: rgba(0, 240, 255, 0.5); font-size: 18px; margin: 4px 0; text-align: center; }
+        @keyframes demoSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === GUIDED FLOW CARD === */
+        .friday-flow-card {
+            position: fixed; bottom: 180px; right: 24px; z-index: 7500;
+            width: 320px; background: rgba(15, 15, 30, 0.95);
+            border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 14px;
+            backdrop-filter: blur(16px); overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            opacity: 0; transform: translateY(20px); pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .friday-flow-card.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .friday-flow-header {
+            padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 240, 255, 0.03);
+        }
+        .friday-flow-header h4 { color: #fff; font-size: 14px; font-weight: 600; margin: 0; }
+        .friday-flow-header p { color: #888; font-size: 11px; margin: 4px 0 0 0; }
+        .friday-flow-body { padding: 14px 18px; }
+        .friday-flow-answer {
+            display: flex; gap: 8px; align-items: flex-start; padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .friday-flow-answer .label { color: #00F0FF; font-size: 11px; font-weight: 600; min-width: 70px; }
+        .friday-flow-answer .value { color: #d0d0d0; font-size: 12px; }
+        .friday-flow-current { color: rgba(138, 43, 226, 0.8); font-size: 12px; font-style: italic; padding-top: 8px; }
+        .friday-flow-summary {
+            padding: 14px 18px; background: rgba(0, 240, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .friday-flow-summary h5 { color: #00F0FF; font-size: 12px; font-weight: 600; margin: 0 0 6px 0; }
+        .friday-flow-summary p { color: #d0d0d0; font-size: 12px; line-height: 1.5; margin: 0; }
+        .friday-flow-services { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .friday-flow-service-tag {
+            padding: 3px 10px; background: rgba(138, 43, 226, 0.15);
+            border: 1px solid rgba(138, 43, 226, 0.3); border-radius: 20px;
+            color: #c4a0ff; font-size: 11px;
+        }
+
+        /* === BOOKING WIDGET === */
+        .friday-booking-overlay {
+            position: fixed; inset: 0; z-index: 9500;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+        }
+        .friday-booking-overlay.visible { display: flex; }
+        .friday-booking-container {
+            width: 90%; max-width: 600px; background: rgba(15, 15, 30, 0.95);
+            border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 16px;
+            overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: demoSlideUp 0.5s ease;
+        }
+        .friday-booking-header {
+            padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(135deg, rgba(138,43,226,0.1), rgba(0,240,255,0.05));
+        }
+        .friday-booking-header h3 { color: #fff; font-size: 18px; font-weight: 600; }
+        .friday-booking-body { padding: 24px; }
+        .friday-booking-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .friday-booking-slot {
+            padding: 14px; border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px; cursor: pointer; text-align: center;
+            transition: all 0.2s; background: rgba(255, 255, 255, 0.02);
+        }
+        .friday-booking-slot:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .friday-booking-slot .day { color: #fff; font-size: 14px; font-weight: 600; }
+        .friday-booking-slot .time { color: #888; font-size: 12px; margin-top: 4px; }
+        .friday-booking-confirm {
+            margin-top: 16px; width: 100%; padding: 12px;
+            border: none; border-radius: 10px; cursor: pointer;
+            font-weight: 600; font-size: 14px; color: #fff;
+            background: linear-gradient(135deg, #8A2BE2, #00F0FF);
+            transition: opacity 0.2s;
+        }
+        .friday-booking-confirm:hover { opacity: 0.9; }
+
+        /* === PERSONA MODES === */
+        body.persona-developer .dev-emphasis { border-color: rgba(0, 240, 255, 0.4) !important; box-shadow: 0 0 10px rgba(0, 240, 255, 0.1); }
+        body.persona-developer .exec-emphasis { opacity: 0.6; }
+        body.persona-executive .exec-emphasis { border-color: rgba(138, 43, 226, 0.4) !important; box-shadow: 0 0 10px rgba(138, 43, 226, 0.1); }
+        body.persona-executive .dev-emphasis { opacity: 0.6; }
+        body.persona-researcher .research-emphasis { border-color: rgba(0, 240, 255, 0.4) !important; }
+        body.persona-researcher .exec-emphasis { opacity: 0.6; }
+
+        /* === VISITOR COUNT INDICATOR === */
+        .friday-visitor-count {
+            position: fixed; top: 20px; right: 20px; z-index: 5000;
+            padding: 6px 14px; border-radius: 20px;
+            background: rgba(15, 15, 30, 0.8); backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            color: #888; font-size: 11px; font-family: 'Fira Code', monospace;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .friday-visitor-count.visible { opacity: 1; }
+        .friday-visitor-count .count-dot {
+            display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+            background: #00F0FF; margin-right: 6px; animation: pulse-dot 2s infinite;
+        }
         .voice-close-btn {
             width: 28px;
             height: 28px;
@@ -865,7 +1093,7 @@
             </section>
 
             <!-- Services/Features snippet -->
-            <section id="services" data-section="services" class="py-24 border-t border-white/5 glass-panel content-backdrop" aria-label="AI consulting services">
+            <section id="services" data-section="services" class="py-24 border-t border-white/5 glass-panel content-backdrop exec-emphasis" aria-label="AI consulting services">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/90">AI Consulting <span class="font-bold text-white">Services</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1344,7 +1572,7 @@
             </section>
 
             <!-- CAPABILITIES — What Friday Can Actually Do -->
-            <section id="friday-capabilities" data-section="friday-capabilities" class="py-20 content-backdrop" aria-label="Key Capabilities">
+            <section id="friday-capabilities" data-section="friday-capabilities" class="py-20 content-backdrop dev-emphasis research-emphasis" aria-label="Key Capabilities">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-bold tracking-tight mb-4 text-center" data-testid="text-capabilities-title">&#x1F320;&#x1F52D; What Friday Can Actually Do</h2>
                     <p class="text-gray-400 text-center mb-14 max-w-2xl mx-auto font-light">You've seen why Friday is trustworthy. Now here's what that trust makes possible.</p>
@@ -3699,6 +3927,58 @@ Agent B receives:
         </div>
     </div>
 
+    <!-- Cinematic Overlay -->
+    <div id="friday-cinematic-overlay" class="friday-cinematic-overlay"></div>
+    <div id="friday-cinematic-narration" class="friday-cinematic-narration" style="display:none;"></div>
+
+    <!-- Ambient Presence Orb -->
+    <div id="friday-ambient-orb" class="friday-ambient-orb" data-testid="friday-ambient-orb">
+        <div class="friday-orb-ring"></div>
+    </div>
+
+    <!-- Demo Overlay -->
+    <div id="friday-demo-overlay" class="friday-demo-overlay" data-testid="friday-demo-overlay">
+        <div class="friday-demo-container">
+            <div class="friday-demo-header">
+                <h3 id="friday-demo-title">Interactive Demo</h3>
+                <button class="friday-demo-close" onclick="window.fridayDismissDemo && window.fridayDismissDemo()">✕</button>
+            </div>
+            <div class="friday-demo-body" id="friday-demo-body"></div>
+        </div>
+    </div>
+
+    <!-- Guided Flow Card -->
+    <div id="friday-flow-card" class="friday-flow-card" data-testid="friday-flow-card">
+        <div class="friday-flow-header">
+            <h4 id="friday-flow-title">Consultation Intake</h4>
+            <p id="friday-flow-subtitle">Tell Agent Friday about your needs</p>
+        </div>
+        <div class="friday-flow-body" id="friday-flow-body"></div>
+    </div>
+
+    <!-- Booking Widget -->
+    <div id="friday-booking-overlay" class="friday-booking-overlay" data-testid="friday-booking-overlay">
+        <div class="friday-booking-container">
+            <div class="friday-booking-header">
+                <h3>Book a Consultation</h3>
+                <button class="friday-demo-close" onclick="document.getElementById('friday-booking-overlay').classList.remove('visible')">✕</button>
+            </div>
+            <div class="friday-booking-body" id="friday-booking-body">
+                <p style="color:#999; font-size:13px; margin-bottom:16px;">Select a time to meet with Stephen C. Webster:</p>
+                <div class="friday-booking-slots" id="friday-booking-slots"></div>
+                <button class="friday-booking-confirm" id="friday-booking-confirm" style="display:none;">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visitor Count Indicator -->
+    <div id="friday-visitor-count" class="friday-visitor-count" data-testid="friday-visitor-count">
+        <span class="count-dot"></span><span id="friday-visitor-text">1 explorer</span>
+    </div>
+
+    <!-- Annotation Container (annotations are positioned dynamically) -->
+    <div id="friday-annotations" data-testid="friday-annotations"></div>
+
     <!-- Footer -->
     <footer class="border-t border-white/5 bg-navy-900/80 backdrop-blur-md mt-auto relative z-10">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -5491,6 +5771,310 @@ Agent B receives:
             }
         }
 
+        // === CINEMATIC SPOTLIGHT ===
+        function fridayCinematicSpotlight(sectionId, narration) {
+            var el = document.getElementById(sectionId) ||
+                     document.querySelector('[data-section="' + sectionId + '"]') ||
+                     document.querySelector('.' + sectionId);
+            var overlay = document.getElementById('friday-cinematic-overlay');
+            var narrationEl = document.getElementById('friday-cinematic-narration');
+            
+            // Remove previous spotlight
+            var prev = document.querySelector('.friday-cinematic-spotlight');
+            if (prev) prev.classList.remove('friday-cinematic-spotlight');
+            
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(function() {
+                    overlay.classList.add('active');
+                    el.classList.add('friday-cinematic-spotlight');
+                    if (narration) {
+                        narrationEl.textContent = narration;
+                        narrationEl.style.display = 'block';
+                    }
+                }, 400);
+            }
+        }
+
+        function fridayDismissCinematic() {
+            var overlay = document.getElementById('friday-cinematic-overlay');
+            var narrationEl = document.getElementById('friday-cinematic-narration');
+            var spot = document.querySelector('.friday-cinematic-spotlight');
+            overlay.classList.remove('active');
+            narrationEl.style.display = 'none';
+            if (spot) spot.classList.remove('friday-cinematic-spotlight');
+        }
+        window.fridayDismissCinematic = fridayDismissCinematic;
+
+        // === FLOATING ANNOTATIONS ===
+        function fridayShowAnnotation(targetId, text, position, annotationId) {
+            var target = document.getElementById(targetId) ||
+                         document.querySelector('[data-section="' + targetId + '"]') ||
+                         document.querySelector('.' + targetId);
+            if (!target) return;
+            
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            setTimeout(function() {
+                var container = document.getElementById('friday-annotations');
+                var note = document.createElement('div');
+                note.className = 'friday-annotation ' + (position || 'right');
+                note.id = annotationId;
+                note.innerHTML = '<div class="annotation-text">' + text + '</div>';
+                
+                var rect = target.getBoundingClientRect();
+                note.style.position = 'fixed';
+                note.style.top = (rect.top + rect.height / 2 - 30) + 'px';
+                if (position === 'left') {
+                    note.style.left = Math.max(10, rect.left - 280) + 'px';
+                } else {
+                    note.style.left = Math.min(window.innerWidth - 280, rect.right + 16) + 'px';
+                }
+                container.appendChild(note);
+            }, 500);
+        }
+
+        function fridayDismissAnnotations() {
+            var container = document.getElementById('friday-annotations');
+            container.innerHTML = '';
+        }
+
+        // === INTERACTIVE DEMOS ===
+        var DEMO_CONTENT = {
+            'proof-of-integrity': {
+                title: 'Proof of Integrity — How cLaws Are Verified',
+                steps: [
+                    { num: 1, title: 'Agent Generates Hash', desc: 'The agent computes an HMAC-SHA256 hash of its governance laws using a cryptographic key.' },
+                    { num: 2, title: 'Hash Stored On-Chain', desc: 'The integrity hash is stored in an immutable ledger — tamper-evident and publicly verifiable.' },
+                    { num: 3, title: 'Verification Request', desc: 'Another agent or user requests proof that this agent\'s laws haven\'t been modified.' },
+                    { num: 4, title: 'Real-Time Comparison', desc: 'The agent recomputes its hash and compares it to the stored reference. Any mismatch = tampered.' },
+                    { num: 5, title: 'Attestation Issued', desc: 'If verified, a signed attestation is returned. The agent\'s integrity is mathematically proven.' },
+                ]
+            },
+            'federation-handshake': {
+                title: 'Federation Handshake — Agent-to-Agent Trust',
+                steps: [
+                    { num: 1, title: 'Discovery', desc: 'Agent A discovers Agent B through the Federation registry — a decentralized lookup service.' },
+                    { num: 2, title: 'Challenge Issued', desc: 'Agent A sends a cryptographic challenge: "Prove your governance laws are intact."' },
+                    { num: 3, title: 'Proof Generated', desc: 'Agent B computes its Proof of Integrity and signs it with its private key.' },
+                    { num: 4, title: 'Mutual Verification', desc: 'Both agents verify each other\'s proofs. Trust is bilateral — neither agent trusts blindly.' },
+                    { num: 5, title: 'Encrypted Channel', desc: 'A secure, end-to-end encrypted communication channel is established. Thoughts encrypted, not just transport.' },
+                ]
+            },
+            'onboarding-preview': {
+                title: 'Agent Friday — First Launch Experience',
+                steps: [
+                    { num: 1, title: 'A Voice Greets You', desc: 'The desktop comes alive. Friday speaks for the first time, asking who you are.' },
+                    { num: 2, title: 'Personality Setup', desc: 'Choose a voice from 30 options. Define a personality — formal, irreverent, warm, bold. Make it yours.' },
+                    { num: 3, title: 'Psychological Profile', desc: 'Through conversation, Friday builds a working model of how you think and communicate.' },
+                    { num: 4, title: 'Integrations Connect', desc: 'Calendar, email, browser, Obsidian — Friday connects to your world, locally and privately.' },
+                    { num: 5, title: 'Your Agent Awakens', desc: 'The holographic cube pulses. Your agent speaks in the voice you chose. It remembers. It learns. It\'s yours.' },
+                ]
+            },
+        };
+
+        function fridayTriggerDemo(demoId) {
+            var demo = DEMO_CONTENT[demoId];
+            if (!demo) return;
+            
+            var overlay = document.getElementById('friday-demo-overlay');
+            var title = document.getElementById('friday-demo-title');
+            var body = document.getElementById('friday-demo-body');
+            
+            title.textContent = demo.title;
+            body.innerHTML = '';
+            
+            demo.steps.forEach(function(step, i) {
+                if (i > 0) {
+                    var arrow = document.createElement('div');
+                    arrow.className = 'demo-arrow';
+                    arrow.textContent = '↓';
+                    body.appendChild(arrow);
+                }
+                var stepEl = document.createElement('div');
+                stepEl.className = 'demo-step';
+                stepEl.innerHTML = '<div class="demo-step-number">' + step.num + '</div>' +
+                    '<div class="demo-step-content"><h4>' + step.title + '</h4><p>' + step.desc + '</p></div>';
+                body.appendChild(stepEl);
+                
+                // Animate steps in sequence
+                stepEl.style.opacity = '0';
+                stepEl.style.transform = 'translateX(-10px)';
+                setTimeout(function() {
+                    stepEl.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    stepEl.style.opacity = '1';
+                    stepEl.style.transform = 'translateX(0)';
+                }, 200 + i * 300);
+            });
+            
+            overlay.classList.add('visible');
+        }
+
+        function fridayDismissDemo() {
+            document.getElementById('friday-demo-overlay').classList.remove('visible');
+        }
+        window.fridayDismissDemo = fridayDismissDemo;
+
+        // === GUIDED FLOW ===
+        function fridayStartFlow(flowId) {
+            var card = document.getElementById('friday-flow-card');
+            var body = document.getElementById('friday-flow-body');
+            var title = document.getElementById('friday-flow-title');
+            var subtitle = document.getElementById('friday-flow-subtitle');
+            
+            if (flowId === 'consulting-intake') {
+                title.textContent = 'Consultation Intake';
+                subtitle.textContent = 'Agent Friday is learning about your needs';
+            }
+            body.innerHTML = '<div class="friday-flow-current">Listening for your first answer...</div>';
+            card.classList.add('visible');
+        }
+
+        function fridayUpdateFlow(stepLabel, answer, step) {
+            var body = document.getElementById('friday-flow-body');
+            // Remove the "current" indicator
+            var current = body.querySelector('.friday-flow-current');
+            if (current) current.remove();
+            
+            // Add the answered step
+            var answerEl = document.createElement('div');
+            answerEl.className = 'friday-flow-answer';
+            answerEl.innerHTML = '<span class="label">' + stepLabel + '</span><span class="value">' + answer + '</span>';
+            body.appendChild(answerEl);
+            
+            // Add new "listening" indicator
+            var next = document.createElement('div');
+            next.className = 'friday-flow-current';
+            next.textContent = 'Listening for next answer...';
+            body.appendChild(next);
+        }
+
+        function fridayCompleteFlow(summary, recommendedServices) {
+            var card = document.getElementById('friday-flow-card');
+            var body = document.getElementById('friday-flow-body');
+            
+            var current = body.querySelector('.friday-flow-current');
+            if (current) current.remove();
+            
+            var summaryEl = document.createElement('div');
+            summaryEl.className = 'friday-flow-summary';
+            var servicesHtml = recommendedServices.split(',').map(function(s) {
+                return '<span class="friday-flow-service-tag">' + s.trim() + '</span>';
+            }).join('');
+            summaryEl.innerHTML = '<h5>Recommendation</h5><p>' + summary + '</p>' +
+                '<div class="friday-flow-services">' + servicesHtml + '</div>';
+            body.appendChild(summaryEl);
+            
+            // Auto-dismiss after 30 seconds
+            setTimeout(function() { card.classList.remove('visible'); }, 30000);
+        }
+
+        // === BOOKING WIDGET ===
+        function fridayOpenBooking() {
+            var overlay = document.getElementById('friday-booking-overlay');
+            var slotsEl = document.getElementById('friday-booking-slots');
+            var confirmBtn = document.getElementById('friday-booking-confirm');
+            
+            // Generate sample slots for this week
+            slotsEl.innerHTML = '';
+            confirmBtn.style.display = 'none';
+            var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            var times = ['10:00 AM', '2:00 PM', '4:00 PM'];
+            var today = new Date();
+            var selectedSlot = null;
+            
+            for (var d = 0; d < 4; d++) {
+                var slotDate = new Date(today);
+                slotDate.setDate(today.getDate() + d + 1);
+                var dayName = days[slotDate.getDay() - 1] || 'Saturday';
+                var dateStr = (slotDate.getMonth() + 1) + '/' + slotDate.getDate();
+                var time = times[d % times.length];
+                
+                var slot = document.createElement('div');
+                slot.className = 'friday-booking-slot';
+                slot.innerHTML = '<div class="day">' + dayName + ' ' + dateStr + '</div><div class="time">' + time + ' CST</div>';
+                slot.setAttribute('data-slot', dayName + ' ' + dateStr + ' at ' + time);
+                slot.addEventListener('click', function() {
+                    var all = slotsEl.querySelectorAll('.friday-booking-slot');
+                    all.forEach(function(s) { s.style.borderColor = 'rgba(255,255,255,0.08)'; s.style.background = 'rgba(255,255,255,0.02)'; });
+                    this.style.borderColor = 'rgba(0, 240, 255, 0.6)';
+                    this.style.background = 'rgba(0, 240, 255, 0.08)';
+                    selectedSlot = this.getAttribute('data-slot');
+                    confirmBtn.style.display = 'block';
+                    confirmBtn.textContent = 'Confirm: ' + selectedSlot;
+                });
+                slotsEl.appendChild(slot);
+            }
+            
+            confirmBtn.onclick = function() {
+                if (selectedSlot) {
+                    confirmBtn.textContent = '✓ Booked — ' + selectedSlot;
+                    confirmBtn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    confirmBtn.disabled = true;
+                    setTimeout(function() { overlay.classList.remove('visible'); }, 2500);
+                }
+            };
+            
+            overlay.classList.add('visible');
+        }
+
+        // === PERSONA SWITCHING ===
+        function fridayAdaptPersona(persona) {
+            document.body.classList.remove('persona-developer', 'persona-executive', 'persona-researcher');
+            if (persona !== 'general') {
+                document.body.classList.add('persona-' + persona);
+            }
+        }
+
+        // === AMBIENT ORB ===
+        var ambientOrb = document.getElementById('friday-ambient-orb');
+        function updateAmbientOrb(state) {
+            if (!ambientOrb) return;
+            ambientOrb.classList.remove('speaking', 'listening');
+            if (state) ambientOrb.classList.add(state);
+        }
+
+        // === VISITOR COUNT ===
+        function updateVisitorCount(count) {
+            var el = document.getElementById('friday-visitor-count');
+            var text = document.getElementById('friday-visitor-text');
+            if (count > 1) {
+                text.textContent = count + ' explorers online';
+                el.classList.add('visible');
+            } else {
+                el.classList.remove('visible');
+            }
+        }
+
+        // === SCROLL DWELL TRACKING ===
+        var dwellTimers = {};
+        var dwellObserver = null;
+        function setupDwellTracking() {
+            if (dwellObserver) return;
+            var sections = document.querySelectorAll('[id], [data-section]');
+            dwellObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    var id = entry.target.id || entry.target.getAttribute('data-section');
+                    if (!id) return;
+                    if (entry.isIntersecting) {
+                        dwellTimers[id] = { start: Date.now(), reported: 0 };
+                    } else if (dwellTimers[id]) {
+                        var elapsed = Date.now() - dwellTimers[id].start;
+                        if (elapsed > 2000 && ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'dwell_update', sectionId: id, dwellMs: elapsed }));
+                        }
+                        delete dwellTimers[id];
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            sections.forEach(function(el) {
+                if (el.id && !el.id.startsWith('friday-') && !el.id.startsWith('email-') && !el.id.startsWith('voice-')) {
+                    dwellObserver.observe(el);
+                }
+            });
+        }
+
         function setStatus(text, state) {
             if (statusEl) statusEl.textContent = text;
             if (agentDot) {
@@ -5500,6 +6084,7 @@ Agent B receives:
             if (visualizer) {
                 visualizer.classList.toggle('active', state === 'speaking' || state === 'listening');
             }
+            updateAmbientOrb(state);
         }
 
         function updateVoiceButtons(active) {
@@ -5758,6 +6343,30 @@ Agent B receives:
                         } else {
                             fridayScrollToSection('contact-section');
                         }
+                    } else if (msg.type === 'cinematic_spotlight') {
+                        fridayCinematicSpotlight(msg.sectionId, msg.narration);
+                    } else if (msg.type === 'dismiss_cinematic') {
+                        fridayDismissCinematic();
+                    } else if (msg.type === 'show_annotation') {
+                        fridayShowAnnotation(msg.targetId, msg.text, msg.position, msg.annotationId);
+                    } else if (msg.type === 'dismiss_annotations') {
+                        fridayDismissAnnotations();
+                    } else if (msg.type === 'trigger_demo') {
+                        fridayTriggerDemo(msg.demoId);
+                    } else if (msg.type === 'dismiss_demo') {
+                        fridayDismissDemo();
+                    } else if (msg.type === 'adapt_persona') {
+                        fridayAdaptPersona(msg.persona);
+                    } else if (msg.type === 'start_guided_flow') {
+                        fridayStartFlow(msg.flowId);
+                    } else if (msg.type === 'update_guided_flow') {
+                        fridayUpdateFlow(msg.stepLabel, msg.answer, msg.step);
+                    } else if (msg.type === 'complete_guided_flow') {
+                        fridayCompleteFlow(msg.summary, msg.recommendedServices);
+                    } else if (msg.type === 'open_booking_widget') {
+                        fridayOpenBooking();
+                    } else if (msg.type === 'visitor_count') {
+                        updateVisitorCount(msg.count);
                     } else if (msg.type === 'gemini_disconnected') {
                         if (isActive) {
                             setStatus('Reconnecting...', 'connecting');
@@ -5878,6 +6487,8 @@ Agent B receives:
             overlay.classList.add('visible');
             updateVoiceButtons(true);
             setStatus('Starting...', 'connecting');
+            if (ambientOrb) ambientOrb.classList.add('visible');
+            setupDwellTracking();
 
             try {
                 await startAudioCapture();
@@ -5898,6 +6509,15 @@ Agent B receives:
             stopPing();
             if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
             if (ws) { ws.close(); ws = null; }
+            // Clean up all features
+            if (ambientOrb) ambientOrb.classList.remove('visible', 'speaking', 'listening');
+            fridayDismissCinematic();
+            fridayDismissAnnotations();
+            fridayDismissDemo();
+            fridayAdaptPersona('general');
+            document.getElementById('friday-flow-card').classList.remove('visible');
+            document.getElementById('friday-booking-overlay').classList.remove('visible');
+            document.getElementById('friday-visitor-count').classList.remove('visible');
         }
 
         closeBtn.addEventListener('click', function() { stopVoice(); });
