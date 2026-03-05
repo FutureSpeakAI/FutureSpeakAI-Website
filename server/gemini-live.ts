@@ -91,6 +91,7 @@ interface VoiceSession {
   _reconnectAttempts: number;
   _audioChunkCount: number;
   _pendingTextMessages: Array<{ text: string }>;
+  _audioForwardingEnabled: boolean;
 }
 
 const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
@@ -259,10 +260,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                   name: "showEmailSignupPopup",
                   description:
                     "Shows an email signup popup form on the website for the user to type their name and email",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {},
-                  },
                 },
                 {
                   name: "saveEmailSubscriber",
@@ -355,7 +352,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                         description: "The section identifier to highlight",
                       },
                       durationMs: {
-                        type: "NUMBER",
+                        type: "INTEGER",
                         description: "How long the highlight should last in milliseconds (default 3000)",
                       },
                     },
@@ -366,10 +363,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                   name: "scrollToContact",
                   description:
                     "Scrolls to the contact/consultation booking section on the homepage. Use when the user wants to get in touch or book a consultation.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {},
-                  },
                 },
               ],
             },
@@ -393,6 +386,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           });
 
           if (!isReconnect) {
+            session._audioForwardingEnabled = false;
             const pageCtx2 = PAGE_CONTEXT[session.currentPage];
             const pageName = pageCtx2 ? pageCtx2.name : "homepage";
             let greetingPrompt: string;
@@ -408,9 +402,10 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 turnComplete: true,
               },
             }));
-            console.log("[Gemini] Setup complete, greeting sent");
+            console.log("[Gemini] Setup complete, greeting sent (audio forwarding paused until greeting delivered)");
           } else {
-            console.log("[Gemini] Reconnection setup complete — listening");
+            session._audioForwardingEnabled = true;
+            console.log("[Gemini] Reconnection setup complete — listening (audio forwarding enabled)");
             sendToClient(session, { type: "listening_ready" });
           }
 
@@ -447,7 +442,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             sendToClient(session, { type: "turn_complete" });
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
-              console.log("[Gemini] Greeting delivered — now listening on same connection");
+              session._audioForwardingEnabled = true;
+              console.log("[Gemini] Greeting delivered — audio forwarding enabled, now listening");
               sendToClient(session, { type: "listening_ready" });
             }
             sendQueuedTextToGemini(session);
@@ -458,8 +454,9 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             session.isModelSpeaking = false;
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
+              session._audioForwardingEnabled = true;
               session.exchangeCount++;
-              console.log("[Gemini] Greeting complete via generationComplete — now listening");
+              console.log("[Gemini] Greeting complete via generationComplete — audio forwarding enabled, now listening");
               sendToClient(session, { type: "turn_complete" });
               sendToClient(session, { type: "listening_ready" });
             }
@@ -499,6 +496,11 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           for (const fc of msg.toolCall.functionCalls) {
             await handleToolCall(session, fc);
           }
+        }
+
+        if (!msg.setupComplete && !msg.serverContent && !msg.toolCall) {
+          const keys = Object.keys(msg);
+          console.log(`[Gemini] Unhandled message type: ${keys.join(', ')}`, JSON.stringify(msg).substring(0, 300));
         }
       } catch (err) {
         console.error("Error processing Gemini message:", err);
@@ -729,6 +731,7 @@ export function setupVoiceWebSocket(httpServer: Server) {
         _reconnectAttempts: 0,
         _audioChunkCount: 0,
         _pendingTextMessages: [],
+        _audioForwardingEnabled: false,
       };
       sessions.set(sessionId, session);
     }
@@ -752,9 +755,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
           session._audioChunkCount++;
           if (session._audioChunkCount <= 3 || session._audioChunkCount % 200 === 0) {
             const geminiState = session.geminiWs ? session.geminiWs.readyState : -1;
-            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete})`);
+            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled})`);
           }
-          if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete) {
+          if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete && session._audioForwardingEnabled) {
             session.geminiWs.send(
               JSON.stringify({
                 realtimeInput: {
