@@ -673,8 +673,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             },
           },
           sessionResumption: session._sessionResumptionHandle
-            ? { handle: session._sessionResumptionHandle, transparent: true }
-            : { transparent: true },
+            ? { handle: session._sessionResumptionHandle }
+            : {},
         },
       });
 
