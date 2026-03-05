@@ -49,29 +49,15 @@ The Gemini Live API deprecated `realtimeInput.mediaChunks`. Updated to use `real
 { realtimeInput: { audio: { mimeType: "audio/pcm;rate=16000", data } } }
 ```
 
-### 2. Added Audio Transcription Config
+This is the most likely fix for why Friday could greet (triggered by text clientContent) but never responded to speech (audio input was sent in a deprecated format the model may not process).
 
-Enabled `inputAudioTranscription` and `outputAudioTranscription` in the setup message so Gemini generates text transcripts of both user speech and model output.
+### 2. Setup Message Preserved
 
-### 3. Fixed `toolResponse` Format
+The setup message structure (model, generationConfig, systemInstruction, tools format) is kept byte-for-byte identical to the original working version. No `inputAudioTranscription`, `outputAudioTranscription`, or `realtimeInputConfig` were added — these caused setup rejection in prior attempts. The default automatic VAD works correctly.
 
-Added the required `name` field to all `FunctionResponse` objects:
+### 3. Lean System Instruction
 
-```js
-// Before:
-{ response: { result }, id: fcId }
-
-// After:
-{ response: { result }, id: fcId, name: fcName }
-```
-
-### 4. Lean System Instruction
-
-Condensed the system instruction from ~95 lines to ~30 lines. Native audio models have tighter context constraints — a bloated system instruction can cause setup timeouts. Function descriptions in the declarations themselves carry the behavioral detail; the instruction just needs concise directives.
-
-### 5. No `realtimeInputConfig`
-
-Deliberately omitted. The default automatic activity detection works correctly. Adding explicit VAD config with string enum values risks setup rejection if the model version doesn't support the exact format.
+New tool capabilities are described in a single paragraph (4 lines) added to the existing system instruction. The function declarations themselves carry all the behavioral detail. Previous attempts with 95+ line instructions caused setup timeouts.
 
 ## Features
 

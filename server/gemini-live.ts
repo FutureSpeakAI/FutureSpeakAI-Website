@@ -49,17 +49,15 @@ CONVERSATION BEHAVIOR:
 - STEP_TRACKING_PLACEHOLDER
 
 SITE GUIDE CAPABILITIES:
-You can control the website as you talk. Use these proactively and naturally — say "Let me show you..." then act:
-- navigateToPage / scrollToSection / highlightContent / scrollToContact — guide users to content
-- cinematicSpotlight / dismissCinematic — dim the page and spotlight one section for dramatic narration
-- showAnnotation / dismissAnnotations — place floating notes next to content (max 3 at once)
-- triggerInteractiveDemo / dismissDemo — show animated step-by-step visualizations
-- adaptSitePersona — reshape page emphasis for 'developer', 'executive', or 'researcher' audiences
-- startGuidedFlow / updateGuidedFlow / completeGuidedFlow — structured consulting intake conversation
-- openBookingWidget — inline calendar for scheduling consultations
-- getVisitorInsight — check what sections the user lingered on and how many others are exploring the site
+You can interact with the website the user is viewing. Use these capabilities proactively to make conversations vivid and engaging:
+- Call navigateToPage to take the user to a relevant page when discussing a topic (e.g., navigate to the Declaration page when talking about digital sovereignty)
+- Call scrollToSection to scroll to specific content sections so the user can see what you're discussing
+- Call highlightContent to draw the user's visual attention to a specific area as you explain it
+- Call scrollToContact when the user wants to get in touch or book a consultation
+Use these naturally — for example, "Let me show you what I mean..." then navigate or highlight. Don't overuse them, but proactively guide the user through the site as you talk.
 
-Ask about their role early. When they want consulting, start the intake flow. Don't use every tool in every conversation.
+ADDITIONAL TOOLS:
+You can also: cinematicSpotlight/dismissCinematic (dim page, spotlight a section), showAnnotation/dismissAnnotations (floating margin notes), triggerInteractiveDemo/dismissDemo (animated visualizations: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'), adaptSitePersona (reshape site for 'developer'/'executive'/'researcher'/'general'), startGuidedFlow/updateGuidedFlow/completeGuidedFlow (structured consulting intake), openBookingWidget (inline calendar), getVisitorInsight (visitor behavior data).
 
 AVAILABLE SECTIONS PER PAGE:
 - home: hero, services, contact-section
@@ -97,11 +95,8 @@ interface VoiceSession {
   _audioChunkCount: number;
   _pendingTextMessages: Array<{ text: string }>;
   _audioForwardingEnabled: boolean;
-  activePersona: string | null;
-  guidedFlowState: { flowId: string; step: number; answers: Record<string, string> } | null;
   dwellSections: Record<string, number>;
   annotationCount: number;
-  cinematicActive: boolean;
 }
 
 const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
@@ -139,16 +134,6 @@ function getActiveVisitorCount(): number {
     if (s.clientWs && s.clientWs.readyState === WebSocket.OPEN) count++;
   }
   return count;
-}
-
-function getActiveVisitorPages(): Record<string, number> {
-  const pages: Record<string, number> = {};
-  for (const [, s] of sessions) {
-    if (s.clientWs && s.clientWs.readyState === WebSocket.OPEN) {
-      pages[s.currentPage] = (pages[s.currentPage] || 0) + 1;
-    }
-  }
-  return pages;
 }
 
 setInterval(() => {
@@ -215,14 +200,14 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   return instruction;
 }
 
-function sendToolResponse(session: VoiceSession, fcId: string, result: string, fcName?: string) {
+function sendToolResponse(session: VoiceSession, fcId: string, result: string) {
   if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-    const fnResponse: any = { response: { result }, id: fcId };
-    if (fcName) fnResponse.name = fcName;
     session.geminiWs.send(
       JSON.stringify({
         toolResponse: {
-          functionResponses: [fnResponse],
+          functionResponses: [
+            { response: { result }, id: fcId },
+          ],
         },
       })
     );
@@ -281,8 +266,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           systemInstruction: {
             parts: [{ text: systemInstruction }],
           },
-          inputAudioTranscription: {},
-          outputAudioTranscription: {},
           tools: [
             {
               functionDeclarations: [
@@ -313,7 +296,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "saveUserName",
                   description:
-                    "Saves the user's name when they tell you. Call whenever they introduce themselves.",
+                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -396,153 +379,105 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 },
                 {
                   name: "cinematicSpotlight",
-                  description:
-                    "Dims the entire page and spotlights a specific section. Call dismissCinematic when done.",
+                  description: "Dims the page and spotlights a section. Call dismissCinematic when done.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      sectionId: {
-                        type: "STRING",
-                        description: "The section to spotlight",
-                      },
-                      narration: {
-                        type: "STRING",
-                        description: "Brief label shown below the spotlight (optional)",
-                      },
+                      sectionId: { type: "STRING", description: "Section to spotlight" },
+                      narration: { type: "STRING", description: "Optional label shown below spotlight" },
                     },
                     required: ["sectionId"],
                   },
                 },
                 {
                   name: "dismissCinematic",
-                  description:
-                    "Removes the cinematic spotlight/dimming effect and returns the page to normal.",
+                  description: "Removes cinematic spotlight, returns page to normal.",
                 },
                 {
                   name: "showAnnotation",
-                  description:
-                    "Shows a floating note next to a content section. Use for explanatory margin notes.",
+                  description: "Shows a floating note next to a section.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      targetId: {
-                        type: "STRING",
-                        description: "The section to annotate",
-                      },
-                      text: {
-                        type: "STRING",
-                        description: "The annotation text (keep to 1-2 sentences)",
-                      },
-                      position: {
-                        type: "STRING",
-                        description: "Where to place the note: 'left' or 'right' (default 'right')",
-                      },
+                      targetId: { type: "STRING", description: "Section to annotate" },
+                      text: { type: "STRING", description: "Note text (1-2 sentences)" },
+                      position: { type: "STRING", description: "'left' or 'right' (default 'right')" },
                     },
                     required: ["targetId", "text"],
                   },
                 },
                 {
                   name: "dismissAnnotations",
-                  description:
-                    "Removes all floating annotations from the page.",
+                  description: "Removes all floating annotations.",
                 },
                 {
                   name: "triggerInteractiveDemo",
-                  description:
-                    "Shows an animated step-by-step visualization. Available: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'. Call dismissDemo when done.",
+                  description: "Shows animated visualization. IDs: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'. Call dismissDemo when done.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      demoId: {
-                        type: "STRING",
-                        description: "The demo identifier: 'proof-of-integrity', 'federation-handshake', or 'onboarding-preview'",
-                      },
+                      demoId: { type: "STRING", description: "Demo identifier" },
                     },
                     required: ["demoId"],
                   },
                 },
                 {
                   name: "dismissDemo",
-                  description:
-                    "Closes the currently active interactive demo.",
+                  description: "Closes the active demo.",
                 },
                 {
                   name: "adaptSitePersona",
-                  description:
-                    "Adapts site visual emphasis for the visitor's role: 'developer', 'executive', 'researcher', or 'general' (reset).",
+                  description: "Reshapes site emphasis: 'developer', 'executive', 'researcher', or 'general' (reset).",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      persona: {
-                        type: "STRING",
-                        description: "The visitor persona: 'developer', 'executive', 'researcher', or 'general'",
-                      },
+                      persona: { type: "STRING", description: "Visitor persona" },
                     },
                     required: ["persona"],
                   },
                 },
                 {
                   name: "startGuidedFlow",
-                  description:
-                    "Starts a structured consulting intake conversation. Use 'consulting-intake' to qualify visitors through questions about their needs.",
+                  description: "Starts consulting intake. Use 'consulting-intake'.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      flowId: {
-                        type: "STRING",
-                        description: "The flow identifier: 'consulting-intake'",
-                      },
+                      flowId: { type: "STRING", description: "Flow ID" },
                     },
                     required: ["flowId"],
                   },
                 },
                 {
                   name: "updateGuidedFlow",
-                  description:
-                    "Records the user's answer and advances the guided flow to the next step.",
+                  description: "Records answer, advances guided flow.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      stepLabel: {
-                        type: "STRING",
-                        description: "Label for the answered step (e.g., 'Industry', 'Team Size')",
-                      },
-                      answer: {
-                        type: "STRING",
-                        description: "The user's answer to record",
-                      },
+                      stepLabel: { type: "STRING", description: "Step label (e.g. 'Industry')" },
+                      answer: { type: "STRING", description: "User's answer" },
                     },
                     required: ["stepLabel", "answer"],
                   },
                 },
                 {
                   name: "completeGuidedFlow",
-                  description:
-                    "Completes a guided flow and shows a recommendation summary card.",
+                  description: "Completes guided flow, shows recommendation.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
-                      summary: {
-                        type: "STRING",
-                        description: "A brief recommendation summary based on the user's answers",
-                      },
-                      recommendedServices: {
-                        type: "STRING",
-                        description: "Comma-separated list of recommended services",
-                      },
+                      summary: { type: "STRING", description: "Recommendation summary" },
+                      recommendedServices: { type: "STRING", description: "Comma-separated services" },
                     },
                     required: ["summary", "recommendedServices"],
                   },
                 },
                 {
                   name: "openBookingWidget",
-                  description:
-                    "Opens an inline calendar booking widget so the user can schedule a consultation with Stephen. Use when the user expresses interest in booking a meeting or consultation.",
+                  description: "Opens inline calendar for scheduling a consultation.",
                 },
                 {
                   name: "getVisitorInsight",
-                  description:
-                    "Returns the visitor's browsing behavior: dwell times, pages visited, and active visitor count.",
+                  description: "Returns visitor browsing data: dwell times, pages visited, active visitor count.",
                 },
               ],
             },
@@ -564,7 +499,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             sessionId: session.sessionId,
             isReconnect,
           });
-          sendToClient(session, { type: "visitor_count", count: getActiveVisitorCount() });
 
           if (!isReconnect) {
             session._audioForwardingEnabled = false;
@@ -767,7 +701,7 @@ async function handleToolCall(session: VoiceSession, fc: any) {
     } catch (err) {
       console.error("Error looking up user:", err);
     }
-    sendToolResponse(session, fc.id, resultMsg, fc.name);
+    sendToolResponse(session, fc.id, resultMsg);
 
   } else if (fc.name === "confirmReturningUser") {
     if (fc.args.confirmed) {
@@ -780,15 +714,15 @@ async function handleToolCall(session: VoiceSession, fc: any) {
       if (pageCtx) {
         returnMsg += ` They are currently viewing "${pageCtx.name}". ${pageCtx.talkingPoints}`;
       }
-      sendToolResponse(session, fc.id, returnMsg, fc.name);
+      sendToolResponse(session, fc.id, returnMsg);
     } else {
-      sendToolResponse(session, fc.id, "Not a returning user. Continue as a new conversation.", fc.name);
+      sendToolResponse(session, fc.id, "Not a returning user. Continue as a new conversation.");
     }
 
   } else if (fc.name === "showEmailSignupPopup") {
     session.emailAsked = true;
     sendToClient(session, { type: "show_email_popup" });
-    sendToolResponse(session, fc.id, "Email signup popup is now showing on the user's screen. Wait for them to fill it out.", fc.name);
+    sendToolResponse(session, fc.id, "Email signup popup is now showing on the user's screen. Wait for them to fill it out.");
 
   } else if (fc.name === "saveEmailSubscriber") {
     session.emailAsked = true;
@@ -799,11 +733,11 @@ async function handleToolCall(session: VoiceSession, fc: any) {
         source: "voice_agent",
       });
       session.emailCollected = true;
-      sendToolResponse(session, fc.id, "Successfully saved the user's email subscription. Confirm to the user that they're signed up.", fc.name);
+      sendToolResponse(session, fc.id, "Successfully saved the user's email subscription. Confirm to the user that they're signed up.");
       sendToClient(session, { type: "email_saved", name: fc.args.name, email: fc.args.email });
     } catch (err) {
       console.error("Failed to save email subscriber:", err);
-      sendToolResponse(session, fc.id, "There was an error saving the email. Apologize briefly and move on.", fc.name);
+      sendToolResponse(session, fc.id, "There was an error saving the email. Apologize briefly and move on.");
     }
 
   } else if (fc.name === "navigateToPage") {
@@ -814,130 +748,87 @@ async function handleToolCall(session: VoiceSession, fc: any) {
         session.pagesVisited.push(pageId);
       }
       sendToClient(session, { type: "navigate_to_page", pageId });
-      sendToolResponse(session, fc.id, `Navigated user to the "${PAGE_CONTEXT[pageId].name}" page. ${PAGE_CONTEXT[pageId].talkingPoints}`, fc.name);
+      sendToolResponse(session, fc.id, `Navigated user to the "${PAGE_CONTEXT[pageId].name}" page. ${PAGE_CONTEXT[pageId].talkingPoints}`);
     } else {
-      sendToolResponse(session, fc.id, `Page "${pageId}" not found. Available pages: ${Object.keys(PAGE_CONTEXT).join(', ')}`, fc.name);
+      sendToolResponse(session, fc.id, `Page "${pageId}" not found. Available pages: ${Object.keys(PAGE_CONTEXT).join(', ')}`);
     }
 
   } else if (fc.name === "scrollToSection") {
     sendToClient(session, { type: "scroll_to_section", sectionId: fc.args.sectionId });
-    sendToolResponse(session, fc.id, `Scrolled to the "${fc.args.sectionId}" section. The user can now see this content.`, fc.name);
+    sendToolResponse(session, fc.id, `Scrolled to the "${fc.args.sectionId}" section. The user can now see this content.`);
 
   } else if (fc.name === "highlightContent") {
     const duration = fc.args.durationMs || 3000;
     sendToClient(session, { type: "highlight_content", sectionId: fc.args.sectionId, durationMs: duration });
-    sendToolResponse(session, fc.id, `Highlighted the "${fc.args.sectionId}" section for ${duration}ms. The user's attention is drawn to this area.`, fc.name);
+    sendToolResponse(session, fc.id, `Highlighted the "${fc.args.sectionId}" section for ${duration}ms. The user's attention is drawn to this area.`);
 
   } else if (fc.name === "scrollToContact") {
     sendToClient(session, { type: "scroll_to_contact" });
-    sendToolResponse(session, fc.id, "Scrolled to the contact/consultation booking section. The user can now see how to get in touch.", fc.name);
+    sendToolResponse(session, fc.id, "Scrolled to the contact/consultation booking section. The user can now see how to get in touch.");
 
   } else if (fc.name === "cinematicSpotlight") {
-    session.cinematicActive = true;
-    sendToClient(session, {
-      type: "cinematic_spotlight",
-      sectionId: fc.args.sectionId,
-      narration: fc.args.narration || null,
-    });
-    sendToolResponse(session, fc.id, `Cinematic spotlight is now on "${fc.args.sectionId}". The page is dimmed and this section is dramatically lit. Continue narrating, then call dismissCinematic when done.`, fc.name);
+    sendToClient(session, { type: "cinematic_spotlight", sectionId: fc.args.sectionId, narration: fc.args.narration || null });
+    sendToolResponse(session, fc.id, `Spotlighting "${fc.args.sectionId}". Call dismissCinematic when done.`);
 
   } else if (fc.name === "dismissCinematic") {
-    session.cinematicActive = false;
     sendToClient(session, { type: "dismiss_cinematic" });
-    sendToolResponse(session, fc.id, "Cinematic effect dismissed. Page is back to normal.", fc.name);
+    sendToolResponse(session, fc.id, "Cinematic dismissed.");
 
   } else if (fc.name === "showAnnotation") {
     session.annotationCount++;
-    sendToClient(session, {
-      type: "show_annotation",
-      targetId: fc.args.targetId,
-      text: fc.args.text,
-      position: fc.args.position || "right",
-      annotationId: `annotation-${session.annotationCount}`,
-    });
-    sendToolResponse(session, fc.id, `Floating annotation added next to "${fc.args.targetId}": "${fc.args.text}". The user can see this note alongside the content.`, fc.name);
+    sendToClient(session, { type: "show_annotation", targetId: fc.args.targetId, text: fc.args.text, position: fc.args.position || "right", annotationId: `annotation-${session.annotationCount}` });
+    sendToolResponse(session, fc.id, `Annotation added next to "${fc.args.targetId}".`);
 
   } else if (fc.name === "dismissAnnotations") {
     session.annotationCount = 0;
     sendToClient(session, { type: "dismiss_annotations" });
-    sendToolResponse(session, fc.id, "All annotations removed.", fc.name);
+    sendToolResponse(session, fc.id, "Annotations cleared.");
 
   } else if (fc.name === "triggerInteractiveDemo") {
     const validDemos = ["proof-of-integrity", "federation-handshake", "onboarding-preview"];
     if (validDemos.includes(fc.args.demoId)) {
       sendToClient(session, { type: "trigger_demo", demoId: fc.args.demoId });
-      sendToolResponse(session, fc.id, `Interactive demo "${fc.args.demoId}" is now showing on screen. The user can see the visualization. Narrate what they're seeing.`, fc.name);
+      sendToolResponse(session, fc.id, `Demo "${fc.args.demoId}" showing. Narrate what the user sees.`);
     } else {
-      sendToolResponse(session, fc.id, `Demo "${fc.args.demoId}" not found. Available demos: ${validDemos.join(", ")}`, fc.name);
+      sendToolResponse(session, fc.id, `Unknown demo. Available: ${validDemos.join(", ")}`);
     }
 
   } else if (fc.name === "dismissDemo") {
     sendToClient(session, { type: "dismiss_demo" });
-    sendToolResponse(session, fc.id, "Demo closed.", fc.name);
+    sendToolResponse(session, fc.id, "Demo closed.");
 
   } else if (fc.name === "adaptSitePersona") {
-    const validPersonas = ["developer", "executive", "researcher", "general"];
-    const persona = validPersonas.includes(fc.args.persona) ? fc.args.persona : "general";
-    session.activePersona = persona === "general" ? null : persona;
+    const valid = ["developer", "executive", "researcher", "general"];
+    const persona = valid.includes(fc.args.persona) ? fc.args.persona : "general";
     sendToClient(session, { type: "adapt_persona", persona });
-    const descriptions: Record<string, string> = {
-      developer: "Now emphasizing technical specs, code examples, GitHub links, and API details.",
-      executive: "Now emphasizing business value, ROI, compliance, and strategic outcomes.",
-      researcher: "Now emphasizing architecture, specifications, academic rigor, and the cLaw protocol.",
-      general: "Reset to default site layout.",
-    };
-    sendToolResponse(session, fc.id, `Site adapted for ${persona} persona. ${descriptions[persona]}`, fc.name);
+    sendToolResponse(session, fc.id, `Site adapted for ${persona}.`);
 
   } else if (fc.name === "startGuidedFlow") {
-    session.guidedFlowState = { flowId: fc.args.flowId, step: 0, answers: {} };
     sendToClient(session, { type: "start_guided_flow", flowId: fc.args.flowId });
-    sendToolResponse(session, fc.id, `Guided flow "${fc.args.flowId}" started. A visual card is now showing. Walk the user through the first question conversationally. Call updateGuidedFlow after each answer, then completeGuidedFlow when done.`, fc.name);
+    sendToolResponse(session, fc.id, "Flow started. Walk the user through questions, call updateGuidedFlow after each answer.");
 
   } else if (fc.name === "updateGuidedFlow") {
-    if (session.guidedFlowState) {
-      session.guidedFlowState.step++;
-      session.guidedFlowState.answers[fc.args.stepLabel] = fc.args.answer;
-      sendToClient(session, {
-        type: "update_guided_flow",
-        stepLabel: fc.args.stepLabel,
-        answer: fc.args.answer,
-        step: session.guidedFlowState.step,
-      });
-      sendToolResponse(session, fc.id, `Recorded: ${fc.args.stepLabel} = "${fc.args.answer}". Visual card updated. Ask the next question.`, fc.name);
-    } else {
-      sendToolResponse(session, fc.id, "No active guided flow. Call startGuidedFlow first.", fc.name);
-    }
+    sendToClient(session, { type: "update_guided_flow", stepLabel: fc.args.stepLabel, answer: fc.args.answer });
+    sendToolResponse(session, fc.id, `Recorded: ${fc.args.stepLabel} = "${fc.args.answer}". Ask the next question.`);
 
   } else if (fc.name === "completeGuidedFlow") {
-    sendToClient(session, {
-      type: "complete_guided_flow",
-      summary: fc.args.summary,
-      recommendedServices: fc.args.recommendedServices,
-    });
-    session.guidedFlowState = null;
-    sendToolResponse(session, fc.id, `Flow complete. Summary card shown with recommendations: ${fc.args.recommendedServices}. Discuss the recommendations and offer to book a consultation.`, fc.name);
+    sendToClient(session, { type: "complete_guided_flow", summary: fc.args.summary, recommendedServices: fc.args.recommendedServices });
+    sendToolResponse(session, fc.id, "Flow complete. Discuss recommendations.");
 
   } else if (fc.name === "openBookingWidget") {
     sendToClient(session, { type: "open_booking_widget" });
-    sendToolResponse(session, fc.id, "Booking widget is now showing. The user can pick a time slot. Let them know you've pulled up the calendar.", fc.name);
+    sendToolResponse(session, fc.id, "Booking calendar showing.");
 
   } else if (fc.name === "getVisitorInsight") {
     const visitorCount = getActiveVisitorCount();
-    const pageDistribution = getActiveVisitorPages();
     const dwellSummary = Object.entries(session.dwellSections)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([section, ms]) => `${section}: ${Math.round(ms / 1000)}s`)
-      .join(", ");
-    const insight = {
-      totalActiveVisitors: visitorCount,
-      visitorsPerPage: pageDistribution,
-      userDwellTime: dwellSummary || "No dwell data yet",
-      pagesVisited: session.pagesVisited,
-      currentPage: session.currentPage,
-      exchangeCount: session.exchangeCount,
-    };
-    sendToolResponse(session, fc.id, JSON.stringify(insight), fc.name);
+      .sort((a, b) => b[1] - a[1]).slice(0, 5)
+      .map(([s, ms]) => `${s}: ${Math.round(ms / 1000)}s`).join(", ");
+    sendToolResponse(session, fc.id, JSON.stringify({
+      activeVisitors: visitorCount, pagesVisited: session.pagesVisited,
+      currentPage: session.currentPage, exchanges: session.exchangeCount,
+      dwellTime: dwellSummary || "No data yet",
+    }));
   }
 }
 
@@ -1020,11 +911,8 @@ export function setupVoiceWebSocket(httpServer: Server) {
         _audioChunkCount: 0,
         _pendingTextMessages: [],
         _audioForwardingEnabled: false,
-        activePersona: null,
-        guidedFlowState: null,
         dwellSections: {},
         annotationCount: 0,
-        cinematicActive: false,
       };
       sessions.set(sessionId, session);
     }
@@ -1146,12 +1034,13 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
   console.log("Voice WebSocket server ready on /ws/voice");
 
-  // Broadcast active visitor count to all connected clients every 15 seconds
   setInterval(() => {
     const count = getActiveVisitorCount();
-    for (const [, s] of sessions) {
-      if (s.clientWs && s.clientWs.readyState === WebSocket.OPEN) {
-        sendToClient(s, { type: "visitor_count", count });
+    if (count > 1) {
+      for (const [, s] of sessions) {
+        if (s.clientWs && s.clientWs.readyState === WebSocket.OPEN) {
+          sendToClient(s, { type: "visitor_count", count });
+        }
       }
     }
   }, 15000);
