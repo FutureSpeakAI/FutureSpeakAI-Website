@@ -288,6 +288,15 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
             );
           }
 
+          if (session._keepAliveTimer) {
+            clearInterval(session._keepAliveTimer);
+          }
+          session._keepAliveTimer = setInterval(() => {
+            if (geminiWs.readyState === WebSocket.OPEN) {
+              geminiWs.send(JSON.stringify({ realtimeInput: { activityStart: {} } }));
+            }
+          }, 15000);
+
           if (!skipGreeting) {
             const pageCtx2 = PAGE_CONTEXT[session.currentPage];
             const pageName = pageCtx2 ? pageCtx2.name : "homepage";
@@ -378,6 +387,10 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
             }
           }
 
+          if (sc.generationComplete) {
+            console.log(`[Gemini] generationComplete received (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
+          }
+
           if (sc.interrupted) {
             session.isModelSpeaking = false;
             if (
@@ -410,6 +423,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
         }
 
         if (msg.toolCall) {
+          console.log(`[Gemini] toolCall received: ${msg.toolCall.functionCalls.map((fc: any) => fc.name).join(', ')}`);
           for (const fc of msg.toolCall.functionCalls) {
             if (fc.name === "saveUserName") {
               session.userName = fc.args.name;
@@ -445,6 +459,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
               }
 
               if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                console.log(`[Gemini] Sending toolResponse for saveUserName (id=${fc.id})`);
                 session.geminiWs.send(
                   JSON.stringify({
                     toolResponse: {
@@ -600,7 +615,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
     });
 
     geminiWs.on("close", (code, reason) => {
-      console.log(`Gemini WS closed: ${code} ${reason.toString()}`);
+      console.log(`[Gemini] WS closed: code=${code} reason="${reason.toString()}" exchanges=${session.exchangeCount} greetingDelivered=${session.greetingDelivered} historyLen=${session.conversationHistory.length}`);
       session.geminiWs = null;
       session.setupComplete = false;
       if (session._keepAliveTimer) {
@@ -612,8 +627,10 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
       if (clientAlive && !session._reconnecting) {
         session._reconnecting = true;
         const isListeningReconnect = session.greetingDelivered;
-        console.log(`[Gemini] Auto-reconnecting (${isListeningReconnect ? 'listening' : 'greeting'} mode)...`);
-        connectToGemini(session, false, isListeningReconnect)
+        const hasPriorConversation = session.exchangeCount > 1 || session.conversationHistory.length > 0;
+        const reconnectIsReconnect = isListeningReconnect && hasPriorConversation;
+        console.log(`[Gemini] Auto-reconnecting (${isListeningReconnect ? 'listening' : 'greeting'} mode, ${reconnectIsReconnect ? 'with' : 'without'} conversation context)...`);
+        connectToGemini(session, reconnectIsReconnect, isListeningReconnect)
           .then(() => {
             session._reconnecting = false;
             console.log("[Gemini] Reconnection successful");
