@@ -281,6 +281,25 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
               })
             );
           }
+
+          const pageCtx = PAGE_CONTEXT[session.currentPage];
+          const pageName = pageCtx ? pageCtx.name : "homepage";
+          let greetingPrompt: string;
+          if (isReconnect) {
+            greetingPrompt = `[System: The user just reconnected. Welcome them back briefly. They are on the "${pageName}" page.]`;
+          } else if (session.userName) {
+            greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
+          } else {
+            greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
+          }
+
+          geminiWs.send(JSON.stringify({
+            clientContent: {
+              turns: [{ role: "user", parts: [{ text: greetingPrompt }] }],
+              turnComplete: true,
+            },
+          }));
+
           resolve();
           return;
         }
