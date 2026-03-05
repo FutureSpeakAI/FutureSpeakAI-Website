@@ -74,6 +74,7 @@ interface VoiceSession {
   greetingDelivered: boolean;
   _reconnecting: boolean;
   _greetingTimeout?: ReturnType<typeof setTimeout>;
+  _audioChunkCount?: number;
 }
 
 const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
@@ -315,18 +316,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
                 turnComplete: true,
               },
             }));
-
-            session._greetingTimeout = setTimeout(() => {
-              if (!session.greetingDelivered && session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
-                console.log("[Gemini] Greeting timeout, forcing listening-mode reconnect");
-                session.greetingDelivered = true;
-                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                  session.geminiWs.close();
-                }
-              }
-            }, 15000);
           } else {
-            console.log("[Gemini] Listening-mode connection ready (no greeting)");
+            console.log("[Gemini] Reconnection ready (listening mode, with conversation context)");
             if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
               session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
             }
@@ -368,27 +359,34 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeti
           if (sc.turnComplete) {
             session.isModelSpeaking = false;
             session.exchangeCount++;
+            console.log(`[Gemini] turnComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
             if (
               session.clientWs &&
               session.clientWs.readyState === WebSocket.OPEN
             ) {
               session.clientWs.send(JSON.stringify({ type: "turn_complete" }));
             }
-            if (!session.greetingDelivered && !skipGreeting) {
+            if (!session.greetingDelivered) {
               session.greetingDelivered = true;
-              console.log("[Gemini] Greeting delivered, closing for listening-mode reconnect...");
-              if (session._greetingTimeout) {
-                clearTimeout(session._greetingTimeout);
-                session._greetingTimeout = undefined;
-              }
-              if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                session.geminiWs.close();
+              console.log("[Gemini] Greeting delivered via turnComplete — now listening on same connection");
+              if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+                session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
               }
             }
           }
 
           if (sc.generationComplete) {
             console.log(`[Gemini] generationComplete received (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
+            session.isModelSpeaking = false;
+            if (!session.greetingDelivered) {
+              session.greetingDelivered = true;
+              session.exchangeCount++;
+              console.log("[Gemini] Greeting complete — now listening on same connection");
+              if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+                session.clientWs.send(JSON.stringify({ type: "turn_complete" }));
+                session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
+              }
+            }
           }
 
           if (sc.interrupted) {
@@ -762,6 +760,12 @@ export function setupVoiceWebSocket(httpServer: Server) {
         const msg = JSON.parse(data.toString());
 
         if (msg.type === "audio") {
+          if (!session._audioChunkCount) session._audioChunkCount = 0;
+          session._audioChunkCount++;
+          if (session._audioChunkCount <= 3 || session._audioChunkCount % 100 === 0) {
+            const geminiState = session.geminiWs ? session.geminiWs.readyState : -1;
+            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, dataLen=${msg.data?.length || 0})`);
+          }
           const ready = session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete;
           if (ready) {
             session.geminiWs!.send(
