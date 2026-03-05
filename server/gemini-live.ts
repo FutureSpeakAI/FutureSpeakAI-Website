@@ -1,9 +1,9 @@
 import { WebSocketServer, WebSocket } from "ws";
 import type { Server } from "http";
 import { storage } from "./storage";
+import { GoogleGenAI, type Session, type LiveServerMessage, Modality } from "@google/genai";
 
-const GEMINI_WS_URL = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent";
-const MODEL = "models/gemini-2.5-flash-native-audio-latest";
+const MODEL = "gemini-2.5-flash-native-audio-preview-12-2025";
 
 const SITE_CONTEXT = `
 FUTURESPEAK.AI — COMPLETE KNOWLEDGE BASE
@@ -81,7 +81,7 @@ interface VoiceSession {
   emailCollected: boolean;
   conversationHistory: Array<{ role: string; text: string }>;
   lastActiveAt: Date;
-  geminiWs: WebSocket | null;
+  geminiSession: Session | null;
   clientWs: WebSocket | null;
   isModelSpeaking: boolean;
   setupComplete: boolean;
@@ -140,7 +140,9 @@ setInterval(() => {
   const now = Date.now();
   for (const [id, session] of sessions) {
     if (now - session.lastActiveAt.getTime() > 30 * 60 * 1000) {
-      if (session.geminiWs) session.geminiWs.close();
+      if (session.geminiSession) {
+        try { session.geminiSession.close(); } catch (e) {}
+      }
       if (session.clientWs) session.clientWs.close();
       sessions.delete(id);
     }
@@ -201,16 +203,16 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
 }
 
 function sendToolResponse(session: VoiceSession, fcId: string, result: string) {
-  if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-    session.geminiWs.send(
-      JSON.stringify({
-        toolResponse: {
-          functionResponses: [
-            { response: { result }, id: fcId },
-          ],
-        },
-      })
-    );
+  if (session.geminiSession) {
+    try {
+      session.geminiSession.sendToolResponse({
+        functionResponses: [
+          { response: { result }, id: fcId },
+        ],
+      });
+    } catch (err: any) {
+      console.error("[Gemini] Error sending tool response:", err.message);
+    }
   }
 }
 
@@ -222,456 +224,427 @@ function sendToClient(session: VoiceSession, msg: object) {
 
 function sendQueuedTextToGemini(session: VoiceSession) {
   if (session._pendingTextMessages.length === 0) return;
-  if (!session.geminiWs || session.geminiWs.readyState !== WebSocket.OPEN) return;
+  if (!session.geminiSession) return;
   if (session.isModelSpeaking) return;
 
   const pending = session._pendingTextMessages.shift()!;
-  session.geminiWs.send(JSON.stringify({
-    clientContent: {
+  try {
+    session.geminiSession.sendClientContent({
       turns: [{ role: "user", parts: [{ text: pending.text }] }],
       turnComplete: true,
-    },
-  }));
+    });
+  } catch (err: any) {
+    console.error("[Gemini] Error sending queued text:", err.message);
+  }
 }
 
+const FUNCTION_DECLARATIONS = [
+  {
+    name: "showEmailSignupPopup",
+    description: "Shows an email signup popup form on the website for the user to type their name and email",
+  },
+  {
+    name: "saveEmailSubscriber",
+    description: "Saves a user's name and email address for newsletter subscription when they provide it verbally",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        name: { type: "STRING" as const, description: "The user's name" },
+        email: { type: "STRING" as const, description: "The user's email address" },
+      },
+      required: ["name", "email"],
+    },
+  },
+  {
+    name: "saveUserName",
+    description: "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        name: { type: "STRING" as const, description: "The user's first name or preferred name" },
+      },
+      required: ["name"],
+    },
+  },
+  {
+    name: "confirmReturningUser",
+    description: "Called when the user confirms they are a returning visitor whose name was matched.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        confirmed: { type: "BOOLEAN" as const, description: "True if the user confirmed they are the returning visitor" },
+      },
+      required: ["confirmed"],
+    },
+  },
+  {
+    name: "navigateToPage",
+    description: "Navigates the user's browser to a specific page on the FutureSpeak.AI website. Use when discussing a topic that has its own page.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        pageId: { type: "STRING" as const, description: "The page identifier: 'home', 'friday', 'declaration', 'claw', 'certification', or 'leadership'" },
+      },
+      required: ["pageId"],
+    },
+  },
+  {
+    name: "scrollToSection",
+    description: "Scrolls the page smoothly to a specific content section so the user can see what you're discussing.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        sectionId: { type: "STRING" as const, description: "The section identifier to scroll to (e.g., 'hero', 'services', 'contact-section', 'declaration-grievances')" },
+      },
+      required: ["sectionId"],
+    },
+  },
+  {
+    name: "highlightContent",
+    description: "Temporarily highlights a content section with a visual glow to draw the user's attention to it.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        sectionId: { type: "STRING" as const, description: "The section identifier to highlight" },
+        durationMs: { type: "INTEGER" as const, description: "How long the highlight should last in milliseconds (default 3000)" },
+      },
+      required: ["sectionId"],
+    },
+  },
+  {
+    name: "scrollToContact",
+    description: "Scrolls to the contact/consultation booking section on the homepage. Use when the user wants to get in touch or book a consultation.",
+  },
+  {
+    name: "cinematicSpotlight",
+    description: "Dims the page and spotlights a section. Call dismissCinematic when done.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        sectionId: { type: "STRING" as const, description: "Section to spotlight" },
+        narration: { type: "STRING" as const, description: "Optional label shown below spotlight" },
+      },
+      required: ["sectionId"],
+    },
+  },
+  {
+    name: "dismissCinematic",
+    description: "Removes cinematic spotlight, returns page to normal.",
+  },
+  {
+    name: "showAnnotation",
+    description: "Shows a floating note next to a section.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        targetId: { type: "STRING" as const, description: "Section to annotate" },
+        text: { type: "STRING" as const, description: "Note text (1-2 sentences)" },
+        position: { type: "STRING" as const, description: "'left' or 'right' (default 'right')" },
+      },
+      required: ["targetId", "text"],
+    },
+  },
+  {
+    name: "dismissAnnotations",
+    description: "Removes all floating annotations.",
+  },
+  {
+    name: "triggerInteractiveDemo",
+    description: "Shows animated visualization. IDs: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'. Call dismissDemo when done.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        demoId: { type: "STRING" as const, description: "Demo identifier" },
+      },
+      required: ["demoId"],
+    },
+  },
+  {
+    name: "dismissDemo",
+    description: "Closes the active demo.",
+  },
+  {
+    name: "adaptSitePersona",
+    description: "Reshapes site emphasis: 'developer', 'executive', 'researcher', or 'general' (reset).",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        persona: { type: "STRING" as const, description: "Visitor persona" },
+      },
+      required: ["persona"],
+    },
+  },
+  {
+    name: "startGuidedFlow",
+    description: "Starts consulting intake. Use 'consulting-intake'.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        flowId: { type: "STRING" as const, description: "Flow ID" },
+      },
+      required: ["flowId"],
+    },
+  },
+  {
+    name: "updateGuidedFlow",
+    description: "Records answer, advances guided flow.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        stepLabel: { type: "STRING" as const, description: "Step label (e.g. 'Industry')" },
+        answer: { type: "STRING" as const, description: "User's answer" },
+      },
+      required: ["stepLabel", "answer"],
+    },
+  },
+  {
+    name: "completeGuidedFlow",
+    description: "Completes guided flow, shows recommendation.",
+    parameters: {
+      type: "OBJECT" as const,
+      properties: {
+        summary: { type: "STRING" as const, description: "Recommendation summary" },
+        recommendedServices: { type: "STRING" as const, description: "Comma-separated services" },
+      },
+      required: ["summary", "recommendedServices"],
+    },
+  },
+  {
+    name: "openBookingWidget",
+    description: "Opens inline calendar for scheduling a consultation.",
+  },
+  {
+    name: "getVisitorInsight",
+    description: "Returns visitor browsing data: dwell times, pages visited, active visitor count.",
+  },
+];
+
 function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       reject(new Error("GEMINI_API_KEY not configured"));
       return;
     }
 
-    const wsUrl = `${GEMINI_WS_URL}?key=${apiKey}`;
-    const geminiWs = new WebSocket(wsUrl);
-    session.geminiWs = geminiWs;
-    session.setupComplete = false;
-
-    geminiWs.on("open", () => {
+    try {
+      const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: "v1alpha" } });
       const systemInstruction = buildSystemInstruction(session, isReconnect);
 
-      const setupMsg = {
-        setup: {
-          model: MODEL,
-          generationConfig: {
-            responseModalities: ["AUDIO"],
-            speechConfig: {
-              voiceConfig: {
-                prebuiltVoiceConfig: {
-                  voiceName: "Kore",
-                },
+      const geminiSession = await ai.live.connect({
+        model: MODEL,
+        callbacks: {
+          onopen: () => {
+            console.log("[Gemini SDK] WebSocket opened");
+          },
+          onmessage: async (msg: LiveServerMessage) => {
+            try {
+              if (msg.setupComplete) {
+                session.setupComplete = true;
+                sendToClient(session, {
+                  type: "setup_complete",
+                  sessionId: session.sessionId,
+                  isReconnect,
+                });
+
+                if (!isReconnect) {
+                  session._audioForwardingEnabled = false;
+                  const pageCtx2 = PAGE_CONTEXT[session.currentPage];
+                  const pageName = pageCtx2 ? pageCtx2.name : "homepage";
+                  let greetingPrompt: string;
+                  if (session.userName) {
+                    greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
+                  } else {
+                    greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
+                  }
+
+                  geminiSession.sendClientContent({
+                    turns: [{ role: "user", parts: [{ text: greetingPrompt }] }],
+                    turnComplete: true,
+                  });
+                  console.log("[Gemini SDK] Setup complete, greeting sent (audio forwarding paused until greeting delivered)");
+                } else {
+                  session._audioForwardingEnabled = true;
+                  console.log("[Gemini SDK] Reconnection setup complete — listening (audio forwarding enabled)");
+                  sendToClient(session, { type: "listening_ready" });
+                }
+
+                resolve();
+                return;
+              }
+
+              if (msg.serverContent) {
+                const sc = msg.serverContent;
+
+                if (sc.modelTurn && sc.modelTurn.parts) {
+                  session.isModelSpeaking = true;
+                  for (const part of sc.modelTurn.parts) {
+                    if (part.inlineData) {
+                      sendToClient(session, {
+                        type: "audio",
+                        data: part.inlineData.data,
+                        mimeType: part.inlineData.mimeType,
+                      });
+                    }
+                    if (part.text) {
+                      session.conversationHistory.push({
+                        role: "Friday",
+                        text: part.text,
+                      });
+                    }
+                  }
+                }
+
+                if (sc.turnComplete) {
+                  session.isModelSpeaking = false;
+                  session.exchangeCount++;
+                  console.log(`[Gemini SDK] turnComplete (exchanges=${session.exchangeCount})`);
+                  sendToClient(session, { type: "turn_complete" });
+                  if (!session.greetingDelivered) {
+                    session.greetingDelivered = true;
+                    session._audioForwardingEnabled = true;
+                    console.log("[Gemini SDK] Greeting delivered — audio forwarding enabled, now listening");
+                    sendToClient(session, { type: "listening_ready" });
+                  }
+                  sendQueuedTextToGemini(session);
+                }
+
+                if ((sc as any).generationComplete) {
+                  console.log(`[Gemini SDK] generationComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
+                  session.isModelSpeaking = false;
+                  if (!session.greetingDelivered) {
+                    session.greetingDelivered = true;
+                    session._audioForwardingEnabled = true;
+                    session.exchangeCount++;
+                    console.log("[Gemini SDK] Greeting complete via generationComplete — audio forwarding enabled, now listening");
+                    sendToClient(session, { type: "turn_complete" });
+                    sendToClient(session, { type: "listening_ready" });
+                  }
+                  sendQueuedTextToGemini(session);
+                }
+
+                if (sc.interrupted) {
+                  session.isModelSpeaking = false;
+                  console.log("[Gemini SDK] Model interrupted by user speech");
+                  sendToClient(session, { type: "interrupted" });
+                }
+              }
+
+              if ((msg as any).serverContent?.inputTranscript) {
+                session.conversationHistory.push({
+                  role: "User",
+                  text: (msg as any).serverContent.inputTranscript,
+                });
+                console.log(`[Gemini SDK] User said: "${(msg as any).serverContent.inputTranscript}"`);
+              }
+
+              if ((msg as any).serverContent?.outputTranscript) {
+                const existingLast =
+                  session.conversationHistory[
+                    session.conversationHistory.length - 1
+                  ];
+                if (!existingLast || existingLast.role !== "Friday") {
+                  session.conversationHistory.push({
+                    role: "Friday",
+                    text: (msg as any).serverContent.outputTranscript,
+                  });
+                }
+                console.log(`[Gemini SDK] Friday said: "${(msg as any).serverContent.outputTranscript.substring(0, 100)}..."`);
+              }
+
+              if (msg.toolCall) {
+                console.log(`[Gemini SDK] toolCall: ${msg.toolCall.functionCalls?.map((fc: any) => fc.name).join(', ')}`);
+                if (msg.toolCall.functionCalls) {
+                  for (const fc of msg.toolCall.functionCalls) {
+                    await handleToolCall(session, fc);
+                  }
+                }
+              }
+
+              if (!msg.setupComplete && !msg.serverContent && !msg.toolCall) {
+                const keys = Object.keys(msg);
+                if (keys.length > 0 && !keys.every(k => k === 'usageMetadata' || k === 'sessionResumptionUpdate' || k === 'goAway')) {
+                  console.log(`[Gemini SDK] Other message: ${keys.join(', ')}`, JSON.stringify(msg).substring(0, 300));
+                }
+                if ((msg as any).goAway) {
+                  console.log(`[Gemini SDK] Server sent goAway — session ending soon`);
+                }
+              }
+            } catch (err) {
+              console.error("[Gemini SDK] Error processing message:", err);
+            }
+          },
+          onerror: (err: any) => {
+            console.error("[Gemini SDK] WebSocket error:", err?.message || err);
+            if (!session.setupComplete) reject(new Error("Gemini connection error"));
+          },
+          onclose: (event: any) => {
+            const code = event?.code || 0;
+            const reason = event?.reason || "";
+            console.log(`[Gemini SDK] WS closed: code=${code} reason="${reason}" exchanges=${session.exchangeCount} historyLen=${session.conversationHistory.length}`);
+            session.geminiSession = null;
+            session.setupComplete = false;
+
+            const MAX_SERVER_RECONNECTS = 3;
+            const clientAlive = session.clientWs && session.clientWs.readyState === WebSocket.OPEN;
+            if (clientAlive && !session._reconnecting && session._reconnectAttempts < MAX_SERVER_RECONNECTS) {
+              session._reconnecting = true;
+              session._reconnectAttempts++;
+              const hasConversation = session.conversationHistory.length > 0;
+              const delay = Math.min(1000 * Math.pow(2, session._reconnectAttempts - 1), 8000);
+              console.log(`[Gemini SDK] Auto-reconnecting attempt ${session._reconnectAttempts}/${MAX_SERVER_RECONNECTS} in ${delay}ms (${hasConversation ? 'with' : 'without'} conversation context)...`);
+              sendToClient(session, { type: "reconnecting" });
+              setTimeout(() => {
+                connectToGemini(session, hasConversation)
+                  .then(() => {
+                    session._reconnecting = false;
+                    session._reconnectAttempts = 0;
+                    console.log("[Gemini SDK] Reconnection successful");
+                  })
+                  .catch((err) => {
+                    session._reconnecting = false;
+                    console.error("[Gemini SDK] Reconnection failed:", err.message);
+                    sendToClient(session, { type: "gemini_disconnected", reason: "reconnect_failed" });
+                  });
+              }, delay);
+              return;
+            }
+
+            if (clientAlive) {
+              sendToClient(session, { type: "gemini_disconnected", reason: "session_ended" });
+            }
+          },
+        },
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: "Kore",
               },
             },
           },
           systemInstruction: {
             parts: [{ text: systemInstruction }],
           },
-          tools: [
-            {
-              functionDeclarations: [
-                {
-                  name: "showEmailSignupPopup",
-                  description:
-                    "Shows an email signup popup form on the website for the user to type their name and email",
-                },
-                {
-                  name: "saveEmailSubscriber",
-                  description:
-                    "Saves a user's name and email address for newsletter subscription when they provide it verbally",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      name: {
-                        type: "STRING",
-                        description: "The user's name",
-                      },
-                      email: {
-                        type: "STRING",
-                        description: "The user's email address",
-                      },
-                    },
-                    required: ["name", "email"],
-                  },
-                },
-                {
-                  name: "saveUserName",
-                  description:
-                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      name: {
-                        type: "STRING",
-                        description: "The user's first name or preferred name",
-                      },
-                    },
-                    required: ["name"],
-                  },
-                },
-                {
-                  name: "confirmReturningUser",
-                  description:
-                    "Called when the user confirms they are a returning visitor whose name was matched.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      confirmed: {
-                        type: "BOOLEAN",
-                        description: "True if the user confirmed they are the returning visitor",
-                      },
-                    },
-                    required: ["confirmed"],
-                  },
-                },
-                {
-                  name: "navigateToPage",
-                  description:
-                    "Navigates the user's browser to a specific page on the FutureSpeak.AI website. Use when discussing a topic that has its own page.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      pageId: {
-                        type: "STRING",
-                        description: "The page identifier: 'home', 'friday', 'declaration', 'claw', 'certification', or 'leadership'",
-                      },
-                    },
-                    required: ["pageId"],
-                  },
-                },
-                {
-                  name: "scrollToSection",
-                  description:
-                    "Scrolls the page smoothly to a specific content section so the user can see what you're discussing.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      sectionId: {
-                        type: "STRING",
-                        description: "The section identifier to scroll to (e.g., 'hero', 'services', 'contact-section', 'declaration-grievances')",
-                      },
-                    },
-                    required: ["sectionId"],
-                  },
-                },
-                {
-                  name: "highlightContent",
-                  description:
-                    "Temporarily highlights a content section with a visual glow to draw the user's attention to it.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      sectionId: {
-                        type: "STRING",
-                        description: "The section identifier to highlight",
-                      },
-                      durationMs: {
-                        type: "INTEGER",
-                        description: "How long the highlight should last in milliseconds (default 3000)",
-                      },
-                    },
-                    required: ["sectionId"],
-                  },
-                },
-                {
-                  name: "scrollToContact",
-                  description:
-                    "Scrolls to the contact/consultation booking section on the homepage. Use when the user wants to get in touch or book a consultation.",
-                },
-                {
-                  name: "cinematicSpotlight",
-                  description: "Dims the page and spotlights a section. Call dismissCinematic when done.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      sectionId: { type: "STRING", description: "Section to spotlight" },
-                      narration: { type: "STRING", description: "Optional label shown below spotlight" },
-                    },
-                    required: ["sectionId"],
-                  },
-                },
-                {
-                  name: "dismissCinematic",
-                  description: "Removes cinematic spotlight, returns page to normal.",
-                },
-                {
-                  name: "showAnnotation",
-                  description: "Shows a floating note next to a section.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      targetId: { type: "STRING", description: "Section to annotate" },
-                      text: { type: "STRING", description: "Note text (1-2 sentences)" },
-                      position: { type: "STRING", description: "'left' or 'right' (default 'right')" },
-                    },
-                    required: ["targetId", "text"],
-                  },
-                },
-                {
-                  name: "dismissAnnotations",
-                  description: "Removes all floating annotations.",
-                },
-                {
-                  name: "triggerInteractiveDemo",
-                  description: "Shows animated visualization. IDs: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'. Call dismissDemo when done.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      demoId: { type: "STRING", description: "Demo identifier" },
-                    },
-                    required: ["demoId"],
-                  },
-                },
-                {
-                  name: "dismissDemo",
-                  description: "Closes the active demo.",
-                },
-                {
-                  name: "adaptSitePersona",
-                  description: "Reshapes site emphasis: 'developer', 'executive', 'researcher', or 'general' (reset).",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      persona: { type: "STRING", description: "Visitor persona" },
-                    },
-                    required: ["persona"],
-                  },
-                },
-                {
-                  name: "startGuidedFlow",
-                  description: "Starts consulting intake. Use 'consulting-intake'.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      flowId: { type: "STRING", description: "Flow ID" },
-                    },
-                    required: ["flowId"],
-                  },
-                },
-                {
-                  name: "updateGuidedFlow",
-                  description: "Records answer, advances guided flow.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      stepLabel: { type: "STRING", description: "Step label (e.g. 'Industry')" },
-                      answer: { type: "STRING", description: "User's answer" },
-                    },
-                    required: ["stepLabel", "answer"],
-                  },
-                },
-                {
-                  name: "completeGuidedFlow",
-                  description: "Completes guided flow, shows recommendation.",
-                  parameters: {
-                    type: "OBJECT",
-                    properties: {
-                      summary: { type: "STRING", description: "Recommendation summary" },
-                      recommendedServices: { type: "STRING", description: "Comma-separated services" },
-                    },
-                    required: ["summary", "recommendedServices"],
-                  },
-                },
-                {
-                  name: "openBookingWidget",
-                  description: "Opens inline calendar for scheduling a consultation.",
-                },
-                {
-                  name: "getVisitorInsight",
-                  description: "Returns visitor browsing data: dwell times, pages visited, active visitor count.",
-                },
-              ],
-            },
-          ],
+          tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],
         },
-      };
+      });
 
-      geminiWs.send(JSON.stringify(setupMsg));
-    });
+      session.geminiSession = geminiSession;
 
-    geminiWs.on("message", async (data: Buffer | string) => {
-      try {
-        const msg = JSON.parse(data.toString());
-
-        if (msg.setupComplete) {
-          session.setupComplete = true;
-          sendToClient(session, {
-            type: "setup_complete",
-            sessionId: session.sessionId,
-            isReconnect,
-          });
-
-          if (!isReconnect) {
-            session._audioForwardingEnabled = false;
-            const pageCtx2 = PAGE_CONTEXT[session.currentPage];
-            const pageName = pageCtx2 ? pageCtx2.name : "homepage";
-            let greetingPrompt: string;
-            if (session.userName) {
-              greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
-            } else {
-              greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
-            }
-
-            geminiWs.send(JSON.stringify({
-              clientContent: {
-                turns: [{ role: "user", parts: [{ text: greetingPrompt }] }],
-                turnComplete: true,
-              },
-            }));
-            console.log("[Gemini] Setup complete, greeting sent (audio forwarding paused until greeting delivered)");
-          } else {
-            session._audioForwardingEnabled = true;
-            console.log("[Gemini] Reconnection setup complete — listening (audio forwarding enabled)");
-            sendToClient(session, { type: "listening_ready" });
-          }
-
-          resolve();
-          return;
+      setTimeout(() => {
+        if (!session.setupComplete) {
+          try { geminiSession.close(); } catch (e) {}
+          session.geminiSession = null;
+          reject(new Error("Gemini setup timeout"));
         }
+      }, 15000);
 
-        if (msg.serverContent) {
-          const sc = msg.serverContent;
-
-          if (sc.modelTurn && sc.modelTurn.parts) {
-            session.isModelSpeaking = true;
-            for (const part of sc.modelTurn.parts) {
-              if (part.inlineData) {
-                sendToClient(session, {
-                  type: "audio",
-                  data: part.inlineData.data,
-                  mimeType: part.inlineData.mimeType,
-                });
-              }
-              if (part.text) {
-                session.conversationHistory.push({
-                  role: "Friday",
-                  text: part.text,
-                });
-              }
-            }
-          }
-
-          if (sc.turnComplete) {
-            session.isModelSpeaking = false;
-            session.exchangeCount++;
-            console.log(`[Gemini] turnComplete (exchanges=${session.exchangeCount})`);
-            sendToClient(session, { type: "turn_complete" });
-            if (!session.greetingDelivered) {
-              session.greetingDelivered = true;
-              session._audioForwardingEnabled = true;
-              console.log("[Gemini] Greeting delivered — audio forwarding enabled, now listening");
-              sendToClient(session, { type: "listening_ready" });
-            }
-            sendQueuedTextToGemini(session);
-          }
-
-          if (sc.generationComplete) {
-            console.log(`[Gemini] generationComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
-            session.isModelSpeaking = false;
-            if (!session.greetingDelivered) {
-              session.greetingDelivered = true;
-              session._audioForwardingEnabled = true;
-              session.exchangeCount++;
-              console.log("[Gemini] Greeting complete via generationComplete — audio forwarding enabled, now listening");
-              sendToClient(session, { type: "turn_complete" });
-              sendToClient(session, { type: "listening_ready" });
-            }
-            sendQueuedTextToGemini(session);
-          }
-
-          if (sc.interrupted) {
-            session.isModelSpeaking = false;
-            sendToClient(session, { type: "interrupted" });
-          }
-        }
-
-        if (msg.serverContent?.inputTranscript) {
-          session.conversationHistory.push({
-            role: "User",
-            text: msg.serverContent.inputTranscript,
-          });
-          console.log(`[Gemini] User said: "${msg.serverContent.inputTranscript}"`);
-        }
-
-        if (msg.serverContent?.outputTranscript) {
-          const existingLast =
-            session.conversationHistory[
-              session.conversationHistory.length - 1
-            ];
-          if (!existingLast || existingLast.role !== "Friday") {
-            session.conversationHistory.push({
-              role: "Friday",
-              text: msg.serverContent.outputTranscript,
-            });
-          }
-          console.log(`[Gemini] Friday said: "${msg.serverContent.outputTranscript.substring(0, 100)}..."`);
-        }
-
-        if (msg.toolCall) {
-          console.log(`[Gemini] toolCall: ${msg.toolCall.functionCalls.map((fc: any) => fc.name).join(', ')}`);
-          for (const fc of msg.toolCall.functionCalls) {
-            await handleToolCall(session, fc);
-          }
-        }
-
-        if (!msg.setupComplete && !msg.serverContent && !msg.toolCall) {
-          const keys = Object.keys(msg);
-          console.log(`[Gemini] Unhandled message type: ${keys.join(', ')}`, JSON.stringify(msg).substring(0, 300));
-        }
-      } catch (err) {
-        console.error("Error processing Gemini message:", err);
-      }
-    });
-
-    geminiWs.on("error", (err) => {
-      console.error("Gemini WebSocket error:", err.message);
-      if (!session.setupComplete) reject(err);
-    });
-
-    geminiWs.on("close", (code, reason) => {
-      const reasonStr = reason.toString();
-      console.log(`[Gemini] WS closed: code=${code} reason="${reasonStr}" exchanges=${session.exchangeCount} historyLen=${session.conversationHistory.length}`);
-      session.geminiWs = null;
-      session.setupComplete = false;
-
-      const MAX_SERVER_RECONNECTS = 3;
-      const clientAlive = session.clientWs && session.clientWs.readyState === WebSocket.OPEN;
-      if (clientAlive && !session._reconnecting && session._reconnectAttempts < MAX_SERVER_RECONNECTS) {
-        session._reconnecting = true;
-        session._reconnectAttempts++;
-        const hasConversation = session.conversationHistory.length > 0;
-        const delay = Math.min(1000 * Math.pow(2, session._reconnectAttempts - 1), 8000);
-        console.log(`[Gemini] Auto-reconnecting attempt ${session._reconnectAttempts}/${MAX_SERVER_RECONNECTS} in ${delay}ms (${hasConversation ? 'with' : 'without'} conversation context)...`);
-        sendToClient(session, { type: "reconnecting" });
-        setTimeout(() => {
-          connectToGemini(session, hasConversation)
-            .then(() => {
-              session._reconnecting = false;
-              session._reconnectAttempts = 0;
-              console.log("[Gemini] Reconnection successful");
-            })
-            .catch((err) => {
-              session._reconnecting = false;
-              console.error("[Gemini] Reconnection failed:", err.message);
-              sendToClient(session, { type: "gemini_disconnected", reason: "reconnect_failed" });
-            });
-        }, delay);
-        return;
-      }
-
-      if (clientAlive) {
-        sendToClient(session, { type: "gemini_disconnected", reason: "session_ended" });
-      }
-    });
-
-    setTimeout(() => {
-      if (!session.setupComplete) {
-        if (geminiWs.readyState === WebSocket.OPEN || geminiWs.readyState === WebSocket.CONNECTING) {
-          geminiWs.close();
-        }
-        session.geminiWs = null;
-        reject(new Error("Gemini setup timeout"));
-      }
-    }, 15000);
+    } catch (err: any) {
+      console.error("[Gemini SDK] Connection failed:", err.message);
+      reject(err);
+    }
   });
 }
 
@@ -857,9 +830,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
       }
       if (userName && !session.userName) session.userName = userName;
       if (userEmail && !session.userEmail) session.userEmail = userEmail;
-      if (session.geminiWs) {
-        session.geminiWs.close();
-        session.geminiWs = null;
+      if (session.geminiSession) {
+        try { session.geminiSession.close(); } catch (e) {}
+        session.geminiSession = null;
       }
     } else {
       let returningUser = false;
@@ -897,7 +870,7 @@ export function setupVoiceWebSocket(httpServer: Server) {
         emailCollected,
         conversationHistory: [],
         lastActiveAt: new Date(),
-        geminiWs: null,
+        geminiSession: null,
         clientWs: ws,
         isModelSpeaking: false,
         setupComplete: false,
@@ -935,22 +908,19 @@ export function setupVoiceWebSocket(httpServer: Server) {
         if (msg.type === "audio") {
           session._audioChunkCount++;
           if (session._audioChunkCount <= 3 || session._audioChunkCount % 200 === 0) {
-            const geminiState = session.geminiWs ? session.geminiWs.readyState : -1;
-            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled})`);
+            console.log(`[Audio] chunk #${session._audioChunkCount} (session=${!!session.geminiSession}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled}, dataLen=${msg.data?.length || 0})`);
           }
-          if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete && session._audioForwardingEnabled) {
-            session.geminiWs.send(
-              JSON.stringify({
-                realtimeInput: {
-                  mediaChunks: [
-                    {
-                      mimeType: "audio/pcm;rate=16000",
-                      data: msg.data,
-                    },
-                  ],
+          if (session.geminiSession && session.setupComplete && session._audioForwardingEnabled) {
+            try {
+              session.geminiSession.sendRealtimeInput({
+                audio: {
+                  data: msg.data,
+                  mimeType: "audio/pcm;rate=16000",
                 },
-              })
-            );
+              });
+            } catch (err: any) {
+              console.error("[Audio] Error forwarding to Gemini:", err.message);
+            }
           }
         } else if (msg.type === "set_name") {
           session.userName = msg.name;
@@ -960,13 +930,15 @@ export function setupVoiceWebSocket(httpServer: Server) {
           const text = "I just submitted my email through the form on the screen.";
           if (session.isModelSpeaking) {
             session._pendingTextMessages.push({ text });
-          } else if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-            session.geminiWs.send(JSON.stringify({
-              clientContent: {
+          } else if (session.geminiSession) {
+            try {
+              session.geminiSession.sendClientContent({
                 turns: [{ role: "user", parts: [{ text }] }],
                 turnComplete: true,
-              },
-            }));
+              });
+            } catch (err: any) {
+              console.error("[Gemini SDK] Error sending email confirmation:", err.message);
+            }
           }
         } else if (msg.type === "page_change") {
           const rawNewPage = msg.page || "home";
@@ -981,13 +953,15 @@ export function setupVoiceWebSocket(httpServer: Server) {
               const text = `[The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`;
               if (session.isModelSpeaking) {
                 session._pendingTextMessages.push({ text });
-              } else if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
-                session.geminiWs.send(JSON.stringify({
-                  clientContent: {
+              } else if (session.geminiSession) {
+                try {
+                  session.geminiSession.sendClientContent({
                     turns: [{ role: "user", parts: [{ text }] }],
                     turnComplete: true,
-                  },
-                }));
+                  });
+                } catch (err: any) {
+                  console.error("[Gemini SDK] Error sending page change:", err.message);
+                }
               }
             }
           }
@@ -1006,9 +980,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
     ws.on("close", async () => {
       session.clientWs = null;
-      if (session.geminiWs) {
-        session.geminiWs.close();
-        session.geminiWs = null;
+      if (session.geminiSession) {
+        try { session.geminiSession.close(); } catch (e) {}
+        session.geminiSession = null;
       }
       if (session.userName) {
         try {
