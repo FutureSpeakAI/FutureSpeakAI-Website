@@ -5698,6 +5698,8 @@ Agent B receives:
                         showEmailPopup();
                     } else if (msg.type === 'email_saved') {
                         showEmailSavedNotice(msg.name);
+                    } else if (msg.type === 'listening_ready') {
+                        setStatus('Listening...', 'listening');
                     } else if (msg.type === 'gemini_disconnected') {
                         if (isActive) {
                             setStatus('Reconnecting...', 'connecting');

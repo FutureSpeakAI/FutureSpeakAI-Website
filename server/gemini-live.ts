@@ -70,6 +70,10 @@ interface VoiceSession {
   pagesVisited: string[];
   returningUser: boolean;
   previousSummary: string | null;
+  _keepAliveTimer?: ReturnType<typeof setInterval>;
+  greetingDelivered: boolean;
+  _reconnecting: boolean;
+  _greetingTimeout?: ReturnType<typeof setTimeout>;
 }
 
 const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
@@ -164,7 +168,7 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   return instruction;
 }
 
-function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<void> {
+function connectToGemini(session: VoiceSession, isReconnect: boolean, skipGreeting: boolean = false): Promise<void> {
   return new Promise((resolve, reject) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -270,6 +274,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
       try {
         const msg = JSON.parse(data.toString());
 
+        
+
         if (msg.setupComplete) {
           session.setupComplete = true;
           if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
@@ -282,23 +288,40 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             );
           }
 
-          const pageCtx = PAGE_CONTEXT[session.currentPage];
-          const pageName = pageCtx ? pageCtx.name : "homepage";
-          let greetingPrompt: string;
-          if (isReconnect) {
-            greetingPrompt = `[System: The user just reconnected. Welcome them back briefly. They are on the "${pageName}" page.]`;
-          } else if (session.userName) {
-            greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
-          } else {
-            greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
-          }
+          if (!skipGreeting) {
+            const pageCtx2 = PAGE_CONTEXT[session.currentPage];
+            const pageName = pageCtx2 ? pageCtx2.name : "homepage";
+            let greetingPrompt: string;
+            if (isReconnect) {
+              greetingPrompt = `[System: The user just reconnected. Welcome them back briefly. They are on the "${pageName}" page.]`;
+            } else if (session.userName) {
+              greetingPrompt = `[System: The user just connected. Their name is ${session.userName}. Greet them warmly by name. They are on the "${pageName}" page. Keep it to 1-2 sentences.]`;
+            } else {
+              greetingPrompt = `[System: A new user just connected to the voice agent on the "${pageName}" page. Greet them warmly as Agent Friday. Introduce yourself briefly in 1-2 sentences and ask how you can help. Do NOT ask for their name yet — wait a couple exchanges first.]`;
+            }
 
-          geminiWs.send(JSON.stringify({
-            clientContent: {
-              turns: [{ role: "user", parts: [{ text: greetingPrompt }] }],
-              turnComplete: true,
-            },
-          }));
+            geminiWs.send(JSON.stringify({
+              clientContent: {
+                turns: [{ role: "user", parts: [{ text: greetingPrompt }] }],
+                turnComplete: true,
+              },
+            }));
+
+            session._greetingTimeout = setTimeout(() => {
+              if (!session.greetingDelivered && session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+                console.log("[Gemini] Greeting timeout, forcing listening-mode reconnect");
+                session.greetingDelivered = true;
+                if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                  session.geminiWs.close();
+                }
+              }
+            }, 15000);
+          } else {
+            console.log("[Gemini] Listening-mode connection ready (no greeting)");
+            if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+              session.clientWs.send(JSON.stringify({ type: "listening_ready" }));
+            }
+          }
 
           resolve();
           return;
@@ -341,6 +364,17 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
               session.clientWs.readyState === WebSocket.OPEN
             ) {
               session.clientWs.send(JSON.stringify({ type: "turn_complete" }));
+            }
+            if (!session.greetingDelivered && !skipGreeting) {
+              session.greetingDelivered = true;
+              console.log("[Gemini] Greeting delivered, closing for listening-mode reconnect...");
+              if (session._greetingTimeout) {
+                clearTimeout(session._greetingTimeout);
+                session._greetingTimeout = undefined;
+              }
+              if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN) {
+                session.geminiWs.close();
+              }
             }
           }
 
@@ -569,11 +603,33 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
       console.log(`Gemini WS closed: ${code} ${reason.toString()}`);
       session.geminiWs = null;
       session.setupComplete = false;
-      if (
-        session.clientWs &&
-        session.clientWs.readyState === WebSocket.OPEN
-      ) {
-        session.clientWs.send(
+      if (session._keepAliveTimer) {
+        clearInterval(session._keepAliveTimer);
+        session._keepAliveTimer = undefined;
+      }
+      
+      const clientAlive = session.clientWs && session.clientWs.readyState === WebSocket.OPEN;
+      if (clientAlive && !session._reconnecting) {
+        session._reconnecting = true;
+        const isListeningReconnect = session.greetingDelivered;
+        console.log(`[Gemini] Auto-reconnecting (${isListeningReconnect ? 'listening' : 'greeting'} mode)...`);
+        connectToGemini(session, false, isListeningReconnect)
+          .then(() => {
+            session._reconnecting = false;
+            console.log("[Gemini] Reconnection successful");
+          })
+          .catch((err) => {
+            session._reconnecting = false;
+            console.error("[Gemini] Reconnection failed:", err.message);
+            if (session.clientWs && session.clientWs.readyState === WebSocket.OPEN) {
+              session.clientWs.send(JSON.stringify({ type: "gemini_disconnected", reason: "reconnect_failed" }));
+            }
+          });
+        return;
+      }
+      
+      if (clientAlive) {
+        session.clientWs!.send(
           JSON.stringify({
             type: "gemini_disconnected",
             reason: "session_ended",
@@ -667,6 +723,8 @@ export function setupVoiceWebSocket(httpServer: Server) {
         pagesVisited: Array.from(new Set([...existingPages, currentPage])),
         returningUser,
         previousSummary,
+        greetingDelivered: false,
+        _reconnecting: false,
       };
       sessions.set(sessionId, session);
     }
@@ -687,12 +745,9 @@ export function setupVoiceWebSocket(httpServer: Server) {
         const msg = JSON.parse(data.toString());
 
         if (msg.type === "audio") {
-          if (
-            session.geminiWs &&
-            session.geminiWs.readyState === WebSocket.OPEN &&
-            session.setupComplete
-          ) {
-            session.geminiWs.send(
+          const ready = session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete;
+          if (ready) {
+            session.geminiWs!.send(
               JSON.stringify({
                 realtimeInput: {
                   mediaChunks: [
@@ -754,7 +809,7 @@ export function setupVoiceWebSocket(httpServer: Server) {
                         role: "user",
                         parts: [
                           {
-                            text: `[System: The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`,
+                            text: `[The user just navigated to the "${pageCtx.name}" page. ${pageCtx.talkingPoints} Naturally acknowledge that you notice they're looking at this page and offer to tell them about it. Keep it brief and warm — one or two sentences.]`,
                           },
                         ],
                       },
@@ -776,6 +831,14 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
     ws.on("close", async () => {
       session.clientWs = null;
+      if (session._keepAliveTimer) {
+        clearInterval(session._keepAliveTimer);
+        session._keepAliveTimer = undefined;
+      }
+      if (session._greetingTimeout) {
+        clearTimeout(session._greetingTimeout);
+        session._greetingTimeout = undefined;
+      }
       if (session.geminiWs) {
         session.geminiWs.close();
         session.geminiWs = null;
