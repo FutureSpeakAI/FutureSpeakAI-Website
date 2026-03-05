@@ -53,11 +53,7 @@ The Gemini Live API deprecated `realtimeInput.mediaChunks`. Updated to use `real
 
 Enabled `inputAudioTranscription` and `outputAudioTranscription` in the setup message so Gemini generates text transcripts of both user speech and model output.
 
-### 3. Added `realtimeInputConfig`
-
-Configured automatic activity detection with high sensitivity for both speech start and end detection, with a 1-second silence threshold.
-
-### 4. Fixed `toolResponse` Format
+### 3. Fixed `toolResponse` Format
 
 Added the required `name` field to all `FunctionResponse` objects:
 
@@ -68,6 +64,14 @@ Added the required `name` field to all `FunctionResponse` objects:
 // After:
 { response: { result }, id: fcId, name: fcName }
 ```
+
+### 4. Lean System Instruction
+
+Condensed the system instruction from ~95 lines to ~30 lines. Native audio models have tighter context constraints — a bloated system instruction can cause setup timeouts. Function descriptions in the declarations themselves carry the behavioral detail; the instruction just needs concise directives.
+
+### 5. No `realtimeInputConfig`
+
+Deliberately omitted. The default automatic activity detection works correctly. Adding explicit VAD config with string enum values risks setup rejection if the model version doesn't support the exact format.
 
 ## Features
 

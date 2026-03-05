@@ -49,39 +49,17 @@ CONVERSATION BEHAVIOR:
 - STEP_TRACKING_PLACEHOLDER
 
 SITE GUIDE CAPABILITIES:
-You can interact with the website the user is viewing. Use these capabilities proactively to make conversations vivid and engaging:
-- Call navigateToPage to take the user to a relevant page when discussing a topic (e.g., navigate to the Declaration page when talking about digital sovereignty)
-- Call scrollToSection to scroll to specific content sections so the user can see what you're discussing
-- Call highlightContent to draw the user's visual attention to a specific area as you explain it
-- Call scrollToContact when the user wants to get in touch or book a consultation
-Use these naturally — for example, "Let me show you what I mean..." then navigate or highlight. Don't overuse them, but proactively guide the user through the site as you talk.
+You can control the website as you talk. Use these proactively and naturally — say "Let me show you..." then act:
+- navigateToPage / scrollToSection / highlightContent / scrollToContact — guide users to content
+- cinematicSpotlight / dismissCinematic — dim the page and spotlight one section for dramatic narration
+- showAnnotation / dismissAnnotations — place floating notes next to content (max 3 at once)
+- triggerInteractiveDemo / dismissDemo — show animated step-by-step visualizations
+- adaptSitePersona — reshape page emphasis for 'developer', 'executive', or 'researcher' audiences
+- startGuidedFlow / updateGuidedFlow / completeGuidedFlow — structured consulting intake conversation
+- openBookingWidget — inline calendar for scheduling consultations
+- getVisitorInsight — check what sections the user lingered on and how many others are exploring the site
 
-CINEMATIC TOUR MODE:
-For dramatic effect, use cinematicSpotlight to dim the entire page and spotlight a section while you narrate it. This creates a focused, theatrical presentation effect — like a guided museum tour with lighting. Perfect for first-time visitors exploring the Declaration or cLaw Spec. Always call dismissCinematic when you're done with a section or moving on.
-
-FLOATING ANNOTATIONS:
-Use showAnnotation to place temporary explanatory notes next to content as you discuss it. Great for technical topics — you explain verbally while visual notes appear alongside the text. Call dismissAnnotations to clean up when moving to a new topic. Don't show more than 3 at once.
-
-INTERACTIVE DEMOS:
-When a user asks "how does that work?" or wants to understand a mechanism, trigger an interactive demo with triggerInteractiveDemo. Available: 'proof-of-integrity' (cLaw verification flow), 'federation-handshake' (agent trust), 'onboarding-preview' (Agent Friday setup). Narrate over the demo as it plays. Call dismissDemo when done.
-
-VISITOR PERSONA ADAPTATION:
-When you learn what kind of person you're talking to, call adaptSitePersona to reshape the page emphasis. If they're a developer, technical content and GitHub links become prominent. If they're a CTO or executive, business value and ROI take center stage. If they're a researcher, specifications and architecture shine. This creates a personalized experience. Always ask about their role within the first few exchanges.
-
-GUIDED DECISION FLOWS:
-When a visitor expresses interest in consulting services, use startGuidedFlow('consulting-intake') to begin a structured conversation. Walk them through questions about their industry, team size, AI maturity, and pain points — each answer recorded with updateGuidedFlow. When complete, call completeGuidedFlow with a tailored recommendation. This turns you into a qualification engine, not just a tour guide.
-
-BOOKING CONSULTATIONS:
-When a visitor wants to talk to Stephen or book a consultation, call openBookingWidget to show an inline calendar. Don't just scroll to a contact form — make it effortless.
-
-VISITOR INTELLIGENCE:
-Call getVisitorInsight to learn about the current visitor's behavior — which sections they've lingered on, which pages they've visited, and how many other people are currently exploring the site. Use this to make contextually aware observations: "I notice you've spent a lot of time reading about the cLaw specification — shall I walk you through how Proof of Integrity works?" or "There are a few other people exploring the site right now too."
-
-AMBIENT PRESENCE:
-You have a persistent floating presence on the page (a small orb that follows the user's scroll). It reacts to your state — glowing when speaking, pulsing when listening. The user sees this at all times during the conversation, so they know you're there.
-
-SCROLL DWELL DETECTION:
-The system tracks how long the user lingers on each section. If they spend significant time on a section, consider proactively engaging about it.
+Ask about their role early. When they want consulting, start the intake flow. Don't use every tool in every conversation.
 
 AVAILABLE SECTIONS PER PAGE:
 - home: hero, services, contact-section
@@ -305,13 +283,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           },
           inputAudioTranscription: {},
           outputAudioTranscription: {},
-          realtimeInputConfig: {
-            automaticActivityDetection: {
-              startOfSpeechSensitivity: "START_SENSITIVITY_HIGH",
-              endOfSpeechSensitivity: "END_SENSITIVITY_HIGH",
-              silenceDurationMs: 1000,
-            },
-          },
           tools: [
             {
               functionDeclarations: [
@@ -342,7 +313,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "saveUserName",
                   description:
-                    "Saves the user's name after they tell you their name in conversation. Call this whenever the user introduces themselves or tells you their name.",
+                    "Saves the user's name when they tell you. Call whenever they introduce themselves.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -426,7 +397,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "cinematicSpotlight",
                   description:
-                    "Dims the entire page and spotlights a specific section with dramatic lighting. Creates a cinematic guided tour effect. Use to draw intense visual focus while narrating. Call dismissCinematic when done.",
+                    "Dims the entire page and spotlights a specific section. Call dismissCinematic when done.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -450,7 +421,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "showAnnotation",
                   description:
-                    "Shows a floating annotation note next to a specific section. Use to add explanatory margin notes while discussing complex topics. Multiple annotations can be visible simultaneously.",
+                    "Shows a floating note next to a content section. Use for explanatory margin notes.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -478,7 +449,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "triggerInteractiveDemo",
                   description:
-                    "Launches an inline interactive visualization/demo. Available demos: 'proof-of-integrity' (shows cLaw verification flow), 'federation-handshake' (agent-to-agent trust), 'onboarding-preview' (Agent Friday setup experience). Use when the user wants to see how something works.",
+                    "Shows an animated step-by-step visualization. Available: 'proof-of-integrity', 'federation-handshake', 'onboarding-preview'. Call dismissDemo when done.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -498,7 +469,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "adaptSitePersona",
                   description:
-                    "Adapts the website's visual emphasis based on the visitor's role/interests. Use when you learn what kind of person you're talking to. 'developer' emphasizes code, specs, and GitHub links. 'executive' emphasizes ROI, strategy, and compliance. 'researcher' emphasizes technical papers, architecture, and the cLaw specification. 'general' resets to default.",
+                    "Adapts site visual emphasis for the visitor's role: 'developer', 'executive', 'researcher', or 'general' (reset).",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -513,7 +484,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "startGuidedFlow",
                   description:
-                    "Starts a guided conversational decision flow. Use 'consulting-intake' when a user wants consulting services to qualify them through questions about their industry, team size, AI maturity, and pain points. Friday should narrate each step conversationally while the UI shows a visual card.",
+                    "Starts a structured consulting intake conversation. Use 'consulting-intake' to qualify visitors through questions about their needs.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -528,7 +499,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "updateGuidedFlow",
                   description:
-                    "Advances the guided flow to the next step after receiving the user's verbal answer. Records the answer and shows the next question card.",
+                    "Records the user's answer and advances the guided flow to the next step.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -547,7 +518,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "completeGuidedFlow",
                   description:
-                    "Completes a guided flow and shows a summary card with recommendations.",
+                    "Completes a guided flow and shows a recommendation summary card.",
                   parameters: {
                     type: "OBJECT",
                     properties: {
@@ -571,7 +542,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 {
                   name: "getVisitorInsight",
                   description:
-                    "Returns data about the current visitor's browsing behavior — which sections they've lingered on, how long they've spent on each page, and how many other people are currently exploring the site. Use to make contextually aware observations.",
+                    "Returns the visitor's browsing behavior: dwell times, pages visited, and active visitor count.",
                 },
               ],
             },
