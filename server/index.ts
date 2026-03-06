@@ -5,8 +5,7 @@ import { createServer } from "http";
 import { runMigrations } from "stripe-replit-sync";
 import { getStripeSync } from "./stripe";
 import { WebhookHandlers } from "./webhookHandlers";
-// Voice agent preserved in gemini-live.ts for future use
-// import { setupVoiceWebSocket } from "./gemini-live";
+import { setupVoiceWebSocket } from "./gemini-live";
 
 const app = express();
 const httpServer = createServer(app);
@@ -120,6 +119,7 @@ app.use((req, res, next) => {
 (async () => {
   await initStripe();
   await registerRoutes(httpServer, app);
+  setupVoiceWebSocket(httpServer);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

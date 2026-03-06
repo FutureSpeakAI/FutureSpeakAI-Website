@@ -4,10 +4,11 @@
 
 This project is the **FutureSpeak.AI** marketing and consulting website, a minimalist, content-focused web presence for an enterprise AI strategy firm. It showcases services like agentic workflow design, RAG-based architectures, and AI transformation for Fortune 500 companies, founded by Stephen C. Webster.
 
-The application is a full-stack TypeScript project using React for the frontend and Express for the backend. It features six static content pages, a comprehensive invoicing and payment system, and **PromptPush** AI explanation buttons for contextual site guidance.
+The application is a full-stack TypeScript project using React for the frontend and Express for the backend. It features six static content pages, a comprehensive invoicing and payment system, **Agent Friday** — an AI voice agent powered by Google Gemini, and **PromptPush** AI explanation buttons for contextual site guidance.
 
 ### Key Capabilities
 
+- **Agent Friday Voice Agent**: Real-time voice conversations via Gemini Live API raw WebSocket. Features include page-aware context, function calling for navigation/highlighting/name capture/email signup, cross-session memory, and audio-reactive site visuals.
 - **PromptPush AI Buttons**: "Have Your AI Explain" buttons in the header navbar and at the bottom of each major content section, powered by PromptPush.ai external script.
 - **Static Content Delivery**: Dedicated pages for services, product showcase (Agent Friday), and thought leadership.
 - **Agent Friday Product Page**: Highlights "The World's First AGI OS" with detailed features, an interactive 3D model, and an open-source ecosystem.
@@ -27,7 +28,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Architecture
 
--   **Primary UI**: `client/index.html` — a self-contained ~5100-line static HTML single-page app with inline CSS, JS, and Three.js animations. This is the production site. Vite serves it in development via `server/vite.ts` (using `transformIndexHtml`). The React SPA in `client/src/` is unused scaffolding from the project template.
+-   **Primary UI**: `client/index.html` — a self-contained ~6000-line static HTML single-page app with inline CSS, JS, and Three.js animations. This is the production site. Vite serves it in development via `server/vite.ts` (using `transformIndexHtml`). The React SPA in `client/src/` is unused scaffolding from the project template.
 -   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `about`.
 -   **Styling**: Tailwind CSS via CDN (`cdn.tailwindcss.com`), Inter and Fira Code fonts, custom CSS variables for navy/cyan/purple theme.
 -   **3D Visuals**: Three.js (CDN import map) for background particle lattice and interactive cube animations.
@@ -45,9 +46,12 @@ Preferred communication style: Simple, everyday language.
     -   **Email Services**: Utilizes Resend for sending invoice emails (with attachments), certification inquiry notifications, and payment confirmations.
     -   **Signatory Management**: API for collecting and listing signatories for the Declaration of Digital Independence.
     -   **Certification Inquiries**: API for submitting and storing certification program inquiries.
--   **Voice Agent (Deactivated)**: Gemini voice agent code preserved in `server/gemini-live.ts` for future use but not wired up. The import and `setupVoiceWebSocket()` call are commented out in `server/index.ts`.
--   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and contextual `-ctx` buttons on all major pages via `<script src="https://promptpush.ai/scripts/1.0.0/promptpush.js"></script>`.
--   **Contextual Button Styling**: Page-level AI buttons use `.ctx-action-bar` CSS class — a frosted glass bar with gradient accent, "Explore" label, divider, and PromptPush widget integrated inline.
+-   **Voice Agent (Friday)**: Gemini voice agent via raw WebSocket to `wss://generativelanguage.googleapis.com` (`server/gemini-live.ts`), model `gemini-2.5-flash-native-audio-latest`. Uses raw WebSocket protocol (not the `@google/genai` SDK) for the Gemini BidiGenerateContent streaming API. Features: Kore voice, page-aware context with `PAGE_CONTEXT` map, function calling for name capture (`saveUserName`), returning-user recognition (`confirmReturningUser`), email signup (`showEmailSignupPopup`, `saveEmailSubscriber`), site navigation (`navigateToPage`, `scrollToSection`, `highlightContent`, `scrollToContact`), cross-session memory via `voice_sessions` DB table, AudioWorklet-based PCM capture/playback at 16kHz in / 24kHz out, session persistence via localStorage, auto-reconnect, and text message queuing.
+    -   **Page ID Mapping**: Server uses `claw`/`leadership` keys; client HTML uses `claw-spec`/`about` IDs. Mapping handled bidirectionally.
+    -   **Two-Tier AI Button System**: Top-of-page navbar buttons ("Have Your AI Explain" / "Have Agent Friday Explain") persist site-wide; contextual bottom-of-page buttons placed after major content sections with page-specific prompts.
+    -   **Email Subscribers**: Database table for collecting email signups from voice agent or popup form.
+    -   **PromptPush Integration**: Custom AI analyst widget embedded in header nav and contextual `-ctx` buttons on all major pages.
+    -   **Audio-Reactive Visuals**: When Agent Friday speaks, the site's visuals pulse with her voice via `window.fridaySmoothedLevel` (0-1).
 -   **Authentication**: Admin routes are password-protected via an `x-admin-password` header checked against a `SESSION_SECRET` environment variable.
 
 ### Data Storage
@@ -100,4 +104,12 @@ Preferred communication style: Simple, everyday language.
 -   `DATABASE_URL`: PostgreSQL connection string.
 -   `SESSION_SECRET`: Admin password for invoice management.
 -   `REPLIT_DOMAINS`: Used for webhook URL and payment link generation.
--   `GEMINI_API_KEY`: Google Gemini API key (preserved for future voice agent use).
+-   `GEMINI_API_KEY`: Google Gemini API key for Friday voice agent.
+
+### Voice Model
+-   **Model**: `gemini-2.5-flash-native-audio-latest` (via raw WebSocket to `v1beta` BidiGenerateContent endpoint)
+-   **Voice**: Kore (warm American female)
+-   **Connection**: Raw WebSocket — NOT using `@google/genai` SDK
+
+### Contextual Button Styling
+-   Page-level AI buttons use `.ctx-action-bar` CSS class — a frosted glass bar with gradient accent, "Explore" label, dividers, PromptPush widget, and voice button integrated inline.
