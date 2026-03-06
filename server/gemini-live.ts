@@ -385,8 +385,14 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             isReconnect,
           });
 
+          // Enable audio forwarding IMMEDIATELY for both new sessions and
+          // reconnects. Gemini's own VAD + barge-in handles the case where
+          // the user speaks during the greeting. The previous design gated
+          // audio until after greeting turnComplete, which caused the user's
+          // first reply to be dropped entirely (audio arrived before gate opened).
+          session._audioForwardingEnabled = true;
+
           if (!isReconnect) {
-            session._audioForwardingEnabled = false;
             const pageCtx2 = PAGE_CONTEXT[session.currentPage];
             const pageName = pageCtx2 ? pageCtx2.name : "homepage";
             let greetingPrompt: string;
@@ -402,9 +408,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
                 turnComplete: true,
               },
             }));
-            console.log("[Gemini] Setup complete, greeting sent (audio forwarding paused until greeting delivered)");
+            console.log("[Gemini] Setup complete — greeting sent, audio forwarding ENABLED immediately");
           } else {
-            session._audioForwardingEnabled = true;
             console.log("[Gemini] Reconnection setup complete — listening (audio forwarding enabled)");
             sendToClient(session, { type: "listening_ready" });
           }
@@ -752,15 +757,16 @@ export function setupVoiceWebSocket(httpServer: Server) {
             console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled})`);
           }
           if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete && session._audioForwardingEnabled) {
+            // Use the `audio` field, not the deprecated `mediaChunks` array.
+            // Native audio models (gemini-2.5-flash-native-audio-*) require
+            // the `audio` format; `mediaChunks` is silently ignored by them.
             session.geminiWs.send(
               JSON.stringify({
                 realtimeInput: {
-                  mediaChunks: [
-                    {
-                      mimeType: "audio/pcm;rate=16000",
-                      data: msg.data,
-                    },
-                  ],
+                  audio: {
+                    mimeType: "audio/pcm;rate=16000",
+                    data: msg.data,
+                  },
                 },
               })
             );
