@@ -11,7 +11,7 @@ The application is a full-stack TypeScript project using React for the frontend 
 - **Agent Friday Voice Agent**: Real-time voice conversations via Gemini Live API raw WebSocket. Features include page-aware context, function calling for navigation/highlighting/name capture/email signup, cross-session memory, and audio-reactive site visuals.
 - **PromptPush AI Buttons**: "Have Your AI Explain" buttons in the header navbar and at the bottom of each major content section, powered by PromptPush.ai external script.
 - **Static Content Delivery**: Dedicated pages for services, product showcase (Agent Friday), and thought leadership.
-- **Agent Friday Product Page**: Highlights "The World's First AGI OS" with detailed features, an interactive 3D model, and an open-source ecosystem.
+- **Agent Friday Product Page**: Highlights local-first AI powered by open-source Hugging Face models, with detailed features, an interactive 3D model, and an open-source ecosystem.
 - **Declaration of Digital Independence**: A manifesto page with a live signatory form.
 - **cLaw Specification**: A formal technical standard for AI agent governance.
 - **Asimov Agent Certification Program**: Details certification levels, process, and includes an inquiry form.

@@ -11,8 +11,8 @@ FUTURESPEAK.AI — COMPLETE KNOWLEDGE BASE
 == COMPANY OVERVIEW ==
 FutureSpeak.AI is an enterprise AI strategy and consulting firm founded by Stephen C. Webster, based in Austin, Texas. The firm designs agentic workflows, RAG-based architectures, and AI transformation strategies for Fortune 500 companies in regulated industries.
 
-== AGENT FRIDAY — THE WORLD'S FIRST AGI OS ==
-Agent Friday is a desktop AI operating system — not a chatbot, not an assistant. It's a voice-first AI chief of staff that talks, listens, remembers, learns your patterns, tracks your professional relationships, and evolves its personality over time. Think Jarvis meets the emotional depth of "Her," running locally on your machine with full privacy. Features include: 200+ AI models, relationship intelligence, voice-first interface, local execution for privacy, and it's an "Asimov Agent" — governed by cryptographic laws it cannot break. Agent Friday is open source under the MIT license and available on GitHub at FutureSpeakAI/Agent-Friday.
+== AGENT FRIDAY — LOCAL-FIRST AI YOU CAN TRUST ==
+Agent Friday is a local-first AI assistant — not a chatbot, not an assistant app that phones home. It runs 100% on your machine using open-source models from Hugging Face, and scales in power depending on your hardware. Cloud and frontier AI models are available, but the system tries every local option first and never connects without your permission. That's how we prioritize data ownership. Features include: voice-first interaction, relationship intelligence, desktop automation, and it's an "Asimov Agent" — governed by cryptographic laws it cannot break. Agent Friday is open source under the MIT license and available on GitHub at FutureSpeakAI/Agent-Friday.
 
 == THE DECLARATION OF DIGITAL INDEPENDENCE ==
 A manifesto for sovereign computing in the age of artificial intelligence, published by FutureSpeak.AI as stewards of the Asimov Federation. It addresses the fundamental grievances of the digital age: corporate exploitation of user data, surveillance capitalism, platform lock-in, algorithmic manipulation, and the concentration of AI power in the hands of a few mega-corporations. It calls for digital sovereignty — the right of every individual to own their data, control their AI, and participate in a decentralized digital economy free from corporate overreach.
@@ -100,8 +100,8 @@ const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
     talkingPoints: "The user is on the consulting/homepage. Focus on FutureSpeak.AI's enterprise AI consulting services: agentic workflow design, RAG architecture, AI compliance for regulated industries, AI safety & governance, and training. Mention Stephen's background training Gemini, LLaMA 3, and his Fortune 500 consulting experience at Aquent Studios."
   },
   friday: {
-    name: "Agent Friday — The World's First AGI OS",
-    talkingPoints: "The user is viewing the Agent Friday page. Explain that Agent Friday is a desktop AI operating system — voice-first, runs locally, manages relationships, tracks professional networks, and is governed by cryptographic laws (cLaws) that cannot be broken. It's open source on GitHub. Think Jarvis meets 'Her.'"
+    name: "Agent Friday — Local-First AI You Can Trust",
+    talkingPoints: "The user is viewing the Agent Friday page. Explain that Agent Friday is a local-first AI assistant — runs 100% on your machine using open-source models from Hugging Face. Scales with your hardware. Cloud AI is available but only with permission — the system tries every local option first. Voice-first, manages relationships, tracks professional networks, and is governed by cryptographic laws (cLaws) that cannot be broken. It's open source on GitHub."
   },
   declaration: {
     name: "The Declaration of Digital Independence",
