@@ -29,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 
 -   **Primary UI**: `client/index.html` — a self-contained ~6000-line static HTML single-page app with inline CSS, JS, and Three.js animations. This is the production site. Vite serves it in development via `server/vite.ts` (using `transformIndexHtml`). The React SPA in `client/src/` is unused scaffolding from the project template.
--   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `about`.
+-   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `about`. Leadership link is in the footer (not the topbar).
 -   **Styling**: Tailwind CSS via CDN (`cdn.tailwindcss.com`), Inter and Fira Code fonts, custom CSS variables for navy/cyan/purple theme.
 -   **3D Visuals**: Three.js (CDN import map) for background particle lattice and interactive cube animations.
 -   **SEO**: Static meta tags, structured data (ProfessionalService, SoftwareApplication, WebSite, BreadcrumbList, Person), OG tags, Twitter cards.
