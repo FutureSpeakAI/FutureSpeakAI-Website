@@ -176,10 +176,11 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   if (isReconnect) {
     instruction += "\n\nIMPORTANT: This is a seamless continuation of an ongoing conversation. Do NOT greet the user, do NOT introduce yourself, and do NOT say welcome back. Just continue naturally as if there was no interruption. The user should not notice any break in the conversation.\n";
     if (session.conversationHistory.length > 0) {
-      const recentHistory = session.conversationHistory.slice(-20);
-      instruction += "\nRecent conversation context:\n";
+      const recentHistory = session.conversationHistory.slice(-10);
+      instruction += "\nRecent conversation context (last few exchanges):\n";
       for (const entry of recentHistory) {
-        instruction += `${entry.role}: ${entry.text}\n`;
+        const truncated = entry.text.length > 200 ? entry.text.slice(0, 200) + '...' : entry.text;
+        instruction += `${entry.role}: ${truncated}\n`;
       }
     }
   }
@@ -412,8 +413,18 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             }));
             console.log("[Gemini] Setup complete — greeting sent, audio forwarding ENABLED immediately");
           } else {
-            console.log("[Gemini] Reconnection setup complete — listening (audio forwarding enabled)");
+            console.log("[Gemini] Reconnection setup complete — sending continuation prompt");
             sendToClient(session, { type: "listening_ready" });
+
+            const continuationPrompt = session.userName
+              ? `[System: Connection was briefly interrupted but is now restored. Continue the conversation naturally. Do NOT re-greet or re-introduce yourself. Just say something brief like "Sorry about that little hiccup — I'm back. Where were we?" and wait for ${session.userName} to continue.]`
+              : `[System: Connection was briefly interrupted but is now restored. Continue the conversation naturally. Do NOT re-greet or re-introduce yourself. Just say something brief like "Sorry about that — I'm back. Go ahead!" and wait for the user to continue.]`;
+            geminiWs.send(JSON.stringify({
+              clientContent: {
+                turns: [{ role: "user", parts: [{ text: continuationPrompt }] }],
+                turnComplete: true,
+              },
+            }));
           }
 
           resolve();

@@ -6183,6 +6183,7 @@ Agent B receives:
 
         async function startVoice() {
             isActive = true;
+            reconnectAttempts = 0;
             overlay.classList.add('visible');
             updateVoiceButtons(true);
             setStatus('Starting...', 'connecting');
