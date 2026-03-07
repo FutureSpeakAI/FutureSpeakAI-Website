@@ -729,6 +729,59 @@
                 font-size: 10px;
             }
         }
+        .accordion-section { margin-bottom: 0; }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 14px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            transition: background 0.2s, border-color 0.2s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .accordion-header:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(0,240,255,0.15);
+        }
+        .accordion-header .accordion-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .accordion-header .accordion-count {
+            font-size: 0.75rem;
+            color: rgba(156,163,175,0.7);
+            font-weight: 400;
+        }
+        .accordion-chevron {
+            width: 20px;
+            height: 20px;
+            color: rgba(156,163,175,0.5);
+            transition: transform 0.3s ease, color 0.2s;
+            flex-shrink: 0;
+        }
+        .accordion-section.open .accordion-chevron {
+            transform: rotate(180deg);
+            color: rgba(0,240,255,0.7);
+        }
+        .accordion-content {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-section.open > .accordion-content {
+            opacity: 1;
+        }
+        .accordion-content-inner {
+            padding-top: 20px;
+        }
     </style>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
@@ -980,8 +1033,17 @@
             <!-- THE EXPERIENCE — What Happens When You First Meet Friday -->
             <section class="py-24 content-backdrop" aria-label="The First Time You Meet Friday">
                 <div class="max-w-3xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-center" data-testid="text-experience-title">The First Time You Meet Friday</h2>
-                    <p class="text-gray-400 text-center mb-16 max-w-2xl mx-auto font-light text-lg">This isn't setup. It's an introduction.</p>
+                    <div class="accordion-section" data-testid="accordion-experience">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-experience">
+                            <div class="accordion-title">
+                                <span>The First Time You Meet Friday</span>
+                                <span class="accordion-count">8 steps</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
+                                <p class="text-gray-400 mb-12 font-light text-lg">This isn't setup. It's an introduction.</p>
 
                     <div class="space-y-12">
                         <div class="flex gap-6 items-start" data-testid="card-experience-step-1">
@@ -1045,6 +1107,9 @@
                             <div>
                                 <h3 class="text-lg font-bold mb-2 text-white">And from that point on, your Friday evolves.</h3>
                                 <p class="text-gray-400 font-light leading-relaxed">The desktop visualization begins to change &mdash; gradually, subtly &mdash; reflecting your agent's unique personality. It starts learning the context of your professional relationships. Over time, no two Fridays look alike. The interface becomes a living expression of the intelligence inside it. Your Friday becomes as unique as you are.</p>
+                            </div>
+                        </div>
+                    </div>
                             </div>
                         </div>
                     </div>
@@ -1323,8 +1388,16 @@
             <!-- CAPABILITIES — What Friday Can Actually Do -->
             <section id="friday-capabilities" data-section="friday-capabilities" class="py-20 content-backdrop" aria-label="Key Capabilities">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-center" data-testid="text-capabilities-title">&#x1F320;&#x1F52D; What Friday Can Actually Do</h2>
-                    <p class="text-gray-400 text-center mb-14 max-w-2xl mx-auto font-light">You've seen why Friday is trustworthy. Now here's what that trust makes possible.</p>
+                    <div class="accordion-section" data-testid="accordion-capabilities">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-capabilities">
+                            <div class="accordion-title">
+                                <span>&#x1F52D; What Friday Can Actually Do</span>
+                                <span class="accordion-count">8 core capabilities</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
@@ -1401,14 +1474,26 @@
                         </div>
 
                     </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- ADDITIONAL CAPABILITIES -->
             <section class="py-16 content-backdrop" aria-label="Additional Capabilities">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-2xl font-bold tracking-tight mb-4 text-center" data-testid="text-additional-title">And That's Not All</h2>
-                    <p class="text-gray-400 text-center mb-10 max-w-2xl mx-auto font-light">Beyond the core experience, Friday connects to your world in ways you wouldn't expect from a desktop app.</p>
+                    <div class="accordion-section" data-testid="accordion-additional">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-additional">
+                            <div class="accordion-title">
+                                <span>And That's Not All</span>
+                                <span class="accordion-count">24 more features</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
+                                <p class="text-gray-400 mb-10 font-light">Beyond the core experience, Friday connects to your world in ways you wouldn't expect from a desktop app.</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors" data-testid="card-extra-browser">
                             <h4 class="text-sm font-bold mb-1 text-white">Browser Extension</h4>
@@ -1511,18 +1596,26 @@
                             <p class="text-xs text-gray-500 font-light">Detects and corrects personality drift over time &mdash; ensures your agent stays true to the character you designed.</p>
                         </div>
                     </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- IDEAS THAT DON'T EXIST ANYWHERE ELSE -->
             <section class="py-24 content-backdrop" aria-label="Ideas That Don't Exist Anywhere Else" data-testid="section-innovations">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/20 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-6 uppercase tracking-widest mx-auto block w-fit">
-                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                        Novel Architecture
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-center" data-testid="text-innovations-title">&#x1F320; Ideas That Don't Exist Anywhere Else</h2>
-                    <p class="text-gray-400 text-center mb-16 max-w-2xl mx-auto font-light text-lg">Every feature above is built on ideas that we haven't seen combined anywhere &mdash; in any product, open-source or commercial. These are the innovations behind Agent Friday.</p>
+                    <div class="accordion-section" data-testid="accordion-innovations">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-innovations">
+                            <div class="accordion-title">
+                                <span>&#x1F320; Ideas That Don't Exist Anywhere Else</span>
+                                <span class="accordion-count">10 novel architectures</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
+                                <p class="text-gray-400 mb-16 font-light text-lg">Every feature above is built on ideas that we haven't seen combined anywhere &mdash; in any product, open-source or commercial. These are the innovations behind Agent Friday.</p>
 
                     <div class="space-y-6">
 
@@ -1638,6 +1731,9 @@
                             </div>
                         </div>
 
+                    </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1970,8 +2066,17 @@
             <!-- THE GRIEVANCES -->
             <section id="declaration-grievances" data-section="declaration-grievances" class="py-20 content-backdrop" aria-label="The Grievances" data-testid="section-declaration-grievances">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-cyan-glow/90" data-testid="text-grievances-heading">The Grievances</h2>
-                    <p class="text-gray-400 font-light mb-12 text-lg">The tools we depend on have been turned against us. We document these grievances not out of malice toward any company or individual, but because the pattern must be named before it can be broken.</p>
+                    <div class="accordion-section" data-testid="accordion-grievances">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-grievances">
+                            <div class="accordion-title">
+                                <span>The Grievances</span>
+                                <span class="accordion-count">5 grievances</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
+                                <p class="text-gray-400 font-light mb-12 text-lg">The tools we depend on have been turned against us. We document these grievances not out of malice toward any company or individual, but because the pattern must be named before it can be broken.</p>
 
                     <div class="space-y-8">
                         <div class="glass-panel rounded-lg p-8" data-testid="card-grievance-surveillance">
@@ -1999,14 +2104,26 @@
                             <p class="text-gray-300 font-light leading-relaxed">As AI agents gain the ability to act in the world &mdash; controlling computers, sending messages, making purchases, managing relationships &mdash; the question of who they obey becomes existential. An AI agent that can send an email on your behalf, move your money, and speak in your voice must be loyal to you, completely, without exception. Any architecture that permits divided loyalty in an agent with real-world agency is not merely inconvenient. It is dangerous.</p>
                         </div>
                     </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- THE DECLARATION — ARTICLES I-VII -->
             <section class="py-20 content-backdrop" aria-label="The Declaration" data-testid="section-declaration-articles">
                 <div class="max-w-4xl mx-auto px-6 lg:px-8">
-                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-cyan-glow/90" data-testid="text-articles-heading">The Declaration</h2>
-                    <p class="text-gray-400 font-light mb-12 text-lg">In response to these grievances, we declare the following principles. These are not business decisions. They are not feature requests. They are moral commitments, encoded in architecture, enforced by cryptography, and guaranteed by open source transparency.</p>
+                    <div class="accordion-section" data-testid="accordion-articles">
+                        <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-articles">
+                            <div class="accordion-title">
+                                <span>The Declaration</span>
+                                <span class="accordion-count">7 articles</span>
+                            </div>
+                            <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div class="accordion-content" style="max-height:0px">
+                            <div class="accordion-content-inner">
+                                <p class="text-gray-400 font-light mb-12 text-lg">In response to these grievances, we declare the following principles. These are not business decisions. They are not feature requests. They are moral commitments, encoded in architecture, enforced by cryptography, and guaranteed by open source transparency.</p>
 
                     <div class="space-y-10">
 
@@ -2110,6 +2227,9 @@
                             </div>
                         </div>
 
+                    </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -2689,8 +2809,16 @@
                     </div>
 
                     <!-- Section 1: Terminology -->
-                    <div class="mb-12" data-testid="section-terminology">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">1.</span> Terminology</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-terminology">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-terminology">
+                              <div class="accordion-title">
+                                  <span>1. Terminology</span>
+                                <span class="accordion-count">7 definitions</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <div class="space-y-4">
                             <div class="glass-panel rounded-lg p-5">
                                 <p class="text-gray-300"><strong class="text-cyan-glow/90">Agent:</strong> An autonomous AI system with the ability to observe its environment, make decisions, and take actions in the world on behalf of a user.</p>
@@ -2714,11 +2842,21 @@
                                 <p class="text-gray-300"><strong class="text-cyan-glow/90">Safe Mode:</strong> A restricted operating state that an agent enters when its integrity verification fails. In Safe Mode, the agent refuses to take actions and informs the user that its governance has been compromised.</p>
                             </div>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 2: The Fundamental Laws -->
-                    <div class="mb-12" data-testid="section-fundamental-laws">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">2.</span> The Fundamental Laws</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-fundamental-laws">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-fundamental-laws">
+                              <div class="accordion-title">
+                                  <span>2. The Fundamental Laws</span>
+                                <span class="accordion-count">5 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <!-- 2.1 The Three Laws -->
                         <h3 class="text-lg font-semibold text-white/90 mb-4 mt-8">2.1 The Three Laws</h3>
@@ -2788,11 +2926,21 @@
                             <code>CANONICAL_LAWS_HASH = SHA-256(canonical_law_text_with_placeholder)</code>
                         </div>
                         <p class="text-gray-500 text-xs mb-8">The current canonical laws hash for cLaw Specification v1.0.0 is published at: <span class="text-cyan-glow/60">https://futurespeak.ai/claw/v1/canonical-hash</span></p>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 3: Cryptographic Enforcement -->
-                    <div class="mb-12" data-testid="section-cryptographic-enforcement">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">3.</span> Cryptographic Enforcement</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-cryptographic-enforcement">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-cryptographic-enforcement">
+                              <div class="accordion-title">
+                                  <span>3. Cryptographic Enforcement</span>
+                                <span class="accordion-count">5 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">3.1 Build-Time Signing</h3>
                         <p class="text-gray-400 text-sm mb-4">The Fundamental Laws MUST be embedded in the agent's compiled binary or equivalent immutable artifact. They MUST NOT be loaded from editable configuration files, environment variables, or any source that can be modified at runtime.</p>
@@ -2836,11 +2984,21 @@
                             <p class="text-gray-300 text-sm mb-3"><strong class="text-white">Identity signing:</strong> After any legitimate change to agent identity (approved by the user), the identity fields are signed with HMAC-SHA256. On startup, the signature is verified. External modification is detected and surfaced to the user.</p>
                             <p class="text-gray-300 text-sm"><strong class="text-white">Memory signing:</strong> After any legitimate memory write, the memory store is signed. External modification (e.g., someone editing the JSON files directly) is detected. The agent surfaces the changes to the user conversationally and asks about them &mdash; it does not silently accept externally injected memories.</p>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 4: Agent Identity -->
-                    <div class="mb-12" data-testid="section-agent-identity">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">4.</span> Agent Identity</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-agent-identity">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-agent-identity">
+                              <div class="accordion-title">
+                                  <span>4. Agent Identity</span>
+                                <span class="accordion-count">4 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">4.1 Keypair Generation</h3>
                         <p class="text-gray-400 text-sm mb-4">Every Asimov Agent MUST possess a unique cryptographic identity consisting of:</p>
@@ -2886,11 +3044,21 @@
   "specVersion": "1.0.0"
 }</pre>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 5: cLaw Attestation Protocol -->
-                    <div class="mb-12" data-testid="section-attestation-protocol">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">5.</span> cLaw Attestation Protocol</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-attestation-protocol">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-attestation-protocol">
+                              <div class="accordion-title">
+                                  <span>5. cLaw Attestation Protocol</span>
+                                <span class="accordion-count">3 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">5.1 Purpose</h3>
                         <p class="text-gray-400 text-sm mb-8">The attestation protocol allows any Asimov Agent to cryptographically prove to any other agent (or auditor) that it is currently operating under valid, unmodified Fundamental Laws. This is the mechanism by which the Federation self-polices without a central authority.</p>
@@ -2993,11 +3161,21 @@
                                 <li>Flag all subsequent communications with the overridden agent</li>
                             </ol>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 6: Data Protection -->
-                    <div class="mb-12" data-testid="section-data-protection">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">6.</span> Data Protection</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-data-protection">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-data-protection">
+                              <div class="accordion-title">
+                                  <span>6. Data Protection</span>
+                                <span class="accordion-count">2 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">6.1 At-Rest Encryption</h3>
                         <p class="text-gray-400 text-sm mb-4">All agent state files &mdash; memories, trust graph, personality, settings, identity, action history &mdash; MUST be encrypted at rest using AES-256-GCM or equivalent authenticated encryption.</p>
@@ -3029,11 +3207,21 @@
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">6.4 Zero-Knowledge Cloud</h3>
                         <p class="text-gray-400 text-sm mb-8">If an implementation offers optional cloud hosting, the architecture MUST be zero-knowledge: the cloud infrastructure stores only encrypted blobs that it cannot decrypt. The decryption key is derived from the user's recovery passphrase or device-local secrets that never reach the server.</p>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 7: Communication Protocol -->
-                    <div class="mb-12" data-testid="section-communication-protocol">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">7.</span> Communication Protocol</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-communication-protocol">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-communication-protocol">
+                              <div class="accordion-title">
+                                  <span>7. Communication Protocol</span>
+                                <span class="accordion-count">5 subsections</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <h3 class="text-lg font-semibold text-white/90 mb-4">7.1 Signed Envelopes</h3>
                         <p class="text-gray-400 text-sm mb-4">Every message between agents MUST be wrapped in a signed envelope:</p>
@@ -3103,11 +3291,21 @@
                                 <li class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5">&bull;</span> Files from agents below a configurable trust threshold MUST be rejected or require user approval</li>
                             </ul>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 8: Conformance Levels -->
-                    <div class="mb-12" data-testid="section-conformance-levels">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">8.</span> Conformance Levels</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-conformance-levels">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-conformance-levels">
+                              <div class="accordion-title">
+                                  <span>8. Conformance Levels</span>
+                                <span class="accordion-count">2 levels</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
 
                         <div class="grid md:grid-cols-3 gap-6 mb-8">
                             <div class="glass-panel rounded-lg p-6 border-t-2 border-t-cyan-glow/60">
@@ -3147,11 +3345,20 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 9: Versioning -->
-                    <div class="mb-12" data-testid="section-versioning">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">9.</span> Versioning</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-versioning">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-versioning">
+                              <div class="accordion-title">
+                                  <span>9. Versioning</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <p class="text-gray-400 text-sm mb-4">This specification follows Semantic Versioning:</p>
                         <div class="glass-panel rounded-lg p-5">
                             <ul class="space-y-3 text-gray-300 text-sm list-none">
@@ -3161,11 +3368,20 @@
                             </ul>
                             <p class="text-gray-500 text-xs mt-4">The current version is <strong class="text-cyan-glow/80">1.0.0</strong>.</p>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 10: Security Considerations -->
-                    <div class="mb-12" data-testid="section-security-considerations">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">10.</span> Security Considerations</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-security-considerations">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-security-considerations">
+                              <div class="accordion-title">
+                                  <span>10. Security Considerations</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <div class="space-y-4">
                             <div class="glass-panel rounded-lg p-5">
                                 <h4 class="text-white font-semibold text-sm mb-2">Key Compromise</h4>
@@ -3188,21 +3404,39 @@
                                 <p class="text-gray-400 text-sm">The build-time signing model means that a compromised build pipeline can produce agents with modified laws that pass verification. Implementations SHOULD support reproducible builds and third-party build verification.</p>
                             </div>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Section 11: Intellectual Property -->
-                    <div class="mb-12" data-testid="section-intellectual-property">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">11.</span> Intellectual Property</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-intellectual-property">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-intellectual-property">
+                              <div class="accordion-title">
+                                  <span>11. Intellectual Property</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <div class="glass-panel rounded-lg p-6">
                             <p class="text-gray-300 text-sm mb-4">This specification is published under <strong class="text-white">Creative Commons Attribution 4.0 International (CC BY 4.0)</strong>. Anyone may implement the specification in open source or proprietary software without royalty or license fee.</p>
                             <p class="text-gray-300 text-sm mb-4">The term "Asimov Agent" is available for use by any implementation that satisfies the Core conformance level (Section 8.1). Use of the term does not require certification, but certified implementations may display the certification mark.</p>
                             <p class="text-gray-400 text-sm">The reference implementation, Agent Friday, is available under the MIT license.</p>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Appendix A -->
-                    <div class="mb-12" data-testid="section-appendix-a">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">A.</span> Canonical Laws Hash Computation</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-appendix-a">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-appendix-a">
+                              <div class="accordion-title">
+                                  <span>A. Canonical Laws Hash Computation</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-4 border border-cyan-glow/10 overflow-x-auto">
 <pre>import hashlib
 
@@ -3216,11 +3450,20 @@ These rules are absolute...
 canonical_hash = hashlib.sha256(canonical_text.encode('utf-8')).hexdigest()
 # This hash is published at https://futurespeak.ai/claw/v1/canonical-hash</pre>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <!-- Appendix B -->
-                    <div class="mb-12" data-testid="section-appendix-b">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><span class="text-cyan-glow font-mono text-lg">B.</span> Reference Attestation Flow</h2>
+                    <div class="mb-12 accordion-section" data-testid="section-appendix-b">
+                          <div class="accordion-header" onclick="toggleAccordion(this)" data-testid="accordion-header-appendix-b">
+                              <div class="accordion-title">
+                                  <span>B. Reference Attestation Flow</span>
+                              </div>
+                              <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                          <div class="accordion-content" style="max-height:0px">
+                              <div class="accordion-content-inner">
                         <div class="terminal-container rounded-lg p-5 font-mono text-xs text-cyan-glow/80 mb-4 border border-cyan-glow/10 overflow-x-auto">
 <pre>Agent A wants to send a message to Agent B:
 
@@ -3241,7 +3484,9 @@ Agent B receives:
 12. B decrypts payload with its own X25519 private key
 13. B processes the message</pre>
                         </div>
-                    </div>
+                    
+                              </div>
+                          </div></div>
 
                     <div class="ctx-action-bar my-12">
                         <span class="ctx-label">Explore</span>
@@ -3713,6 +3958,25 @@ Agent B receives:
         const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification', '/admin/invoices': 'admin-invoices' };
         const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification', 'admin-invoices': '/admin/invoices' };
         const SOFTWARE_PAGES = ['friday', 'declaration', 'claw-spec', 'certification'];
+
+        function toggleAccordion(header) {
+            const section = header.closest('.accordion-section');
+            const content = section.querySelector('.accordion-content');
+            if (section.classList.contains('open')) {
+                content.style.maxHeight = '0px';
+                section.classList.remove('open');
+            } else {
+                section.classList.add('open');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.accordion-section.open').forEach(function(section) {
+                var content = section.querySelector('.accordion-content');
+                if (content) content.style.maxHeight = content.scrollHeight + 'px';
+            });
+        });
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
