@@ -33,6 +33,7 @@ Preferred communication style: Simple, everyday language.
 -   **Styling**: Tailwind CSS compiled at build time via PostCSS (`client/tailwind.css` → `tailwind.config.ts`). Custom colors: navy-900/800, cyan-glow, purple-accent, pink-accent. Fonts: Inter (sans), Fira Code (mono).
 -   **3D Visuals**: Three.js (CDN import map) for background particle lattice and interactive cube animations.
 -   **SEO**: Static meta tags, structured data (ProfessionalService, SoftwareApplication, WebSite, BreadcrumbList, Person), OG tags, Twitter cards.
+-   **Collapsible Sections**: Accordion components on Agent Friday (onboarding steps, capabilities, additional features, innovations), Declaration (grievances, articles), and cLaw Spec (all numbered sections + appendices). Uses CSS max-height transitions + JS `toggleAccordion()`. All start collapsed by default. Keyboard accessible (Enter/Space) with ARIA attributes.
 -   **Specific UI/UX Elements**: Interactive 3D fractured cube with ripple effects on the Agent Friday page, glass-panel cards for grievances and articles on the Declaration page, and terminal-styled code blocks on the cLaw Specification page.
 
 ### Backend Architecture

@@ -742,6 +742,11 @@
             transition: background 0.2s, border-color 0.2s;
             user-select: none;
             -webkit-user-select: none;
+            outline: none;
+        }
+        .accordion-header:focus-visible {
+            border-color: rgba(0,240,255,0.4);
+            box-shadow: 0 0 0 2px rgba(0,240,255,0.15);
         }
         .accordion-header:hover {
             background: rgba(255,255,255,0.04);
@@ -3962,19 +3967,35 @@ Agent B receives:
         function toggleAccordion(header) {
             const section = header.closest('.accordion-section');
             const content = section.querySelector('.accordion-content');
-            if (section.classList.contains('open')) {
+            const isOpen = section.classList.contains('open');
+            if (isOpen) {
                 content.style.maxHeight = '0px';
                 section.classList.remove('open');
+                header.setAttribute('aria-expanded', 'false');
             } else {
                 section.classList.add('open');
                 content.style.maxHeight = content.scrollHeight + 'px';
+                header.setAttribute('aria-expanded', 'true');
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.accordion-header').forEach(function(header) {
+                header.setAttribute('role', 'button');
+                header.setAttribute('tabindex', '0');
+                header.setAttribute('aria-expanded', 'false');
+                header.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleAccordion(header);
+                    }
+                });
+            });
             document.querySelectorAll('.accordion-section.open').forEach(function(section) {
                 var content = section.querySelector('.accordion-content');
                 if (content) content.style.maxHeight = content.scrollHeight + 'px';
+                var header = section.querySelector('.accordion-header');
+                if (header) header.setAttribute('aria-expanded', 'true');
             });
         });
 
