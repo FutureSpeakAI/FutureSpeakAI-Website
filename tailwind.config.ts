@@ -11,7 +11,13 @@ export default {
         sm: ".1875rem", /* 3px */
       },
       colors: {
-        // Flat / base colors (regular buttons)
+        navy: {
+          900: '#060B19',
+          800: '#0F172A',
+        },
+        cyan: { glow: '#00F0FF' },
+        purple: { accent: '#8A2BE2' },
+        pink: { accent: '#FF006E' },
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",
@@ -83,9 +89,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
         serif: ["var(--font-serif)"],
-        mono: ["var(--font-mono)"],
       },
       keyframes: {
         "accordion-down": {

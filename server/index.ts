@@ -24,22 +24,18 @@ async function initStripe() {
   }
 
   try {
-    console.log('Initializing Stripe schema...');
     await runMigrations({ databaseUrl });
-    console.log('Stripe schema ready');
 
     const stripeSync = await getStripeSync();
 
-    console.log('Setting up managed webhook...');
     const webhookBaseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    const webhookResult = await stripeSync.findOrCreateManagedWebhook(
+    await stripeSync.findOrCreateManagedWebhook(
       `${webhookBaseUrl}/api/stripe/webhook`
     );
-    console.log('Webhook configured:', JSON.stringify(webhookResult?.webhook?.url || webhookResult || 'ok'));
 
     stripeSync.syncBackfill()
-      .then(() => console.log('Stripe data synced'))
-      .catch((err: any) => console.error('Error syncing Stripe data:', err));
+      .then(() => console.log('Stripe ready'))
+      .catch((err: any) => console.error('Stripe sync error:', err));
   } catch (error) {
     console.error('Failed to initialize Stripe:', error);
   }
@@ -78,6 +74,14 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), geolocation=()');
+  next();
+});
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

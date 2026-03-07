@@ -15,7 +15,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
@@ -223,27 +222,7 @@
     }
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: {
-                            900: '#060B19',
-                            800: '#0F172A',
-                        },
-                        cyan: { glow: '#00F0FF' },
-                        purple: { accent: '#8A2BE2' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="/tailwind.css">
     <!-- Import map to fix module resolution for Three.js in a module script -->
     <script type="importmap">
     {
@@ -3982,7 +3961,7 @@ Agent B receives:
             fetch('/api/signatories')
                 .then(function(r) { return r.json(); })
                 .then(renderSignatories)
-                .catch(function() {});
+                .catch(function(err) { console.warn('[Signatories] Failed to load:', err); });
         }
 
         var signForm = document.getElementById('sign-declaration-form');
@@ -5288,7 +5267,7 @@ Agent B receives:
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ paymentIntentId: redirectPiId })
                     });
-                } catch (e) {}
+                } catch (e) { console.warn('[Payment] Redirect confirmation error:', e); }
                 loadingEl.classList.add('hidden');
                 successEl.classList.remove('hidden');
                 history.replaceState(null, '', '/pay/' + invoiceId);
@@ -5560,7 +5539,7 @@ Agent B receives:
         }
 
         function clearPlayback() {
-            currentSources.forEach(function(s) { try { s.stop(); } catch(e) {} });
+            currentSources.forEach(function(s) { try { s.stop(); } catch(e) { /* expected if source already stopped */ } });
             currentSources = [];
             playbackQueue = [];
             nextPlayTime = 0;
@@ -5683,7 +5662,7 @@ Agent B receives:
                     } catch (workletErr) {
                         console.warn('[Voice] AudioWorklet failed, falling back to ScriptProcessorNode:', workletErr.message);
                         // Clean up any partial worklet state before falling through
-                        if (workletNode) { try { workletNode.disconnect(); } catch(e) {} workletNode = null; }
+                        if (workletNode) { try { workletNode.disconnect(); } catch(e) { console.warn('[Voice] Worklet disconnect error:', e); } workletNode = null; }
                     }
                 }
 
@@ -5713,8 +5692,8 @@ Agent B receives:
         }
 
         function stopAudioCapture() {
-            if (workletNode) { try { workletNode.disconnect(); } catch(e) {} workletNode = null; }
-            if (audioContext) { try { audioContext.close(); } catch(e) {} audioContext = null; }
+            if (workletNode) { try { workletNode.disconnect(); } catch(e) { /* cleanup */ } workletNode = null; }
+            if (audioContext) { try { audioContext.close(); } catch(e) { /* cleanup */ } audioContext = null; }
             if (mediaStream) { mediaStream.getTracks().forEach(function(t) { t.stop(); }); mediaStream = null; }
         }
 

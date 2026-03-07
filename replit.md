@@ -30,7 +30,7 @@ Preferred communication style: Simple, everyday language.
 
 -   **Primary UI**: `client/index.html` — a self-contained ~6000-line static HTML single-page app with inline CSS, JS, and Three.js animations. This is the production site. Vite serves it in development via `server/vite.ts` (using `transformIndexHtml`). The React SPA in `client/src/` is unused scaffolding from the project template.
 -   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `about`. Leadership link is in the footer (not the topbar).
--   **Styling**: Tailwind CSS via CDN (`cdn.tailwindcss.com`), Inter and Fira Code fonts, custom CSS variables for navy/cyan/purple theme.
+-   **Styling**: Tailwind CSS compiled at build time via PostCSS (`client/tailwind.css` → `tailwind.config.ts`). Custom colors: navy-900/800, cyan-glow, purple-accent, pink-accent. Fonts: Inter (sans), Fira Code (mono).
 -   **3D Visuals**: Three.js (CDN import map) for background particle lattice and interactive cube animations.
 -   **SEO**: Static meta tags, structured data (ProfessionalService, SoftwareApplication, WebSite, BreadcrumbList, Person), OG tags, Twitter cards.
 -   **Specific UI/UX Elements**: Interactive 3D fractured cube with ripple effects on the Agent Friday page, glass-panel cards for grievances and articles on the Declaration page, and terminal-styled code blocks on the cLaw Specification page.

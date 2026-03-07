@@ -445,7 +445,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           if (sc.turnComplete) {
             session.isModelSpeaking = false;
             session.exchangeCount++;
-            console.log(`[Gemini] turnComplete (exchanges=${session.exchangeCount})`);
+            if (session.exchangeCount <= 3) console.log(`[Gemini] turnComplete (exchange #${session.exchangeCount})`);
             sendToClient(session, { type: "turn_complete" });
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
@@ -457,7 +457,6 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
           }
 
           if (sc.generationComplete) {
-            console.log(`[Gemini] generationComplete (exchanges=${session.exchangeCount}, greetingDelivered=${session.greetingDelivered})`);
             session.isModelSpeaking = false;
             if (!session.greetingDelivered) {
               session.greetingDelivered = true;
@@ -481,7 +480,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             role: "User",
             text: msg.serverContent.inputTranscription.text,
           });
-          console.log(`[Gemini] User said: "${msg.serverContent.inputTranscription.text}"`);
+          console.log(`[Gemini] User: "${msg.serverContent.inputTranscription.text.substring(0, 80)}${msg.serverContent.inputTranscription.text.length > 80 ? '...' : ''}"`);
         }
 
         if (msg.serverContent?.outputTranscription?.text) {
@@ -495,7 +494,7 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
               text: msg.serverContent.outputTranscription.text,
             });
           }
-          console.log(`[Gemini] Friday said: "${msg.serverContent.outputTranscription.text.substring(0, 100)}..."`);
+          console.log(`[Gemini] Friday: "${msg.serverContent.outputTranscription.text.substring(0, 80)}${msg.serverContent.outputTranscription.text.length > 80 ? '...' : ''}"`);
         }
 
         if (msg.toolCall) {
@@ -758,9 +757,8 @@ export function setupVoiceWebSocket(httpServer: Server) {
 
         if (msg.type === "audio") {
           session._audioChunkCount++;
-          if (session._audioChunkCount <= 3 || session._audioChunkCount % 200 === 0) {
-            const geminiState = session.geminiWs ? session.geminiWs.readyState : -1;
-            console.log(`[Audio] chunk #${session._audioChunkCount} (geminiWs=${geminiState}, setup=${session.setupComplete}, fwd=${session._audioForwardingEnabled})`);
+          if (session._audioChunkCount === 1 || session._audioChunkCount % 500 === 0) {
+            console.log(`[Audio] chunk #${session._audioChunkCount}`);
           }
           if (session.geminiWs && session.geminiWs.readyState === WebSocket.OPEN && session.setupComplete && session._audioForwardingEnabled) {
             // Use the `audio` field, not the deprecated `mediaChunks` array.
