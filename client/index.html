@@ -3586,29 +3586,83 @@ Agent B receives:
                         </div>
                     </div>
 
-                    <div class="glass-panel rounded-xl border border-purple-accent/20 p-6 mb-16" data-testid="card-podcast">
-                        <div class="flex flex-col lg:flex-row gap-6">
-                            <div class="flex-shrink-0 lg:w-80">
-                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video lg:aspect-square">
+                    <div class="mb-16">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/20 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-6 uppercase tracking-widest">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Watch &amp; Listen
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-media-title">
+                            Prefer <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-accent to-cyan-glow">Watching or Listening?</span>
+                        </h2>
+                        <p class="text-base text-gray-400 font-light leading-relaxed mb-8 max-w-3xl">
+                            Start here if you want the core argument without the math. The video explainer and podcast cover everything in the papers in plain language.
+                        </p>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+                            <div class="glass-panel rounded-xl border border-red-500/15 p-5 flex flex-col" data-testid="card-video-yesman">
+                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video mb-4">
+                                    <video controls preload="metadata" class="w-full h-full" data-testid="video-yesman-player" poster="">
+                                        <source src="/The_AI_Yes_Man.mp4" type="video/mp4">
+                                        Your browser does not support the video element.
+                                    </video>
+                                </div>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-500/20 bg-red-500/5 text-red-400 text-xs font-mono mb-3 uppercase tracking-widest w-fit">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    Watch
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2" data-testid="text-video-title">The AI "Yes-Man"</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed mb-2 flex-grow">
+                                    A visual explainer on how frontier AI models are trained to agree with you, validate your reasoning, and erode your critical thinking &mdash; the sycophancy problem at the heart of the Reverse RLHF Hypothesis, explained in plain language.
+                                </p>
+                                <a href="/The_AI_Yes_Man.mp4" download class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm w-fit mt-2" data-testid="link-download-video">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Download MP4
+                                </a>
+                            </div>
+
+                            <div class="glass-panel rounded-xl border border-purple-accent/20 p-5 flex flex-col" data-testid="card-podcast">
+                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video mb-4">
                                     <iframe src="https://drive.google.com/file/d/1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9/preview" class="w-full h-full border-0" allow="autoplay" data-testid="iframe-podcast-player"></iframe>
                                 </div>
-                            </div>
-                            <div class="flex-grow flex flex-col justify-center">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/20 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-4 uppercase tracking-widest w-fit">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/20 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-3 uppercase tracking-widest w-fit">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
                                     Listen
                                 </div>
-                                <h3 class="text-2xl font-bold text-white mb-3" data-testid="text-podcast-title">The Reverse RLHF Hypothesis &mdash; The Podcast</h3>
-                                <p class="text-sm text-gray-300 leading-relaxed mb-3">
+                                <h3 class="text-xl font-bold text-white mb-2" data-testid="text-podcast-title">The Reverse RLHF Hypothesis &mdash; The Podcast</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed mb-2 flex-grow">
                                     A deep-dive audio discussion of both whitepapers, generated by NotebookLM. Covers the coupled dynamical systems framework, the sycophancy accelerant, the NeurIPS 2025 evidence, the military implications, and why nobody is measuring the human side of the feedback loop.
                                 </p>
-                                <p class="text-xs text-gray-500 leading-relaxed mb-4">
-                                    If you prefer listening to reading, start here. The podcast walks through the full argument in conversational form &mdash; no jargon, no math, just the core ideas and why they matter.
-                                </p>
-                                <a href="https://drive.google.com/file/d/1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm w-fit" data-testid="link-podcast-drive">
+                                <a href="https://drive.google.com/file/d/1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm w-fit mt-2" data-testid="link-podcast-drive">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                     Open on Google Drive
                                 </a>
+                            </div>
+
+                        </div>
+
+                        <div class="glass-panel rounded-xl border border-cyan-glow/15 p-6" data-testid="card-paradigm-pdf">
+                            <div class="flex flex-col md:flex-row gap-6 items-start">
+                                <div class="flex-grow">
+                                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-glow/20 bg-cyan-glow/5 text-cyan-glow text-xs font-mono mb-3 uppercase tracking-widest w-fit">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                        Visual Summary
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2" data-testid="text-paradigm-title">The FutureSpeak Paradigm</h3>
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                                        A visual overview of FutureSpeak.AI's thesis, architecture, and the Reverse RLHF framework &mdash; the full paradigm at a glance. Ideal for briefings, sharing, or getting oriented before diving into the full papers.
+                                    </p>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button onclick="openParadigmViewer()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow hover:bg-cyan-glow/20 transition-colors text-sm font-medium" data-testid="button-view-paradigm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            View PDF
+                                        </button>
+                                        <a href="/The_FutureSpeak_Paradigm.pdf" download class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm" data-testid="link-download-paradigm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            Download PDF
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4683,6 +4737,34 @@ Agent B receives:
             fallback.classList.add('hidden');
             document.body.style.overflow = '';
             if (paperViewerTimeout) { clearTimeout(paperViewerTimeout); paperViewerTimeout = null; }
+        }
+
+        function openParadigmViewer() {
+            var modal = document.getElementById('paper-viewer-modal');
+            var titleEl = document.getElementById('paper-viewer-title');
+            var iframeEl = document.getElementById('paper-viewer-iframe');
+            var downloadEl = document.getElementById('paper-viewer-download');
+            var fallback = document.getElementById('paper-viewer-fallback');
+            var fallbackDl = document.getElementById('paper-viewer-fallback-download');
+            titleEl.textContent = 'The FutureSpeak Paradigm';
+            downloadEl.href = '/The_FutureSpeak_Paradigm.pdf';
+            fallbackDl.href = '/The_FutureSpeak_Paradigm.pdf';
+            fallbackDl.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Download PDF';
+            fallback.classList.add('hidden');
+            var viewerUrl = 'https://docs.google.com/gview?url=' + encodeURIComponent(location.origin + '/The_FutureSpeak_Paradigm.pdf') + '&embedded=true';
+            iframeEl.src = viewerUrl;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            if (paperViewerTimeout) clearTimeout(paperViewerTimeout);
+            paperViewerTimeout = setTimeout(function() {
+                try {
+                    var iframeDoc = iframeEl.contentDocument || iframeEl.contentWindow.document;
+                    if (!iframeDoc || !iframeDoc.body || iframeDoc.body.innerHTML.length < 100) {
+                        fallback.classList.remove('hidden');
+                    }
+                } catch(e) {}
+            }, 8000);
+            iframeEl.onload = function() { if (paperViewerTimeout) clearTimeout(paperViewerTimeout); };
         }
 
         document.addEventListener('keydown', function(e) {
