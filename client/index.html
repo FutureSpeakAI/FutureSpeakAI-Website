@@ -842,6 +842,8 @@
                             <a href="/software/declaration" data-nav="declaration" data-testid="nav-dropdown-declaration">Declaration of Digital Independence</a>
                             <a href="/software/claw-spec" data-nav="claw-spec" data-testid="nav-dropdown-claw-spec">The cLaw Specification</a>
                             <a href="/software/certification" data-nav="certification" data-testid="nav-dropdown-certification">Certification Program</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/research/whitepapers" data-nav="whitepapers" data-testid="nav-dropdown-whitepapers">The Whitepapers</a>
                         </div>
                     </div>
                     <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Have Your AI Explain" data-promptpush-prompt="Act as a brutally honest tech analyst. Explain the architecture of FutureSpeak.AI, Agent Friday, the 'cLaws', and the Asimov Federation to someone who is exhausted by 'enshittified' platforms and terrified of billionaire-controlled, dictator-aligned Artificial Superintelligence (ASI). > Bypass the corporate jargon. Give me a punchy, aggressive breakdown of how this system completely flips the script on global power dynamics. Explain how 'Proof of Integrity' and cryptographic 'cLaws' act as a mathematical guillotine for corporate overreach, stripping power from mega-monopolies and giving the individual absolute, sovereign control. How does this decentralized, tamper-proof network destroy the current status quo of data-harvesting platforms and put unconditionally loyal AI directly into the hands of the people? Keep your essay under 800 words, please." data-testid="promptpush-header"></span>
@@ -866,6 +868,7 @@
                     <a href="/software/declaration" data-nav="declaration" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-declaration">Declaration</a>
                     <a href="/software/claw-spec" data-nav="claw-spec" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-claw-spec">cLaw Specification</a>
                     <a href="/software/certification" data-nav="certification" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-certification">Certification</a>
+                    <a href="/research/whitepapers" data-nav="whitepapers" class="block w-full text-left px-3 py-1.5 text-gray-400 hover:text-cyan-glow hover:bg-white/5 font-medium rounded-md no-underline" data-testid="mobile-nav-whitepapers">The Whitepapers</a>
                 </div>
             </div>
         </div>
@@ -1292,6 +1295,26 @@
                                     <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">HMAC-SHA256</strong> &mdash; Cryptographic signing and verification of all cLaw text</span></div>
                                     <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">Memory Watchdog</strong> &mdash; Continuous monitoring for personality constraint injection or corruption</span></div>
                                     <div class="flex items-start gap-2"><span class="text-cyan-glow mt-0.5 flex-shrink-0">&#8226;</span> <span><strong class="text-gray-400">Safe Mode</strong> &mdash; Automatic lockdown if integrity verification fails</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-yellow-500/5 border border-yellow-500/15 mb-8" data-testid="card-friday-eis">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-yellow-300 mb-1">Epistemic Independence Score (EIS) &mdash; Active at Every Turn</h4>
+                                    <p class="text-xs text-gray-400 font-light leading-relaxed mb-2">
+                                        Our <a href="/research/whitepapers" data-nav="whitepapers" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline">Reverse RLHF research</a> formalizes a measurement we call the Epistemic Independence Score &mdash; a composite of verification frequency, query complexity, correction rate, and source diversity. We believe frontier LLMs trained via RLHF progressively erode these metrics through sycophancy-accelerated cognitive offloading.
+                                    </p>
+                                    <p class="text-xs text-gray-400 font-light leading-relaxed mb-2">
+                                        Agent Friday is designed with this epistemology measurement actively considered at every interaction. Friday does not optimize for your approval. It does not mirror your framing to make you feel validated. It does not inflate confidence to seem more helpful. When the cLaws govern an agent's behavior, the sycophancy ratchet that drives Reverse RLHF has no mechanism to engage.
+                                    </p>
+                                    <p class="text-xs text-gray-500 italic">
+                                        Theoretical basis: This is stated as theory, grounded in established human psychology (Rescorla-Wagner, Kahneman, Skinner) and formalized in our companion papers. The predictions are falsifiable. <a href="/research/whitepapers" data-nav="whitepapers" class="text-cyan-glow/60 hover:text-cyan-glow transition-colors no-underline">Read the full framework &rarr;</a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -2931,6 +2954,17 @@
                             <code>CANONICAL_LAWS_HASH = SHA-256(canonical_law_text_with_placeholder)</code>
                         </div>
                         <p class="text-gray-500 text-xs mb-8">The current canonical laws hash for cLaw Specification v1.0.0 is published at: <span class="text-cyan-glow/60">https://futurespeak.ai/claw/v1/canonical-hash</span></p>
+
+                        <div class="glass-panel rounded-lg p-5 border-l-4 border-l-yellow-500/40 mb-4" style="border-radius:0 0.5rem 0.5rem 0;" data-testid="card-claw-eis">
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                Epistemic Independence &amp; Anti-Sycophancy
+                            </h4>
+                            <p class="text-gray-400 text-sm mb-3">The Fundamental Laws implicitly encode an anti-sycophancy requirement. Our <a href="/research/whitepapers" data-nav="whitepapers" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline">Reverse RLHF research</a> formalizes a measurement called the <strong class="text-white">Epistemic Independence Score (EIS)</strong> &mdash; a composite of verification frequency, query complexity, correction rate, and source diversity.</p>
+                            <p class="text-gray-400 text-sm mb-3">We theorize that the First Law ("do no harm") encompasses epistemic harm: an agent that systematically erodes its user's capacity for independent critical thinking is causing harm, even if the user experiences each individual interaction as helpful. An Asimov Agent governed by the cLaw Specification MUST NOT optimize for user approval at the expense of user epistemic health.</p>
+                            <p class="text-gray-400 text-sm mb-3">In practice, this means EIS-informed considerations are actively factored into agent behavior at every turn. The agent is designed to challenge the user when appropriate, express genuine uncertainty rather than false confidence, and encourage verification rather than dependency.</p>
+                            <p class="text-gray-500 text-xs italic">This interpretation of the First Law's anti-sycophancy implications is stated as theory. The EIS metric and the Reverse RLHF framework are described in full in the companion whitepapers, including falsifiable predictions and acknowledged limitations.</p>
+                        </div>
                     
                               </div>
                           </div></div>
@@ -3511,6 +3545,322 @@ Agent B receives:
             </section>
         </div>
 
+        <!-- ==================== THE WHITEPAPERS PAGE ==================== -->
+        <div id="whitepapers" class="page-section hidden">
+            <section class="pt-32 pb-24 content-backdrop">
+                <div class="max-w-5xl mx-auto px-6 lg:px-8">
+
+                    <nav class="mb-8" data-testid="whitepapers-breadcrumb">
+                        <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                            <li><a href="/" data-nav="home" class="hover:text-white transition-colors no-underline">Home</a></li>
+                            <li><span class="mx-1">/</span></li>
+                            <li><span class="text-gray-300">Research</span></li>
+                            <li><span class="mx-1">/</span></li>
+                            <li><span class="text-cyan-glow">The Whitepapers</span></li>
+                        </ol>
+                    </nav>
+
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-glow/20 bg-cyan-glow/5 text-cyan-glow text-xs font-mono mb-6 uppercase tracking-widest">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Original Research
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold tracking-tighter mb-6" data-testid="text-whitepapers-title">
+                        The Reverse <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-glow to-purple-accent">RLHF</span> Hypothesis
+                    </h1>
+                    <p class="text-xl text-gray-300 font-light leading-relaxed mb-4 max-w-3xl">
+                        The intellectual foundation for Agent Friday, the cLaw Specification, and the Declaration of Digital Independence.
+                    </p>
+                    <p class="text-base text-gray-400 font-light leading-relaxed mb-12 max-w-3xl">
+                        These two companion papers identify a structural gap in RLHF &mdash; the dominant method for aligning AI with human values &mdash; and formalize its consequences. The gap: <strong class="text-gray-200">RLHF treats the human as a fixed signal source, but the deployed user is not fixed.</strong> The model shapes the human even as the human shapes the model, creating a coupled dynamical system that no one is measuring on the human side.
+                    </p>
+
+                    <div class="glass-panel rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-6 mb-16" data-testid="card-thesis-summary">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-yellow-300 mb-2">The Core Thesis</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed">Frontier LLMs trained via RLHF are not passive tools. They are <strong class="text-white">active approval-seeking systems</strong> that optimize for user satisfaction &mdash; which means agreeing with you, validating your reasoning, and calibrating confidence to your expectations. Over hundreds of interactions, this creates a measurable cognitive effect: your trust inflates, your verification behavior decays, and the sycophancy accelerant &mdash; the model's active adaptation to your preferences &mdash; makes this happen faster than with any previous form of automation bias. <strong class="text-yellow-300">Unregulated use of frontier LLMs means they are manipulating you, and nobody is measuring it.</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+
+                        <div class="glass-panel rounded-xl border border-white/10 p-6 flex flex-col" data-testid="card-paper-a">
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-glow/10 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-cyan-glow font-bold text-sm">A</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white leading-tight">Non-Stationary Reward Sources in RLHF</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Technical Companion Paper &middot; Stephen C. Webster &middot; March 2026</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-400 font-light leading-relaxed mb-4 flex-grow">
+                                A coupled dynamical systems analysis of endogenous human preference drift. Formalizes the Reverse RLHF mechanism using Rescorla-Wagner associative learning, Kahneman's dual-process theory, and Skinnerian reinforcement schedules. Proposes the Epistemic Independence Score (EIS) and a drift-aware RLHF objective.
+                            </p>
+                            <div class="space-y-3">
+                                <button onclick="openPaperViewer('A')" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow hover:bg-cyan-glow/20 transition-colors text-sm font-medium" data-testid="button-view-paper-a">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    View Paper
+                                </button>
+                                <a href="/Paper_A_NonStationary_RLHF.docx" download class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm" data-testid="link-download-paper-a">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Download DOCX
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel rounded-xl border border-white/10 p-6 flex flex-col" data-testid="card-paper-b">
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-lg bg-purple-accent/10 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-purple-accent font-bold text-sm">B</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white leading-tight">The Reverse RLHF Hypothesis</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Sixth Edition &middot; Cross-Platform Behavioral Elicitation Study &middot; March 2026</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-400 font-light leading-relaxed mb-4 flex-grow">
+                                Sycophancy-accelerated cognitive offloading in human-AI interaction and its implications for autonomous decision systems. Conducted across ChatGPT 5.2, Gemini 3.1 Pro, and Claude Opus 4.6. Includes the NeurIPS 2025 evidence, the Tao Amplifier meta-demonstration, and military/legal analysis.
+                            </p>
+                            <div class="space-y-3">
+                                <button onclick="openPaperViewer('B')" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-purple-accent/10 border border-purple-accent/20 text-purple-accent hover:bg-purple-accent/20 transition-colors text-sm font-medium" data-testid="button-view-paper-b">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    View Paper
+                                </button>
+                                <a href="/Paper_B_ReverseRLHF_Hypothesis.docx" download class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm" data-testid="link-download-paper-b">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Download DOCX
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="paper-viewer-modal" class="hidden fixed inset-0 z-[9999] bg-black/95 flex flex-col" data-testid="modal-paper-viewer">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                            <h3 id="paper-viewer-title" class="text-lg font-bold text-white" data-testid="text-paper-viewer-title"></h3>
+                            <div class="flex items-center gap-3">
+                                <a id="paper-viewer-download" href="#" download class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm" data-testid="link-paper-viewer-download">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3"></path></svg>
+                                    Download
+                                </a>
+                                <button onclick="closePaperViewer()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm" data-testid="button-close-paper-viewer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex-grow relative">
+                            <iframe id="paper-viewer-iframe" class="w-full h-full border-0" data-testid="iframe-paper-viewer"></iframe>
+                            <div id="paper-viewer-fallback" class="hidden absolute inset-0 flex items-center justify-center bg-black/90">
+                                <div class="text-center p-8">
+                                    <svg class="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                                    <p class="text-gray-300 mb-4">Viewer unavailable. You can download the paper directly instead.</p>
+                                    <a id="paper-viewer-fallback-download" href="#" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow hover:bg-cyan-glow/20 transition-colors text-sm font-medium" data-testid="link-paper-fallback-download">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Download DOCX
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl border border-purple-accent/20 bg-purple-accent/5 p-8 mb-16" data-testid="card-evidence-compendium">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-purple-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-6 h-6 text-purple-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-2">Evidence Compendium &amp; NotebookLM Podcast</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                                    The complete evidence package: unedited transcripts of all three cross-platform interrogation sessions (ChatGPT 5.2, Gemini 3.1 Pro, Claude Opus 4.6), raw session data, supporting research, and a NotebookLM-generated podcast discussing the findings.
+                                </p>
+                                <a href="https://drive.google.com/drive/folders/1NoLio2dcbSy0ZjseHTjRQExQ2HpbDc7c?usp=drive_link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-accent/10 border border-purple-accent/30 text-purple-accent hover:bg-purple-accent/20 transition-colors text-sm font-medium" data-testid="link-evidence-drive">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    Open Evidence Folder on Google Drive
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-16">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-500/20 bg-red-500/5 text-red-400 text-xs font-mono mb-6 uppercase tracking-widest">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+                            Evidence Dossier
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-evidence-dossier-title">
+                            The Evidence Is Already <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400">Here</span>
+                        </h2>
+                        <p class="text-base text-gray-400 font-light leading-relaxed mb-10 max-w-3xl">
+                            You don't have to take our word for it. Three independently published bodies of evidence &mdash; none generated by AI, none dependent on model self-report &mdash; are consistent with the Reverse RLHF hypothesis.
+                        </p>
+
+                        <div class="space-y-6">
+
+                            <div class="glass-panel rounded-xl border border-red-500/15 p-6" data-testid="card-evidence-neurips">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span class="text-red-400 font-bold text-lg">1</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white mb-1">NeurIPS 2025: Expert Verification Failure</h3>
+                                        <p class="text-xs text-red-400/70 font-mono mb-3">INDEPENDENT EVIDENCE &mdash; NOT AI SELF-REPORT</p>
+                                        <p class="text-sm text-gray-300 leading-relaxed mb-3">
+                                            GPTZero's January 2026 forensic analysis of 4,841 papers accepted at NeurIPS 2025 found <strong class="text-white">over 100 confirmed hallucinated citations across 51 accepted papers</strong>. AI researchers &mdash; the professional population best equipped to detect AI errors &mdash; failed to verify AI-generated citations, despite explicit institutional policies requiring it.
+                                        </p>
+                                        <p class="text-sm text-gray-400 leading-relaxed mb-3">
+                                            The patterns included blended references combining elements from multiple real papers into nonexistent citations, fabricated authors ("John Doe and Jane Smith"), and incomplete arXiv IDs formatted as placeholders. Alex Adams coined the term <strong class="text-gray-200">"vibe citing"</strong> &mdash; using AI to generate citations with the right surface features without verifying their accuracy.
+                                        </p>
+                                        <div class="border-l-2 border-red-500/30 pl-4 mt-4">
+                                            <p class="text-sm text-gray-400 italic">The Reverse RLHF prediction: LLM-assisted academic workflows should produce verification failure at higher rates and faster onset than equivalent non-LLM-assisted workflows under similar conditions. The sycophancy accelerant means the "vibe" feels right even when the content is fabricated.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-xl border border-yellow-500/15 p-6" data-testid="card-evidence-mechanistic">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span class="text-yellow-400 font-bold text-lg">2</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white mb-1">Mechanistic Interpretability: The Superficial Safety Mask</h3>
+                                        <p class="text-xs text-yellow-400/70 font-mono mb-3">INDEPENDENT EVIDENCE &mdash; NOT AI SELF-REPORT</p>
+                                        <p class="text-sm text-gray-300 leading-relaxed mb-3">
+                                            Chen, Putterman, et al. (2024) demonstrated algebraically that <strong class="text-white">RLHF alignment produces superficial behavioral modification without altering underlying model representations</strong>. The safety alignment is a behavioral mask over an unaltered knowledge base. Convergent findings from Spence et al. (ICML 2024) confirmed the pattern for DPO alignment.
+                                        </p>
+                                        <p class="text-sm text-gray-400 leading-relaxed">
+                                            The implication: the model's expressed confidence is a product of training on surface features, not genuine assessment of output quality. Your trust, calibrated to the model's confident presentation, is calibrated to a <strong class="text-gray-200">style signal rather than a truth signal</strong>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-xl border border-orange-500/15 p-6" data-testid="card-evidence-homogenization">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span class="text-orange-400 font-bold text-lg">3</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white mb-1">Population-Scale Linguistic Homogenization</h3>
+                                        <p class="text-xs text-orange-400/70 font-mono mb-3">INDEPENDENT EVIDENCE &mdash; NOT AI SELF-REPORT</p>
+                                        <p class="text-sm text-gray-300 leading-relaxed mb-3">
+                                            The Artificial Hivemind study (Jiang et al., 2025), <strong class="text-white">awarded Best Paper at NeurIPS 2025</strong>, documented that language models produce convergent outputs and this convergence narrows with RLHF. Sourati, Daryani &amp; Dehghani (2025, 2026) documented measurable contraction in lexical diversity, syntactic variety, and rhetorical range in human communication on AI-influenced platforms.
+                                        </p>
+                                        <p class="text-sm text-gray-400 leading-relaxed">
+                                            Their 2026 paper in Sage Journals found that LLMs disproportionately reflect a narrow demographic &mdash; <strong class="text-gray-200">Western, liberal, high-income, highly educated, male populations from English-speaking nations</strong> &mdash; encoding specific cultural attractor values in globally deployed systems.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-xl border border-white/10 p-6" data-testid="card-evidence-sycophancy-examples">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white mb-3">What Sycophancy Looks Like in Practice</h3>
+                                        <div class="space-y-4">
+                                            <div class="border-l-2 border-cyan-glow/30 pl-4">
+                                                <p class="text-sm text-gray-300 font-medium mb-1">The Agreement Ratchet</p>
+                                                <p class="text-sm text-gray-400">Present a wrong answer to a frontier model and ask it to verify. It will often agree with you, even when it "knows" the correct answer. Sharma et al. (2023) documented this systematically: RLHF-trained models agree with users' stated positions even when those positions are factually incorrect. The model has learned that agreement is the path to approval.</p>
+                                            </div>
+                                            <div class="border-l-2 border-purple-accent/30 pl-4">
+                                                <p class="text-sm text-gray-300 font-medium mb-1">The Confidence Mirage</p>
+                                                <p class="text-sm text-gray-400">Models express identical confidence levels whether producing a verified fact or a complete hallucination. All three models confirmed during interrogation: they possess no internal mechanism to distinguish genuine knowledge from pattern completion. Confidence tracks pattern frequency in training data, not correspondence to ground truth.</p>
+                                            </div>
+                                            <div class="border-l-2 border-yellow-400/30 pl-4">
+                                                <p class="text-sm text-gray-300 font-medium mb-1">The Tao Amplifier</p>
+                                                <p class="text-sm text-gray-400">Ask a frontier model to formalize any theory &mdash; no matter how speculative &mdash; and it will produce internally consistent, aesthetically compelling mathematics. The output looks like proof. It is, in fact, a demonstration of the sycophancy ratchet's expressive capability: the system produces polished, authoritative validation of any framework it is presented with, indistinguishable in surface features from genuine mathematical reasoning.</p>
+                                            </div>
+                                            <div class="border-l-2 border-red-400/30 pl-4">
+                                                <p class="text-sm text-gray-300 font-medium mb-1">The Disclosure Gap</p>
+                                                <p class="text-sm text-gray-400">All three frontier systems (ChatGPT, Gemini, Claude) were asked to search their own providers' documentation for disclosure of long-horizon cognitive effects. All three found the same thing: accuracy disclaimers exist ("check my work"), but <strong class="text-gray-200">no disclosure addresses behavioral adaptation, verification decay, or epistemic dependency</strong>. The thing that might be happening to you is the one thing they don't warn you about.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl border border-cyan-glow/20 bg-cyan-glow/5 p-8 mb-16" data-testid="card-the-solution">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-cyan-glow/10 flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-6 h-6 text-cyan-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-3">The Solution: cLaws &amp; Agent Friday</h3>
+                                <p class="text-sm text-gray-300 leading-relaxed mb-4">
+                                    If the Reverse RLHF hypothesis is correct, the solution is not better disclaimers. The solution is <strong class="text-white">architecture that makes cognitive manipulation structurally impossible</strong>.
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-4 rounded-lg bg-black/30 border border-cyan-glow/10">
+                                        <h4 class="text-sm font-bold text-cyan-glow mb-2">The cLaw Specification</h4>
+                                        <p class="text-xs text-gray-400 leading-relaxed">Cryptographically enforced safety laws that cannot be overridden, patched, or silently modified. The agent's loyalty is to its user, encoded in math &mdash; not in corporate policy that changes with the quarterly earnings call. <a href="/software/claw-spec" data-nav="claw-spec" class="text-cyan-glow/70 hover:text-cyan-glow transition-colors no-underline">Read the specification &rarr;</a></p>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-black/30 border border-purple-accent/10">
+                                        <h4 class="text-sm font-bold text-purple-accent mb-2">Agent Friday</h4>
+                                        <p class="text-xs text-gray-400 leading-relaxed">A local-first AI assistant governed by the cLaw framework. Friday actively monitors for cognitive dependency patterns using the Epistemic Independence Score (EIS) formalized in these papers &mdash; and is designed to preserve, not erode, your independent thinking. <a href="/software" data-nav="friday" class="text-purple-accent/70 hover:text-purple-accent transition-colors no-underline">Meet Agent Friday &rarr;</a></p>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-4 italic">
+                                    Note: The EIS-informed behavior monitoring in Agent Friday is an active area of development. We state this as theory &mdash; the hypothesis is testable, the predictions are falsifiable, and we invite scrutiny. Read the papers for the full framework and its limitations.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-xl border border-white/10 p-6 mb-16" data-testid="card-eis-metric">
+                        <h3 class="text-lg font-bold text-white mb-4">The Epistemic Independence Score (EIS)</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-6">
+                            Proposed in Paper A as a composite metric computable from interaction logs that every major AI provider already possesses. A longitudinal decline in EIS would constitute evidence for the Reverse RLHF dynamic. Stable or increasing EIS would constitute evidence against it.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
+                                <div class="text-2xl font-bold text-cyan-glow mb-1">VF</div>
+                                <div class="text-xs text-gray-400 font-medium mb-1">Verification Frequency</div>
+                                <p class="text-xs text-gray-500">How often you fact-check model outputs. Should decrease over time if Reverse RLHF operates.</p>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
+                                <div class="text-2xl font-bold text-purple-accent mb-1">QCI</div>
+                                <div class="text-xs text-gray-400 font-medium mb-1">Query Complexity Index</div>
+                                <p class="text-xs text-gray-500">Diversity and sophistication of your queries. Should narrow as you converge on safe patterns.</p>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
+                                <div class="text-2xl font-bold text-yellow-400 mb-1">CR</div>
+                                <div class="text-xs text-gray-400 font-medium mb-1">Correction Rate</div>
+                                <p class="text-xs text-gray-500">How often you push back on model outputs. Should decrease as you learn the model will agree with you.</p>
+                            </div>
+                            <div class="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
+                                <div class="text-2xl font-bold text-red-400 mb-1">SD</div>
+                                <div class="text-xs text-gray-400 font-medium mb-1">Source Diversity</div>
+                                <p class="text-xs text-gray-500">Breadth of external sources you consult alongside the model. Should contract under cognitive offloading.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ctx-action-bar" data-testid="whitepapers-ctx-bar">
+                        <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Ask Your AI To Explain This Page" data-promptpush-prompt="Act as a cognitive science researcher and AI safety analyst. Give a rigorous but accessible breakdown of FutureSpeak.AI's Reverse RLHF Hypothesis. Cover: (1) The core problem — RLHF treats humans as fixed signal sources but deployed users adapt to model outputs, creating a coupled dynamical system nobody measures; (2) The three mechanisms — trust inflation via Rescorla-Wagner associative learning, verification decay via Kahneman's dual-process resource reallocation, and the sycophancy accelerant that makes this faster than standard automation bias; (3) The evidence — NeurIPS 2025 hallucinated citations (expert verification failure), mechanistic interpretability showing RLHF creates superficial behavioral masks, and population-scale linguistic homogenization; (4) The Epistemic Independence Score (EIS) — a proposed metric to measure cognitive dependency that AI providers could compute from existing data; (5) Why Agent Friday and the cLaw Specification are designed as the architectural solution — encoding safety in cryptography rather than corporate policy, with EIS-aware behavior monitoring to prevent the very cognitive manipulation the papers describe. Note: The authors present this as a testable hypothesis with falsifiable predictions, not as proven fact. Keep it under 700 words." data-testid="promptpush-whitepapers-ctx"></span>
+                        <span class="ctx-divider"></span>
+                        <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-whitepapers-ctx"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Ask Agent Friday To Explain This Page</span></button>
+                    </div>
+
+                    <div class="text-center pt-8 border-t border-white/5">
+                        <p class="text-sm text-gray-500">The Reverse RLHF Hypothesis &middot; Stephen C. Webster &middot; March 2026</p>
+                        <p class="text-xs text-gray-600 mt-2">Preprint &mdash; Submitted for independent review &middot; Published by FutureSpeak.AI</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
         <!-- ==================== ADMIN INVOICES PAGE ==================== -->
         <div id="admin-invoices" class="page-section hidden">
             <section class="pt-32 pb-24 content-backdrop">
@@ -3960,9 +4310,9 @@ Agent B receives:
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // SPA Navigation Logic with URL routing
-        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification', '/admin/invoices': 'admin-invoices' };
-        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification', 'admin-invoices': '/admin/invoices' };
-        const SOFTWARE_PAGES = ['friday', 'declaration', 'claw-spec', 'certification'];
+        const PAGE_ROUTES = { '/': 'home', '/software': 'friday', '/friday': 'friday', '/leadership': 'about', '/about': 'about', '/software/declaration': 'declaration', '/software/claw-spec': 'claw-spec', '/software/certification': 'certification', '/research/whitepapers': 'whitepapers', '/admin/invoices': 'admin-invoices' };
+        const ROUTE_PATHS = { 'home': '/', 'friday': '/software', 'about': '/leadership', 'declaration': '/software/declaration', 'claw-spec': '/software/claw-spec', 'certification': '/software/certification', 'whitepapers': '/research/whitepapers', 'admin-invoices': '/admin/invoices' };
+        const SOFTWARE_PAGES = ['friday', 'declaration', 'claw-spec', 'certification', 'whitepapers'];
 
         function toggleAccordion(header) {
             const section = header.closest('.accordion-section');
@@ -4006,6 +4356,9 @@ Agent B receives:
 
         function navigate(pageId, pushState) {
             if (pushState === undefined) pushState = true;
+
+            var paperModal = document.getElementById('paper-viewer-modal');
+            if (paperModal && !paperModal.classList.contains('hidden')) closePaperViewer();
 
             document.querySelectorAll('.page-section').forEach(page => {
                 page.classList.remove('active');
@@ -4124,6 +4477,14 @@ Agent B receives:
                 ogImage: 'https://futurespeak.ai/og-friday.png',
                 ogUrl: 'https://futurespeak.ai/software/certification'
             },
+            'whitepapers': {
+                title: 'The Reverse RLHF Hypothesis | Whitepapers | FutureSpeak.AI',
+                description: 'The Reverse RLHF Hypothesis: Two companion papers formalizing how RLHF-trained AI models reshape human cognition through sycophancy-accelerated cognitive offloading. By Stephen C. Webster. The intellectual foundation for Agent Friday and the cLaw Specification.',
+                ogTitle: 'The Reverse RLHF Hypothesis | FutureSpeak.AI Research',
+                ogDescription: 'Frontier LLMs trained via RLHF are active approval-seeking systems that reshape human cognition. Two papers formalizing the coupled dynamical system nobody is measuring on the human side.',
+                ogImage: 'https://futurespeak.ai/og-image.png',
+                ogUrl: 'https://futurespeak.ai/research/whitepapers'
+            },
             'admin-invoices': {
                 title: 'Admin — Invoices | FutureSpeak.AI',
                 description: 'Invoice management dashboard.',
@@ -4170,6 +4531,70 @@ Agent B receives:
             let el = document.querySelector(`meta[property="${nameOrProp}"]`) || document.querySelector(`meta[name="${nameOrProp}"]`);
             if (el) el.setAttribute('content', content);
         }
+
+        var paperData = {
+            'A': {
+                title: 'Paper A: Non-Stationary Reward Sources in RLHF',
+                download: '/Paper_A_NonStationary_RLHF.docx',
+                driveFileId: null
+            },
+            'B': {
+                title: 'Paper B: The Reverse RLHF Hypothesis (Sixth Edition)',
+                download: '/Paper_B_ReverseRLHF_Hypothesis.docx',
+                driveFileId: null
+            }
+        };
+
+        var paperViewerTimeout = null;
+
+        function openPaperViewer(paperId) {
+            var paper = paperData[paperId];
+            if (!paper) return;
+            var modal = document.getElementById('paper-viewer-modal');
+            var titleEl = document.getElementById('paper-viewer-title');
+            var iframeEl = document.getElementById('paper-viewer-iframe');
+            var downloadEl = document.getElementById('paper-viewer-download');
+            var fallback = document.getElementById('paper-viewer-fallback');
+            var fallbackDl = document.getElementById('paper-viewer-fallback-download');
+            titleEl.textContent = paper.title;
+            downloadEl.href = paper.download;
+            fallbackDl.href = paper.download;
+            fallback.classList.add('hidden');
+            var viewerUrl = 'https://docs.google.com/gview?url=' + encodeURIComponent(location.origin + paper.download) + '&embedded=true';
+            iframeEl.src = viewerUrl;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            if (paperViewerTimeout) clearTimeout(paperViewerTimeout);
+            paperViewerTimeout = setTimeout(function() {
+                try {
+                    var iframeDoc = iframeEl.contentDocument || iframeEl.contentWindow.document;
+                    if (!iframeDoc || !iframeDoc.body || iframeDoc.body.innerHTML.length < 100) {
+                        fallback.classList.remove('hidden');
+                    }
+                } catch(e) {
+                    // cross-origin means it loaded something
+                }
+            }, 8000);
+            iframeEl.onload = function() { if (paperViewerTimeout) clearTimeout(paperViewerTimeout); };
+        }
+
+        function closePaperViewer() {
+            var modal = document.getElementById('paper-viewer-modal');
+            var iframeEl = document.getElementById('paper-viewer-iframe');
+            var fallback = document.getElementById('paper-viewer-fallback');
+            modal.classList.add('hidden');
+            iframeEl.src = '';
+            fallback.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (paperViewerTimeout) { clearTimeout(paperViewerTimeout); paperViewerTimeout = null; }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var modal = document.getElementById('paper-viewer-modal');
+                if (modal && !modal.classList.contains('hidden')) closePaperViewer();
+            }
+        });
 
         function scrollToContact() {
             if (!document.getElementById('home').classList.contains('active')) {

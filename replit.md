@@ -29,11 +29,13 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 
 -   **Primary UI**: `client/index.html` — a self-contained ~6000-line static HTML single-page app with inline CSS, JS, and Three.js animations. This is the production site. Vite serves it in development via `server/vite.ts` (using `transformIndexHtml`). The React SPA in `client/src/` is unused scaffolding from the project template.
--   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `about`. Leadership link is in the footer (not the topbar).
+-   **Routing**: SPA navigation via `navigate(pageId)` function that toggles `.page-section.active` classes. Pages: `home`, `friday`, `declaration`, `claw-spec`, `certification`, `whitepapers`, `about`. Leadership link is in the footer (not the topbar). Whitepapers page at `/research/whitepapers`.
 -   **Styling**: Tailwind CSS compiled at build time via PostCSS (`client/tailwind.css` → `tailwind.config.ts`). Custom colors: navy-900/800, cyan-glow, purple-accent, pink-accent. Fonts: Inter (sans), Fira Code (mono).
 -   **3D Visuals**: Three.js (CDN import map) for background particle lattice and interactive cube animations.
 -   **SEO**: Static meta tags, structured data (ProfessionalService, SoftwareApplication, WebSite, BreadcrumbList, Person), OG tags, Twitter cards.
 -   **Collapsible Sections**: Accordion components on Agent Friday (onboarding steps, capabilities, additional features, innovations), Declaration (grievances, articles), and cLaw Spec (all numbered sections + appendices). Uses CSS max-height transitions + JS `toggleAccordion()`. All start collapsed by default. Keyboard accessible (Enter/Space) with ARIA attributes.
+-   **Whitepapers Page**: "The Reverse RLHF Hypothesis" — two companion papers (Paper A: Non-Stationary Reward Sources, Paper B: Reverse RLHF Hypothesis 6th Ed.). Viewable in fullscreen modal via Google Docs Viewer iframes, downloadable as DOCX from `/public/`. Evidence Dossier section with NeurIPS 2025, mechanistic interpretability, and linguistic homogenization evidence. Google Drive link for evidence compendium + NotebookLM podcast. EIS metric breakdown. Solution section linking to cLaws and Agent Friday. PromptPush contextual button with whitepaper-specific prompt.
+-   **EIS References**: Agent Friday page and cLaw Spec page both reference the Epistemic Independence Score (EIS) from the whitepapers, explaining that this epistemology measurement is actively considered at every agent interaction (stated as theory).
 -   **Specific UI/UX Elements**: Interactive 3D fractured cube with ripple effects on the Agent Friday page, glass-panel cards for grievances and articles on the Declaration page, and terminal-styled code blocks on the cLaw Specification page.
 
 ### Backend Architecture
