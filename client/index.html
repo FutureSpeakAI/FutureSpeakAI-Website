@@ -3548,7 +3548,7 @@ Agent B receives:
         <!-- ==================== THE WHITEPAPERS PAGE ==================== -->
         <div id="whitepapers" class="page-section hidden">
             <section class="pt-32 pb-24 content-backdrop">
-                <div class="max-w-5xl mx-auto px-6 lg:px-8">
+                <div class="max-w-5xl mx-auto px-6 lg:px-8" style="position:relative;z-index:1;">
 
                     <nav class="mb-8" data-testid="whitepapers-breadcrumb">
                         <ol class="flex items-center space-x-2 text-sm text-gray-500">
@@ -3601,8 +3601,8 @@ Agent B receives:
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
 
                             <div class="glass-panel rounded-xl border border-red-500/15 p-5 flex flex-col" data-testid="card-video-yesman">
-                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video mb-4">
-                                    <video controls preload="metadata" class="w-full h-full" data-testid="video-yesman-player" poster="">
+                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video mb-4" style="position:relative;z-index:1;">
+                                    <video controls playsinline preload="metadata" class="w-full h-full object-contain" style="position:relative;z-index:2;" data-testid="video-yesman-player">
                                         <source src="/The_AI_Yes_Man.mp4" type="video/mp4">
                                         Your browser does not support the video element.
                                     </video>
