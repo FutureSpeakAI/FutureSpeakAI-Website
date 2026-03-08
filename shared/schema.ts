@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, integer, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, integer, jsonb, uniqueIndex, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -16,10 +16,12 @@ export const signatories = pgTable("signatories", {
   name: text("name").notNull(),
   organization: text("organization"),
   title: text("title"),
+  approved: boolean("approved").default(false).notNull(),
+  approvalToken: text("approval_token"),
   signedAt: timestamp("signed_at").defaultNow().notNull(),
 });
 
-export const insertSignatorySchema = createInsertSchema(signatories).omit({ id: true, signedAt: true });
+export const insertSignatorySchema = createInsertSchema(signatories).omit({ id: true, signedAt: true, approved: true, approvalToken: true });
 export type Signatory = typeof signatories.$inferSelect;
 export type InsertSignatory = z.infer<typeof insertSignatorySchema>;
 

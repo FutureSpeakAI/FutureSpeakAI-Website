@@ -6,8 +6,11 @@ export interface IStorage {
   getConfig(): Promise<SiteConfig | undefined>;
   createConfig(config: InsertSiteConfig): Promise<SiteConfig>;
   getSignatories(): Promise<Signatory[]>;
+  getApprovedSignatories(): Promise<Signatory[]>;
   getSignatoryCount(): Promise<number>;
-  createSignatory(signatory: InsertSignatory): Promise<Signatory>;
+  createSignatory(signatory: InsertSignatory, approvalToken: string): Promise<Signatory>;
+  approveSignatory(id: number, token: string): Promise<Signatory | undefined>;
+  getSignatoryByToken(token: string): Promise<Signatory | undefined>;
   createCertificationInquiry(inquiry: InsertCertificationInquiry): Promise<CertificationInquiry>;
   createInvoice(invoice: InsertInvoice): Promise<Invoice>;
   getInvoice(id: number): Promise<Invoice | undefined>;
@@ -39,14 +42,31 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(signatories).orderBy(desc(signatories.signedAt));
   }
 
+  async getApprovedSignatories(): Promise<Signatory[]> {
+    return db.select().from(signatories).where(eq(signatories.approved, true)).orderBy(desc(signatories.signedAt));
+  }
+
   async getSignatoryCount(): Promise<number> {
-    const rows = await db.select().from(signatories);
+    const rows = await db.select().from(signatories).where(eq(signatories.approved, true));
     return rows.length;
   }
 
-  async createSignatory(signatory: InsertSignatory): Promise<Signatory> {
-    const [newSignatory] = await db.insert(signatories).values(signatory).returning();
+  async createSignatory(signatory: InsertSignatory, approvalToken: string): Promise<Signatory> {
+    const [newSignatory] = await db.insert(signatories).values({ ...signatory, approvalToken }).returning();
     return newSignatory;
+  }
+
+  async approveSignatory(id: number, token: string): Promise<Signatory | undefined> {
+    const [existing] = await db.select().from(signatories).where(eq(signatories.id, id));
+    if (!existing || existing.approvalToken !== token) return undefined;
+    if (existing.approved) return existing;
+    const [updated] = await db.update(signatories).set({ approved: true, approvalToken: null }).where(eq(signatories.id, id)).returning();
+    return updated;
+  }
+
+  async getSignatoryByToken(token: string): Promise<Signatory | undefined> {
+    const [signatory] = await db.select().from(signatories).where(eq(signatories.approvalToken, token));
+    return signatory;
   }
 
   async createCertificationInquiry(inquiry: InsertCertificationInquiry): Promise<CertificationInquiry> {

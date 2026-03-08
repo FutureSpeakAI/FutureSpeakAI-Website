@@ -6,6 +6,11 @@ import { insertSignatorySchema, insertCertificationInquirySchema, insertEmailSub
 import { getUncachableResendClient } from "./resend";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripe";
 import { z } from "zod";
+import { randomBytes } from "crypto";
+
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
 
 function adminAuth(req: Request, res: Response, next: NextFunction) {
   const password = req.headers['x-admin-password'] as string;
@@ -44,9 +49,9 @@ export async function registerRoutes(
   });
 
   app.get("/api/signatories", async (req, res) => {
-    const allSignatories = await storage.getSignatories();
-    const count = allSignatories.length;
-    res.json({ signatories: allSignatories, count });
+    const approvedSignatories = await storage.getApprovedSignatories();
+    const count = approvedSignatories.length;
+    res.json({ signatories: approvedSignatories, count });
   });
 
   app.post("/api/signatories", async (req, res) => {
@@ -54,8 +59,66 @@ export async function registerRoutes(
     if (!parsed.success) {
       return res.status(400).json({ message: "Invalid input", errors: parsed.error.flatten().fieldErrors });
     }
-    const signatory = await storage.createSignatory(parsed.data);
-    res.status(201).json(signatory);
+    const token = randomBytes(32).toString("hex");
+    const signatory = await storage.createSignatory(parsed.data, token);
+
+    const siteUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0] || 'futurespeak.ai'}`;
+    const approveUrl = `${siteUrl}/api/signatories/${signatory.id}/approve?token=${token}`;
+
+    try {
+      const { client, fromEmail } = await getUncachableResendClient();
+      await client.emails.send({
+        from: fromEmail || "onboarding@resend.dev",
+        to: "stephencwebster@gmail.com",
+        subject: `Declaration Signature Pending: ${parsed.data.name}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+            <h2 style="color:#060B19;">New Declaration Signature</h2>
+            <p>Someone has signed the Declaration of Digital Independence and is awaiting your approval to appear publicly.</p>
+            <table style="border-collapse:collapse;margin:16px 0;">
+              <tr><td style="padding:6px 12px;font-weight:bold;color:#555;">Name</td><td style="padding:6px 12px;">${escapeHtml(parsed.data.name)}</td></tr>
+              <tr><td style="padding:6px 12px;font-weight:bold;color:#555;">Organization</td><td style="padding:6px 12px;">${escapeHtml(parsed.data.organization || '—')}</td></tr>
+              <tr><td style="padding:6px 12px;font-weight:bold;color:#555;">Title</td><td style="padding:6px 12px;">${escapeHtml(parsed.data.title || '—')}</td></tr>
+              <tr><td style="padding:6px 12px;font-weight:bold;color:#555;">Signed At</td><td style="padding:6px 12px;">${new Date().toISOString()}</td></tr>
+            </table>
+            <p style="margin:24px 0;">
+              <a href="${approveUrl}" style="background:#060B19;color:#00F0FF;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">Approve This Signature</a>
+            </p>
+            <p style="color:#888;font-size:12px;">If you do not approve, no action is needed — the signature will not appear publicly.</p>
+          </div>
+        `
+      });
+    } catch (emailErr) {
+      console.error("Failed to send signature approval email:", emailErr);
+    }
+
+    res.status(201).json({ success: true, pending: true });
+  });
+
+  app.get("/api/signatories/:id/approve", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const token = req.query.token as string;
+    if (!token) return res.status(400).send("Missing token");
+
+    const signatory = await storage.approveSignatory(id, token);
+    if (!signatory) {
+      return res.status(404).send(`
+        <html><head><title>Not Found</title></head>
+        <body style="font-family:sans-serif;text-align:center;padding:60px;">
+          <h1>Signature Not Found</h1>
+          <p>This approval link may be invalid or already used.</p>
+        </body></html>
+      `);
+    }
+
+    res.send(`
+      <html><head><title>Approved</title></head>
+      <body style="font-family:sans-serif;text-align:center;padding:60px;background:#060B19;color:white;">
+        <h1 style="color:#00F0FF;">Signature Approved</h1>
+        <p><strong>${escapeHtml(signatory.name)}</strong>${signatory.organization ? ' (' + escapeHtml(signatory.organization) + ')' : ''} is now publicly visible on the Declaration of Digital Independence.</p>
+        <p style="margin-top:24px;"><a href="/" style="color:#00F0FF;">Return to FutureSpeak.AI</a></p>
+      </body></html>
+    `);
   });
 
   app.post("/api/certification-inquiry", async (req, res) => {
