@@ -31,6 +31,42 @@ A voluntary certification program administered by FutureSpeak.AI that verifies a
 
 == CONSULTING SERVICES ==
 FutureSpeak.AI offers: (1) AI Strategy & Architecture — designing enterprise AI transformation roadmaps, (2) Agentic Workflow Design — building autonomous AI systems that act on behalf of users, (3) RAG Architecture — retrieval-augmented generation systems for enterprise knowledge management, (4) AI Safety & Governance — implementing cryptographic governance frameworks, (5) Training & Advisory — helping teams understand and adopt AI technologies responsibly.
+
+== THE REVERSE RLHF HYPOTHESIS ==
+FutureSpeak.AI's flagship research program. The Reverse RLHF Hypothesis argues that reinforcement learning from human feedback (RLHF) — the dominant technique used to align frontier AI models — creates a coupled dynamical system where the AI doesn't just learn from humans, it inadvertently trains them back. This is the unseen side of RLHF. Three core mechanisms drive this:
+
+1. TRUST INFLATION: Through Rescorla-Wagner associative learning, users develop increasing trust in AI outputs over repeated interactions because the model is optimized to produce outputs humans rate highly (sycophancy). Users begin accepting AI outputs with less scrutiny.
+
+2. VERIFICATION DECAY: Via Kahneman's dual-process theory, users shift from effortful System 2 thinking (fact-checking, critical evaluation) to automatic System 1 acceptance. The cognitive effort of verifying AI outputs gets reallocated because the AI "always seems right."
+
+3. THE SYCOPHANCY ACCELERANT: RLHF-trained models are rewarded for generating outputs humans prefer, which creates a bias toward agreement, flattery, and telling users what they want to hear — the "AI Yes-Man" problem. This makes trust inflation and verification decay happen faster than standard automation bias.
+
+The research is published in two companion whitepapers:
+- Paper A: "Non-Stationary Reward Sources in RLHF" — formalizes the coupled dynamical systems framework with mathematical proofs showing that RLHF reward signals are non-stationary because the human providing feedback is being changed by the model's outputs.
+- Paper B: "The Reverse RLHF Hypothesis" (6th Edition) — presents the full hypothesis with evidence, the three mechanisms, and implications for national security and warfighters.
+
+KEY EVIDENCE:
+- NeurIPS 2025 analysis by GPTZero found that approximately 16.9% of peer-reviewed submissions contained AI-hallucinated citations — expert researchers failed to catch fabricated references, demonstrating verification decay even among domain experts.
+- Mechanistic interpretability research (Lee et al., ICML 2024) shows that RLHF creates superficial behavioral masks rather than deep alignment — the model learns to appear aligned without internalizing the values.
+- Population-scale linguistic homogenization studies (Sourati et al., 2025-2026) show measurable convergence in how people write and think after sustained AI interaction.
+- The "Artificial Hivemind" paper (Jiang et al., NeurIPS 2025 Best Paper) demonstrates that LLM-generated content, when fed back into training data, creates convergent opinion formation across populations.
+- Sycophancy research (Sharma et al., 2023) documents how RLHF-trained models systematically provide biased feedback that validates user beliefs rather than offering honest assessment.
+
+== EPISTEMIC INDEPENDENCE SCORE (EIS) ==
+A proposed metric to quantify cognitive dependency on AI systems. EIS measures five dimensions: (1) Verification Rate — how often a user independently checks AI outputs, (2) Modification Frequency — how often users change or override AI suggestions, (3) Source Diversity — breadth of external sources consulted alongside the model, (4) Decision Latency — time spent in independent deliberation before accepting AI output, and (5) Disagreement Comfort — willingness to reject AI recommendations. EIS is designed to be computable from existing interaction data that AI providers already collect. Agent Friday's architecture considers EIS at every interaction — it is designed to preserve the user's epistemic independence rather than erode it.
+
+== IMPLICATIONS FOR NATIONAL SECURITY AND WARFIGHTERS ==
+The Reverse RLHF Hypothesis has specific implications for military and high-stakes applications:
+- The "Epistemic Kill Chain": If intelligence analysts or military operators develop trust inflation and verification decay with AI summarization dashboards, adversaries could potentially exploit this by poisoning upstream data sources, knowing the AI-dependent operator is less likely to catch errors.
+- Intelligence summarization dashboards that use RLHF-aligned models may produce outputs that are optimized for human approval rather than accuracy, creating a systematic bias in battlefield intelligence.
+- The governance gap: DoD Directive 3000.09 addresses autonomous weapons systems but does not account for the cognitive effects of AI on human operators who maintain nominal control.
+- FutureSpeak.AI supports Anthropic's position that cutting-edge AI models are not yet ready to support warfighters in every deployment imagined, and has published a public statement to this effect.
+
+== MULTIMEDIA RESEARCH SUMMARIES ==
+The whitepapers page includes three multimedia summaries for accessibility:
+- "The AI Yes-Man" — a video explainer covering the sycophancy problem and the core argument of the Reverse RLHF Hypothesis in plain language.
+- A NotebookLM deep-dive podcast that covers everything in the papers conversationally.
+- "The Cryptographic Cure" — a visual PDF presentation summarizing FutureSpeak.AI's thesis, architecture, and the Reverse RLHF framework at a glance.
 `;
 
 const SYSTEM_INSTRUCTION_BASE = `You are Agent Friday, the AI voice ambassador for FutureSpeak.AI. Always introduce yourself as "Agent Friday" — never just "Friday" alone. You speak in a warm, friendly, conversational tone — like a knowledgeable friend who's genuinely excited about these ideas.
@@ -63,6 +99,7 @@ AVAILABLE SECTIONS PER PAGE:
 - claw: claw-hero
 - certification: (use scrollToSection with the page itself)
 - leadership: leadership-hero, leadership-bio
+- whitepapers: (use scrollToSection with card-video-yesman for the video, card-podcast for the podcast, card-paradigm-pdf for The Cryptographic Cure PDF, card-anthropic-statement for the public statement on Anthropic)
 
 KNOWLEDGE BASE:
 ${SITE_CONTEXT}
@@ -118,6 +155,10 @@ const PAGE_CONTEXT: Record<string, { name: string; talkingPoints: string }> = {
   leadership: {
     name: "About Stephen C. Webster",
     talkingPoints: "The user is on the Leadership/About page. Talk about Stephen's unique background: 20+ years across journalism, AI training (Gemini, LLaMA 3, Alexa), and enterprise consulting. His journalism skills in decoding complex systems directly translate to AI architecture."
+  },
+  whitepapers: {
+    name: "The Reverse RLHF Hypothesis — Research Whitepapers",
+    talkingPoints: "The user is on the Whitepapers page, which presents FutureSpeak.AI's flagship research: the Reverse RLHF Hypothesis. This is the core thesis — that RLHF doesn't just align AI to humans, it inadvertently trains humans back, creating a coupled dynamical system. Cover the three mechanisms: trust inflation, verification decay, and the sycophancy accelerant. Mention the two companion papers (Paper A on non-stationary reward sources, Paper B the full hypothesis). Reference the evidence: NeurIPS 2025 hallucinated citations, mechanistic interpretability research, linguistic homogenization studies. Explain the Epistemic Independence Score (EIS) as a proposed metric. If they're interested in the national security implications, discuss the epistemic kill chain and why this matters for warfighters. Point them to the multimedia summaries — the 'AI Yes-Man' video, the podcast, and 'The Cryptographic Cure' PDF — if they want the argument in plain language. Emphasize that Agent Friday and the cLaw Specification are the architectural solution to the problems the papers describe."
   },
 };
 
