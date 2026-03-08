@@ -3628,8 +3628,11 @@ Agent B receives:
                                         </div>
                                     </div>
                                 </div>
-                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black mb-4" style="height:80px;">
-                                    <iframe src="https://drive.google.com/file/d/1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9/preview" class="w-full h-full border-0" allow="autoplay" data-testid="iframe-podcast-player"></iframe>
+                                <div class="rounded-lg overflow-hidden border border-white/10 bg-black/50 mb-4 p-3">
+                                    <audio controls preload="metadata" class="w-full" style="height:40px;" data-testid="audio-podcast-player">
+                                        <source src="https://drive.google.com/uc?export=open&id=1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
                                 </div>
                                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-accent/20 bg-purple-accent/5 text-purple-accent text-xs font-mono mb-3 uppercase tracking-widest w-fit">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
@@ -3737,8 +3740,10 @@ Agent B receives:
                         </button>
                         <div class="w-full max-w-3xl px-6 flex flex-col items-center">
                             <img src="/podcast-cover.png" alt="The Reverse RLHF Hypothesis — The Podcast" class="w-full rounded-xl border border-white/10 shadow-2xl mb-6" data-testid="img-podcast-modal-cover">
-                            <div class="w-full rounded-lg overflow-hidden border border-white/10 bg-black" style="height:80px;">
-                                <iframe id="podcast-modal-player" class="w-full h-full border-0" allow="autoplay" data-testid="iframe-podcast-modal-player"></iframe>
+                            <div class="w-full rounded-lg overflow-hidden border border-white/10 bg-black/50 p-3">
+                                <audio id="podcast-modal-player" controls preload="metadata" class="w-full" style="height:40px;" data-testid="audio-podcast-modal-player">
+                                    <source src="https://drive.google.com/uc?export=open&id=1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9" type="audio/mpeg">
+                                </audio>
                             </div>
                         </div>
                     </div>
@@ -4775,17 +4780,29 @@ Agent B receives:
 
         function openPodcastModal() {
             var modal = document.getElementById('podcast-modal');
-            var player = document.getElementById('podcast-modal-player');
-            player.src = 'https://drive.google.com/file/d/1n116x0UPhqbGa2Y72jcsn8LomwIV4xZ9/preview';
+            var modalPlayer = document.getElementById('podcast-modal-player');
+            var cardPlayer = document.querySelector('[data-testid="audio-podcast-player"]');
+            if (cardPlayer && !cardPlayer.paused) {
+                modalPlayer.currentTime = cardPlayer.currentTime;
+                cardPlayer.pause();
+                modalPlayer.play();
+            }
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
         function closePodcastModal() {
             var modal = document.getElementById('podcast-modal');
-            var player = document.getElementById('podcast-modal-player');
+            var modalPlayer = document.getElementById('podcast-modal-player');
+            var cardPlayer = document.querySelector('[data-testid="audio-podcast-player"]');
+            var wasPlaying = !modalPlayer.paused;
+            var currentPos = modalPlayer.currentTime;
+            modalPlayer.pause();
+            if (wasPlaying && cardPlayer) {
+                cardPlayer.currentTime = currentPos;
+                cardPlayer.play();
+            }
             modal.classList.add('hidden');
-            player.src = '';
             document.body.style.overflow = '';
         }
 
