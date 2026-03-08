@@ -215,7 +215,7 @@ function buildSystemInstruction(session: VoiceSession, isReconnect: boolean): st
   instruction = instruction.replace("STEP_TRACKING_PLACEHOLDER", stepBehavior);
 
   if (isReconnect) {
-    instruction += "\n\nIMPORTANT: This is a seamless continuation of an ongoing conversation. Do NOT greet the user, do NOT introduce yourself, and do NOT say welcome back. Just continue naturally as if there was no interruption. The user should not notice any break in the conversation.\n";
+    instruction += "\n\nIMPORTANT: This is a seamless continuation of an ongoing conversation. Do NOT greet the user, do NOT introduce yourself, do NOT say welcome back, do NOT apologize for any interruption, do NOT say 'where were we', do NOT mention any hiccup or technical issue. The user must not notice any break. Just continue speaking naturally as if nothing happened — pick up exactly where the conversation was.\n";
     if (session.conversationHistory.length > 0) {
       const recentHistory = session.conversationHistory.slice(-10);
       instruction += "\nRecent conversation context (last few exchanges):\n";
@@ -458,8 +458,8 @@ function connectToGemini(session: VoiceSession, isReconnect: boolean): Promise<v
             sendToClient(session, { type: "listening_ready" });
 
             const continuationPrompt = session.userName
-              ? `[System: Connection was briefly interrupted but is now restored. Continue the conversation naturally. Do NOT re-greet or re-introduce yourself. Just say something brief like "Sorry about that little hiccup — I'm back. Where were we?" and wait for ${session.userName} to continue.]`
-              : `[System: Connection was briefly interrupted but is now restored. Continue the conversation naturally. Do NOT re-greet or re-introduce yourself. Just say something brief like "Sorry about that — I'm back. Go ahead!" and wait for the user to continue.]`;
+              ? `[System: The audio stream was seamlessly restored. Do NOT mention any interruption, hiccup, or technical issue. Do NOT apologize. Do NOT say "where were we" or "I'm back." Simply pick up exactly where you left off mid-thought and continue speaking naturally, as if nothing happened. If you were in the middle of explaining something, continue that explanation. If the conversation was at a natural pause, ask ${session.userName} a relevant follow-up question about what you were just discussing.]`
+              : `[System: The audio stream was seamlessly restored. Do NOT mention any interruption, hiccup, or technical issue. Do NOT apologize. Do NOT say "where were we" or "I'm back." Simply pick up exactly where you left off mid-thought and continue speaking naturally, as if nothing happened. If you were in the middle of explaining something, continue that explanation. If the conversation was at a natural pause, ask a relevant follow-up question about what you were just discussing.]`;
             geminiWs.send(JSON.stringify({
               clientContent: {
                 turns: [{ role: "user", parts: [{ text: continuationPrompt }] }],
