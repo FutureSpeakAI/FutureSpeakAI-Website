@@ -537,6 +537,57 @@
             animation: friday-glow 1.5s ease-in-out infinite;
             transition: outline 0.3s ease, box-shadow 0.3s ease;
         }
+        .logo-scroll-container {
+            width: 100%;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+        }
+        .logo-scroll-track {
+            display: flex;
+            align-items: center;
+            gap: 3.5rem;
+            width: max-content;
+            animation: logoScroll 40s linear infinite;
+        }
+        .logo-scroll-track:hover {
+            animation-play-state: paused;
+        }
+        .logo-scroll-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-shrink: 0;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .logo-scroll-item:hover {
+            opacity: 0.8;
+        }
+        .logo-scroll-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .logo-scroll-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        .logo-scroll-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        @keyframes logoScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
         @keyframes friday-glow {
             0%, 100% { outline-color: rgba(0, 240, 255, 0.7); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
             50% { outline-color: rgba(138, 43, 226, 0.7); box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); }
@@ -927,9 +978,127 @@
                     <div class="ctx-action-bar mt-16">
                         <span class="ctx-label">Explore</span>
                         <span class="ctx-divider"></span>
-                        <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Ask Your AI To Explain This Page" data-promptpush-prompt="Act as an executive recruiter evaluating Stephen C. Webster and FutureSpeak.AI for an enterprise AI consulting engagement. Give a detailed, no-nonsense breakdown of: (1) FutureSpeak.AI's consulting services — agentic workflow design, RAG architecture, AI compliance for regulated industries, AI safety & governance, and training & advisory; (2) Stephen C. Webster's resume — his work training Google Gemini during the 2024 election, training Meta LLaMA 3, Amazon Alexa, his role as Senior Director of Integrated Intelligence at Aquent Studios leading Fortune 500 AI strategy, and his founding of FutureSpeak.AI with clients including The Motley Fool and Kunai; (3) FutureSpeak.AI's original research — the Reverse RLHF Hypothesis, published as two whitepapers (Paper A: Non-Stationary Reward Sources in RLHF; Paper B: Reverse RLHF Hypothesis, 6th Edition) documenting how RLHF-trained AI models create measurable cognitive dependency in users, proposing the Epistemic Independence Score (EIS) metric, and backed by a video explainer ('The AI Yes-Man'), a NotebookLM podcast, and a visual paradigm summary — all available at futurespeak.ai/research/whitepapers; (4) Why this combination of hands-on frontier model experience, original AI safety research, and enterprise consulting matters for companies navigating AI transformation. Keep it under 700 words." data-testid="promptpush-consulting-ctx"></span>
+                        <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Ask Your AI To Explain This Page" data-promptpush-prompt="Act as an executive recruiter evaluating Stephen C. Webster and FutureSpeak.AI for an enterprise AI consulting engagement. Give a detailed, no-nonsense breakdown of: (1) FutureSpeak.AI's consulting services — agentic workflow design, RAG architecture, AI compliance for regulated industries, AI safety & governance, and training & advisory; (2) Stephen C. Webster's resume — his work training Google Gemini during the 2024 election, training Meta LLaMA 3, Amazon Alexa, his role as Senior Director of Integrated Intelligence at Aquent Studios leading Fortune 500 AI strategy, and his founding of FutureSpeak.AI with clients including Google, Meta, Amazon, Microsoft, General Motors, Sanofi, Merck, Accenture, Tech Mahindra, INNEX Energy, The Motley Fool, Kunai, eSolutions, e2f.AI, and Aquent Studios; (3) FutureSpeak.AI's original research — the Reverse RLHF Hypothesis, published as two whitepapers (Paper A: Non-Stationary Reward Sources in RLHF; Paper B: Reverse RLHF Hypothesis, 6th Edition) documenting how RLHF-trained AI models create measurable cognitive dependency in users, proposing the Epistemic Independence Score (EIS) metric, and backed by a video explainer ('The AI Yes-Man'), a NotebookLM podcast, and a visual paradigm summary — all available at futurespeak.ai/research/whitepapers; (4) Why this combination of hands-on frontier model experience, original AI safety research, and enterprise consulting matters for companies navigating AI transformation. Keep it under 700 words." data-testid="promptpush-consulting-ctx"></span>
                         <span class="ctx-divider"></span>
                         <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-consulting-ctx"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Ask Agent Friday To Explain This Page</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Client Logo Strip -->
+            <section class="py-16 border-t border-white/5 overflow-hidden content-backdrop" aria-label="Trusted by leading enterprises" data-testid="section-client-logos">
+                <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-10">
+                    <p class="text-center text-sm font-mono uppercase tracking-[0.3em] text-white/30">Trusted By Industry Leaders</p>
+                </div>
+                <div class="logo-scroll-container">
+                    <div class="logo-scroll-track">
+                        <div class="logo-scroll-item" data-testid="logo-google">
+                            <img src="https://cdn.simpleicons.org/google/ffffff" alt="Google" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Google</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-meta">
+                            <img src="https://cdn.simpleicons.org/meta/ffffff" alt="Meta" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Meta</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-amazon">
+                            <img src="https://cdn.simpleicons.org/amazon/ffffff" alt="Amazon" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Amazon</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-microsoft">
+                            <img src="https://cdn.simpleicons.org/microsoft/ffffff" alt="Microsoft" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Microsoft</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-accenture">
+                            <img src="https://cdn.simpleicons.org/accenture/ffffff" alt="Accenture" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Accenture</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-generalmotors">
+                            <img src="https://cdn.simpleicons.org/generalmotors/ffffff" alt="General Motors" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">General Motors</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-sanofi">
+                            <img src="https://cdn.simpleicons.org/sanofi/ffffff" alt="Sanofi" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Sanofi</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-merck">
+                            <span class="logo-scroll-text">Merck</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-innex">
+                            <span class="logo-scroll-text">INNEX Energy</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-motleyfool">
+                            <span class="logo-scroll-text">The Motley Fool</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-kunai">
+                            <span class="logo-scroll-text">Kunai</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-esolutions">
+                            <span class="logo-scroll-text">eSolutions</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-techmahindra">
+                            <img src="https://cdn.simpleicons.org/techmahindra/ffffff" alt="Tech Mahindra" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Tech Mahindra</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-e2f">
+                            <span class="logo-scroll-text">e2f.AI</span>
+                        </div>
+                        <div class="logo-scroll-item" data-testid="logo-aquent">
+                            <span class="logo-scroll-text">Aquent Studios</span>
+                        </div>
+
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/google/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Google</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/meta/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Meta</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/amazon/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Amazon</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/microsoft/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Microsoft</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/accenture/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Accenture</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/generalmotors/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">General Motors</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/sanofi/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Sanofi</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">Merck</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">INNEX Energy</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">The Motley Fool</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">Kunai</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">eSolutions</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <img src="https://cdn.simpleicons.org/techmahindra/ffffff" alt="" class="logo-scroll-icon">
+                            <span class="logo-scroll-label">Tech Mahindra</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">e2f.AI</span>
+                        </div>
+                        <div class="logo-scroll-item" aria-hidden="true">
+                            <span class="logo-scroll-text">Aquent Studios</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -4338,7 +4507,7 @@ Agent B receives:
                                 <h3 class="text-sm font-mono text-cyan-400 mb-2 uppercase tracking-widest">Consulting</h3>
                                 <h4 class="text-xl font-bold mb-4">FutureSpeak.AI</h4>
                                 <p class="text-gray-300 font-light text-sm leading-relaxed mb-4">
-                                    Founded a consultancy connecting small-to-medium businesses with AI transformation strategy. Clients have included The Motley Fool and Kunai (fintech).
+                                    Founded a consultancy connecting small-to-medium businesses with AI transformation strategy. Clients have included Google, Meta, Amazon, Microsoft, General Motors, Sanofi, Merck, Accenture, Tech Mahindra, INNEX Energy, The Motley Fool, Kunai, eSolutions, e2f.AI, and Aquent Studios.
                                 </p>
                                 <div class="font-mono text-xs text-white/50 border-t border-white/10 pt-4">
                                     > 2023 &ndash; Present &middot; Founder & CEO
@@ -4410,7 +4579,7 @@ Agent B receives:
                     <div class="ctx-action-bar my-12">
                         <span class="ctx-label">Explore</span>
                         <span class="ctx-divider"></span>
-                        <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Ask Your AI To Explain This Page" data-promptpush-prompt="Act as an executive recruiter evaluating Stephen C. Webster for an enterprise AI leadership role. Give a comprehensive, no-nonsense assessment of: (1) His frontier AI experience — directly training Google Gemini during the 2024 presidential election cycle, training Meta LLaMA 3, and Amazon Alexa; (2) His enterprise consulting track record — Senior Director of Integrated Intelligence at Aquent Studios, leading AI strategy for Fortune 500 clients in regulated industries; (3) FutureSpeak.AI — his consultancy serving clients like The Motley Fool and Kunai (fintech), offering agentic workflow design, RAG architecture, AI compliance for pharma/healthcare/finance, and AI safety governance; (4) His original AI safety research — author of the Reverse RLHF Hypothesis, published as two whitepapers (Paper A: Non-Stationary Reward Sources in RLHF; Paper B: Reverse RLHF Hypothesis, 6th Edition) documenting how RLHF-trained models create measurable cognitive dependency in users, proposing the Epistemic Independence Score (EIS) metric, with implications for military and high-stakes decision-making under CCW and DoD Directive 3000.09 — accompanied by a video explainer ('The AI Yes-Man'), a NotebookLM podcast, and a visual paradigm summary, all at futurespeak.ai/research/whitepapers; (5) His journalism and media background — editor-in-chief of Raw Story (grew from 50K to 5M readers), founder of Austin.com, coverage cited by NYT, Washington Post, Wired, Rolling Stone, and used in ACLU litigation; (6) Why this unique combination — training the world's most advanced AI models + original AI safety research + enterprise strategy + investigative rigor — makes him exceptionally qualified to guide companies through AI transformation. Keep it under 700 words." data-testid="promptpush-leadership-ctx"></span>
+                        <span data-promptpush="true" data-promptpush-theme="light" data-promptpush-style="dropdown" data-promptpush-text="Ask Your AI To Explain This Page" data-promptpush-prompt="Act as an executive recruiter evaluating Stephen C. Webster for an enterprise AI leadership role. Give a comprehensive, no-nonsense assessment of: (1) His frontier AI experience — directly training Google Gemini during the 2024 presidential election cycle, training Meta LLaMA 3, and Amazon Alexa; (2) His enterprise consulting track record — Senior Director of Integrated Intelligence at Aquent Studios, leading AI strategy for Fortune 500 clients in regulated industries; (3) FutureSpeak.AI — his consultancy serving clients like Google, Meta, Amazon, Microsoft, General Motors, Sanofi, Merck, Accenture, Tech Mahindra, INNEX Energy, The Motley Fool, Kunai, eSolutions, e2f.AI, and Aquent Studios, offering agentic workflow design, RAG architecture, AI compliance for pharma/healthcare/finance, and AI safety governance; (4) His original AI safety research — author of the Reverse RLHF Hypothesis, published as two whitepapers (Paper A: Non-Stationary Reward Sources in RLHF; Paper B: Reverse RLHF Hypothesis, 6th Edition) documenting how RLHF-trained models create measurable cognitive dependency in users, proposing the Epistemic Independence Score (EIS) metric, with implications for military and high-stakes decision-making under CCW and DoD Directive 3000.09 — accompanied by a video explainer ('The AI Yes-Man'), a NotebookLM podcast, and a visual paradigm summary, all at futurespeak.ai/research/whitepapers; (5) His journalism and media background — editor-in-chief of Raw Story (grew from 50K to 5M readers), founder of Austin.com, coverage cited by NYT, Washington Post, Wired, Rolling Stone, and used in ACLU litigation; (6) Why this unique combination — training the world's most advanced AI models + original AI safety research + enterprise strategy + investigative rigor — makes him exceptionally qualified to guide companies through AI transformation. Keep it under 700 words." data-testid="promptpush-leadership-ctx"></span>
                         <span class="ctx-divider"></span>
                         <button class="voice-btn" onclick="window.fridayVoice.toggle()" data-testid="button-voice-leadership-ctx"><svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span class="btn-label">Ask Agent Friday To Explain This Page</span></button>
                     </div>
