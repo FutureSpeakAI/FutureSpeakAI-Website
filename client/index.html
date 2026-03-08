@@ -447,6 +447,8 @@
             border: 1px solid rgba(0, 240, 255, 0.08);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 20;
         }
         .ctx-action-bar::before {
             content: '';
@@ -950,7 +952,7 @@
             </section>
 
             <!-- Services/Features snippet -->
-            <section id="services" data-section="services" class="py-24 border-t border-white/5 glass-panel content-backdrop" aria-label="AI consulting services">
+            <section id="services" data-section="services" class="py-24 border-t border-white/5 glass-panel content-backdrop" style="overflow:visible;position:relative;z-index:10" aria-label="AI consulting services">
                 <div class="max-w-7xl mx-auto px-6 lg:px-8">
                     <h2 class="text-3xl font-light mb-16 text-center tracking-tight text-white/90">AI Consulting <span class="font-bold text-white">Services</span></h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
