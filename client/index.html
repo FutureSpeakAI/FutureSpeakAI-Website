@@ -249,6 +249,7 @@
             width: 100vw;
             height: 100vh;
             z-index: -1;
+            pointer-events: none;
             background: radial-gradient(circle at center, #0F172A 0%, #060B19 100%);
         }
 
@@ -3603,7 +3604,7 @@ Agent B receives:
                             <div class="glass-panel rounded-xl border border-red-500/15 p-5 flex flex-col" data-testid="card-video-yesman">
                                 <div class="rounded-lg overflow-hidden border border-white/10 bg-black aspect-video mb-4" style="position:relative;z-index:1;">
                                     <video controls playsinline preload="metadata" class="w-full h-full object-contain" style="position:relative;z-index:2;" data-testid="video-yesman-player">
-                                        <source src="/The_AI_Yes_Man.mp4" type="video/mp4">
+                                        <source src="/stream/The_AI_Yes_Man.mp4" type="video/mp4">
                                         Your browser does not support the video element.
                                     </video>
                                 </div>
@@ -3615,7 +3616,7 @@ Agent B receives:
                                 <p class="text-sm text-gray-300 leading-relaxed mb-2 flex-grow">
                                     A visual explainer on how frontier AI models are trained to agree with you, validate your reasoning, and erode your critical thinking &mdash; the sycophancy problem at the heart of the Reverse RLHF Hypothesis, explained in plain language.
                                 </p>
-                                <a href="/The_AI_Yes_Man.mp4" download class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm w-fit mt-2" data-testid="link-download-video">
+                                <a href="/stream/The_AI_Yes_Man.mp4" download class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm w-fit mt-2" data-testid="link-download-video">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     Download MP4
                                 </a>

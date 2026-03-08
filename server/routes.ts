@@ -7,6 +7,8 @@ import { getUncachableResendClient } from "./resend";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripe";
 import { z } from "zod";
 import { randomBytes } from "crypto";
+import fs from "fs";
+import path from "path";
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -35,6 +37,40 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  app.get('/stream/The_AI_Yes_Man.mp4', (req, res) => {
+    const cwd = process.cwd();
+    const videoPath = process.env.NODE_ENV === 'production'
+      ? path.resolve(cwd, 'dist', 'public', 'The_AI_Yes_Man.mp4')
+      : path.resolve(cwd, 'client', 'public', 'The_AI_Yes_Man.mp4');
+    if (!fs.existsSync(videoPath)) {
+      return res.status(404).send('Video not found');
+    }
+    const stat = fs.statSync(videoPath);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunkSize = end - start + 1;
+      const stream = fs.createReadStream(videoPath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': 'video/mp4',
+      });
+      stream.pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+        'Accept-Ranges': 'bytes',
+      });
+      fs.createReadStream(videoPath).pipe(res);
+    }
+  });
+
   const existingConfig = await storage.getConfig();
   if (!existingConfig) {
     await storage.createConfig({ title: "My Simple Site" });
